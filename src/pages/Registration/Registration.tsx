@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { shop } from "../../constants/machine";
 import type { MachineType } from "../../types";
-import { generateRandomSetupCode } from "../../utils/formatCurrency";
 
 export const Registration: React.FC = () => {
   const navigate = useNavigate();
   const [portal, setPortal] = useState("Winbet");
   const [registrationToken, setRegistrationToken] = useState("ABC1234567890123456");
-  const [machineType, setMachineType] = useState<MachineType>("smart-pc");
+  const [machineType] = useState<MachineType>("smart-pc");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [wizardStep, setWizardStep] = useState<1 | 2>(1);

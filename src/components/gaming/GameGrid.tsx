@@ -179,8 +179,6 @@ const POPULAR_GAMES = [
   },
 ];
 
-const FEATURED_GAMES = games.slice(0, 8);
-
 const SLOT_SYMBOLS = ["🍒", "🍋", "🍇", "💎", "👑", "⚡", "7️⃣"];
 
 export const GameGrid: React.FC<GameGridProps> = ({
