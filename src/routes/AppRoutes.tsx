@@ -9,14 +9,27 @@ import { TerminalCashOut } from "../pages/Terminal/TerminalCashOut";
 import { TicketSuccess } from "../pages/Terminal/TicketSuccess";
 import { NotAuthorized } from "../pages/NotAuthorized/NotAuthorized";
 
+import { TerminalLogin, TerminalRegistration } from "../pages/Terminal/TerminalLogin";
+
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Root redirect */}
       <Route path="/" element={<Navigate to="/register" replace />} />
 
-      {/* Registration Flow */}
-      <Route path="/register" element={<Registration />} />
+      {/* Smart PC Registration & Login Flow */}
+      <Route path="/register" element={<Registration defaultMachineType="smart-pc" />} />
+      <Route path="/smart-pc/register" element={<Registration defaultMachineType="smart-pc" />} />
+      <Route path="/smart-pc/login" element={<Registration defaultMachineType="smart-pc" />} />
+      <Route path="/register/smart-pc" element={<Registration defaultMachineType="smart-pc" />} />
+
+      {/* Terminal Registration & Login Flow */}
+      <Route path="/terminal/login" element={<TerminalLogin />} />
+      <Route path="/terminal/register" element={<TerminalRegistration />} />
+      <Route path="/terminal-login" element={<TerminalLogin />} />
+      <Route path="/terminal-register" element={<TerminalRegistration />} />
+      <Route path="/register/terminal" element={<TerminalRegistration />} />
+
       <Route path="/register/success" element={<RegistrationSuccess />} />
 
       {/* Security / Unbind */}
