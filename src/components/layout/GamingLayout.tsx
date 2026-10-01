@@ -96,7 +96,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
                   </div>
                 </div>
 
-                {/* Right: Tournament & Spin Button */}
+                {/* Right: Tournament */}
                 <div className="jackpot-cta-wrap">
                   <div className="jp-tournament-card">
                     <div className="jp-tour-label">
@@ -105,14 +105,6 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
                     <div className="jp-tour-prize">N$ 50,000 Prize Pool</div>
                     <div className="jp-tour-game">Zeus Blitz • Ends in 04:22:38</div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn-jackpot-spin"
-                    onClick={onPrimaryAction}
-                  >
-                    <i className="fa-solid fa-bolt"></i>
-                    <span>{actionText}</span>
-                  </button>
                 </div>
               </div>
 
