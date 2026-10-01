@@ -2275,75 +2275,81 @@ body.game-lobby-body,
 .mini-showcase-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .mini-game-card {
-  background: #090317;
-  border: 1px solid rgba(139, 61, 255, 0.3);
-  border-radius: 8px;
-  padding: 6px;
+  background: linear-gradient(180deg, #12052b 0%, #080214 100%);
+  border: 1.5px solid rgba(139, 61, 255, 0.35);
+  border-radius: 12px;
+  padding: 8px;
   text-align: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.22s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .mini-game-card:hover {
-  border-color: #a855f7;
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+  border-color: #c084fc;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.45);
 }
 
 .mini-art-thumb {
   width: 100%;
-  height: 68px;
-  border-radius: 6px;
+  aspect-ratio: 1 / 1;
+  min-height: 110px;
+  max-height: 150px;
+  border-radius: 9px;
   overflow: hidden;
   position: relative;
   background: #150638;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
 }
 
 .mini-art-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.35s ease;
 }
 
 .mini-game-card:hover .mini-art-thumb img {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .mini-badge {
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 6px;
+  right: 6px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.52rem;
+  font-size: 0.6rem;
   font-weight: 900;
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 2px 6px;
+  border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   z-index: 2;
 }
-.mini-badge-new { background: #06b6d4; color: #fff; box-shadow: 0 0 6px #06b6d4; }
-.mini-badge-hot { background: #ef4444; color: #fff; box-shadow: 0 0 6px #ef4444; }
+.mini-badge-new { background: #06b6d4; color: #fff; box-shadow: 0 0 8px #06b6d4; }
+.mini-badge-hot { background: #ef4444; color: #fff; box-shadow: 0 0 8px #ef4444; }
 
 .mini-game-label {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: 0.72rem;
-  color: #e9d5ff;
+  font-size: 0.85rem;
+  color: #f3e8ff;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 2px 0;
 }
 
 /* -------------------------------------------------------------

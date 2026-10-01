@@ -22,160 +22,160 @@ const CATEGORIES = [
 
 const POPULAR_GAMES = [
   {
-    id: "pop-aviator",
+    id: "spribe-aviator",
     name: "aviator",
     title: "AVIATOR",
     subtitle: "FLY HIGH • 10,000X MAX",
     category: "crash",
-    categories: ["popular", "crash"],
+    categories: ["popular", "crash", "spribe"],
     theme: "theme-red" as const,
     badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-fire" },
-    image: "/assets/games/1.png",
+    image: "/assets/games/SPRIBE/AVIATOR.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "pop-mines",
-    name: "mines",
-    title: "MINES",
-    subtitle: "AVOID MINES • CASH OUT",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-green" as const,
-    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-shield-halved" },
-    image: "/assets/games/4.png",
-    actionText: "PLAY NOW",
-  },
-  {
-    id: "pop-plinko",
-    name: "plinko",
-    title: "PLINKO",
-    subtitle: "DROP BALL • 1,000X MULTI",
-    category: "instant",
-    categories: ["popular", "instant"],
-    theme: "theme-magenta" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-bullseye" },
-    image: "/assets/games/3.png",
-    actionText: "DROP NOW",
-  },
-  {
-    id: "pop-dice",
-    name: "dice",
-    title: "DICE",
-    subtitle: "ROLL & WIN • 98.6% RTP",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-purple" as const,
-    badge: { text: "TOP", type: "cyan" as const, icon: "fa-solid fa-dice" },
-    image: "/assets/games/2.png",
-    actionText: "ROLL NOW",
-  },
-  {
-    id: "pop-hilo",
-    name: "hilo",
-    title: "HILO",
-    subtitle: "GUESS NEXT CARD",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-blue" as const,
-    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-diamond" },
-    image: "/assets/games/5.png",
-    actionText: "PLAY NOW",
-  },
-  {
-    id: "pop-goal",
-    name: "goal",
-    title: "GOAL",
-    subtitle: "SCORE BIG",
-    category: "sports",
-    categories: ["popular", "sports"],
-    theme: "theme-gold" as const,
-    badge: { text: "POPULAR", type: "cyan" as const, icon: "fa-solid fa-futbol" },
-    image: "/assets/games/6.png",
-    actionText: "KICK NOW",
-  },
-  {
-    id: "pop-hotline",
-    name: "hotline",
-    title: "HOTLINE",
-    subtitle: "FAST ACTION",
-    category: "instant",
-    categories: ["popular", "instant"],
-    theme: "theme-red" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-fire" },
-    image: "/assets/games/1.png",
-    actionText: "PLAY NOW",
-  },
-  {
-    id: "pop-keno",
-    name: "keno",
-    title: "KENO",
-    subtitle: "LOTTERY GAME",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-purple" as const,
-    badge: { text: "CLASSIC", type: "cyan" as const, icon: "fa-solid fa-list-ol" },
-    image: "/assets/games/2.png",
-    actionText: "PLAY NOW",
-  },
-  {
-    id: "pop-multi-keno",
-    name: "multi keno",
-    title: "KENO 80 / MULTI KENO",
-    subtitle: "80 BALLS • BIG WINS",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-magenta" as const,
-    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-gem" },
-    image: "/assets/games/3.png",
-    actionText: "PLAY NOW",
-  },
-  {
-    id: "pop-mini-roulette",
-    name: "mini roulette",
-    title: "MINI ROULETTE",
-    subtitle: "QUICK SPINS",
-    category: "table",
-    categories: ["popular", "table"],
-    theme: "theme-blue" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-circle" },
-    image: "/assets/games/4.png",
-    actionText: "SPIN NOW",
-  },
-  {
-    id: "pop-balloon",
+    id: "spribe-balloon",
     name: "balloon",
     title: "BALLOON",
     subtitle: "DON'T LET IT POP",
     category: "crash",
-    categories: ["popular", "crash"],
+    categories: ["popular", "crash", "spribe"],
     theme: "theme-gold" as const,
     badge: { text: "FUN", type: "gold" as const, icon: "fa-solid fa-wind" },
-    image: "/assets/games/5.png",
+    image: "/assets/games/SPRIBE/BALLON.png",
+    actionText: "INFLATE NOW",
+  },
+  {
+    id: "spribe-dice",
+    name: "dice",
+    title: "DICE",
+    subtitle: "ROLL & WIN • 98.6% RTP",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-purple" as const,
+    badge: { text: "TOP", type: "cyan" as const, icon: "fa-solid fa-dice" },
+    image: "/assets/games/SPRIBE/DICE.png",
+    actionText: "ROLL NOW",
+  },
+  {
+    id: "spribe-hilo",
+    name: "hilo",
+    title: "HILO",
+    subtitle: "GUESS NEXT CARD",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-blue" as const,
+    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-diamond" },
+    image: "/assets/games/SPRIBE/HILO.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "pop-trader",
-    name: "trader",
-    title: "TRADER",
-    subtitle: "MARKET CRASH",
-    category: "crash",
-    categories: ["popular", "crash"],
-    theme: "theme-green" as const,
-    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-chart-line" },
-    image: "/assets/games/6.png",
-    actionText: "TRADE NOW",
+    id: "spribe-hotline",
+    name: "hotline",
+    title: "HOTLINE",
+    subtitle: "FAST ACTION • HIGH PAY",
+    category: "instant",
+    categories: ["popular", "instant", "spribe"],
+    theme: "theme-red" as const,
+    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-fire" },
+    image: "/assets/games/SPRIBE/HOTLINE.png",
+    actionText: "PLAY NOW",
   },
   {
-    id: "pop-pilot-chicken",
-    name: "pilot chicken",
-    title: "PILOT CHICKEN",
-    subtitle: "FLYING HIGH",
+    id: "spribe-keno",
+    name: "keno",
+    title: "KENO",
+    subtitle: "CLASSIC LOTTERY DRAW",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-purple" as const,
+    badge: { text: "CLASSIC", type: "cyan" as const, icon: "fa-solid fa-list-ol" },
+    image: "/assets/games/SPRIBE/KENO.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: "spribe-keno80",
+    name: "keno 80",
+    title: "KENO 80",
+    subtitle: "80 BALLS • BIG WINS",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-magenta" as const,
+    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-gem" },
+    image: "/assets/games/SPRIBE/KENO80.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: "spribe-mines",
+    name: "mines",
+    title: "MINES",
+    subtitle: "AVOID MINES • CASH OUT",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-green" as const,
+    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-shield-halved" },
+    image: "/assets/games/SPRIBE/MINES.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: "spribe-miniroulette",
+    name: "mini roulette",
+    title: "MINI ROULETTE",
+    subtitle: "QUICK SPINS • 12 NUMBERS",
+    category: "table",
+    categories: ["popular", "table", "spribe"],
+    theme: "theme-blue" as const,
+    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-circle" },
+    image: "/assets/games/SPRIBE/MINIROULETTE.png",
+    actionText: "SPIN NOW",
+  },
+  {
+    id: "spribe-pilot",
+    name: "pilot",
+    title: "PILOT",
+    subtitle: "FLYING HIGH • CASH OUT",
     category: "crash",
-    categories: ["popular", "crash"],
+    categories: ["popular", "crash", "spribe"],
     theme: "theme-red" as const,
-    badge: { text: "FUN", type: "hot" as const, icon: "fa-solid fa-kiwi-bird" },
-    image: "/assets/games/avi.png",
+    badge: { text: "FUN", type: "hot" as const, icon: "fa-solid fa-plane" },
+    image: "/assets/games/SPRIBE/PILOT.png",
     actionText: "FLY NOW",
+  },
+  {
+    id: "spribe-plinko",
+    name: "plinko",
+    title: "PLINKO",
+    subtitle: "DROP BALL • 1,000X MULTI",
+    category: "instant",
+    categories: ["popular", "instant", "spribe"],
+    theme: "theme-magenta" as const,
+    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-bullseye" },
+    image: "/assets/games/SPRIBE/PLINKO.png",
+    actionText: "DROP NOW",
+  },
+  {
+    id: "spribe-soccer",
+    name: "goal soccer",
+    title: "GOAL / SOCCER",
+    subtitle: "PENALTY RUN • SCORE BIG",
+    category: "sports",
+    categories: ["popular", "sports", "spribe"],
+    theme: "theme-gold" as const,
+    badge: { text: "POPULAR", type: "cyan" as const, icon: "fa-solid fa-futbol" },
+    image: "/assets/games/SPRIBE/SOCCER.png",
+    actionText: "KICK NOW",
+  },
+  {
+    id: "spribe-trader",
+    name: "trader",
+    title: "TRADER",
+    subtitle: "MARKET CHART • CASH OUT",
+    category: "crash",
+    categories: ["popular", "crash", "spribe"],
+    theme: "theme-green" as const,
+    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-chart-line" },
+    image: "/assets/games/SPRIBE/TRADER.png",
+    actionText: "TRADE NOW",
   },
 ];
 
@@ -440,59 +440,59 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <div className="mini-showcase-grid">
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Sugar Rush" })}
+              onClick={() => handleLaunchGame({ title: "Aviator" })}
             >
-              <span className="mini-badge mini-badge-new">NEW</span>
+              <span className="mini-badge mini-badge-hot">HOT</span>
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/4.png"
-                  alt="Sugar Rush"
+                  src="/assets/games/SPRIBE/AVIATOR.png"
+                  alt="Aviator"
                   onError={(e) => { e.currentTarget.src = "/assets/games/1.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Sugar Rush</div>
+              <div className="mini-game-label">Aviator</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Bigger Bass Bonanza" })}
-            >
-              <span className="mini-badge mini-badge-hot">HOT</span>
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/2250e474-e3ef-4219-b65d-6770ccf51551.png"
-                  alt="Bigger Bass"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Bigger Bass</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Fortune Tiger" })}
+              onClick={() => handleLaunchGame({ title: "Balloon" })}
             >
               <span className="mini-badge mini-badge-new">NEW</span>
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/ec848250-71ad-4cdb-8fac-5da20a956833.png"
-                  alt="Fortune Tiger"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
+                  src="/assets/games/SPRIBE/BALLON.png"
+                  alt="Balloon"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Fortune Tiger</div>
+              <div className="mini-game-label">Balloon</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Zeus vs Hades" })}
+              onClick={() => handleLaunchGame({ title: "Mines" })}
             >
               <span className="mini-badge mini-badge-hot">HOT</span>
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/3.png"
-                  alt="Zeus vs Hades"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/6.png"; }}
+                  src="/assets/games/SPRIBE/MINES.png"
+                  alt="Mines"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/4.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Zeus vs Hades</div>
+              <div className="mini-game-label">Mines</div>
+            </div>
+            <div
+              className="mini-game-card"
+              onClick={() => handleLaunchGame({ title: "Plinko" })}
+            >
+              <span className="mini-badge mini-badge-new">NEW</span>
+              <div className="mini-art-thumb">
+                <img
+                  src="/assets/games/SPRIBE/PLINKO.png"
+                  alt="Plinko"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
+                />
+              </div>
+              <div className="mini-game-label">Plinko</div>
             </div>
           </div>
         </div>
@@ -513,46 +513,46 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <div className="mini-showcase-grid">
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Live Roulette" })}
+              onClick={() => handleLaunchGame({ title: "Mini Roulette" })}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/5.png"
-                  alt="Roulette"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/1.png"; }}
+                  src="/assets/games/SPRIBE/MINIROULETTE.png"
+                  alt="Mini Roulette"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
                 />
               </div>
               <div className="mini-game-label">Roulette</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Live Blackjack" })}
+              onClick={() => handleLaunchGame({ title: "HiLo" })}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/6.png"
-                  alt="Blackjack"
+                  src="/assets/games/SPRIBE/HILO.png"
+                  alt="HiLo"
                   onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Blackjack</div>
+              <div className="mini-game-label">HiLo Cards</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Live Baccarat" })}
+              onClick={() => handleLaunchGame({ title: "Dice" })}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/2.png"
-                  alt="Baccarat"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
+                  src="/assets/games/SPRIBE/DICE.png"
+                  alt="Dice"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Baccarat</div>
+              <div className="mini-game-label">Dice</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Live Dragon Tiger" })}
+              onClick={() => handleLaunchGame({ title: "Dragon Tiger" })}
             >
               <div className="mini-art-thumb">
                 <img
@@ -582,55 +582,55 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <div className="mini-showcase-grid">
             <div
               className="mini-game-card"
-              onClick={() => showToast?.("Live Sports Portal Loaded")}
+              onClick={() => showToast?.("Live Sports Loaded")}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/5.png"
+                  src="/assets/games/SPRIBE/SOCCER.png"
                   alt="Live Sports"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/1.png"; }}
+                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Live Sports</div>
+              <div className="mini-game-label">Live Soccer</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => showToast?.("Virtual Sports Loaded")}
+              onClick={() => showToast?.("Pilot Arcade Loaded")}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/fb642974-1bf3-4ae6-949e-8990bce5d661.png"
-                  alt="Virtual Sports"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
+                  src="/assets/games/SPRIBE/PILOT.png"
+                  alt="Pilot"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/avi.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Virtual Sports</div>
+              <div className="mini-game-label">Pilot</div>
             </div>
             <div
               className="mini-game-card"
-              onClick={() => showToast?.("Esports Hub Loaded")}
+              onClick={() => showToast?.("Crypto Trader Loaded")}
             >
               <div className="mini-art-thumb">
                 <img
-                  src="/assets/games/4.png"
-                  alt="Esports"
+                  src="/assets/games/SPRIBE/TRADER.png"
+                  alt="Trader"
+                  onError={(e) => { e.currentTarget.src = "/assets/games/6.png"; }}
+                />
+              </div>
+              <div className="mini-game-label">Trader</div>
+            </div>
+            <div
+              className="mini-game-card"
+              onClick={() => showToast?.("Keno 80 Loaded")}
+            >
+              <div className="mini-art-thumb">
+                <img
+                  src="/assets/games/SPRIBE/KENO80.png"
+                  alt="Keno 80"
                   onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
                 />
               </div>
-              <div className="mini-game-label">Esports</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => showToast?.("Virtual Racing Loaded")}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/6.png"
-                  alt="Virtual Racing"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/1.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Virtual Racing</div>
+              <div className="mini-game-label">Keno 80</div>
             </div>
           </div>
         </div>
