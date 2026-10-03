@@ -96,6 +96,7 @@ export const TerminalLobby: React.FC = () => {
         toastMessage={toastMessage}
       >
         <GameGrid
+          machineType="terminal"
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}

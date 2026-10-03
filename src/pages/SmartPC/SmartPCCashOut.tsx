@@ -40,6 +40,7 @@ export const SmartPCCashOut: React.FC = () => {
         toastMessage={toastMessage}
       >
         <GameGrid
+          machineType="smart-pc"
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}

@@ -1,13 +1,24 @@
 import React, { useState, useMemo } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay, FreeMode } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+
 import { games } from "../../constants/machine";
-import type { GameItem } from "../../types";
+import type { GameItem, MachineType } from "../../types";
 import { GameCard } from "./GameCard";
 import { Modal } from "../common/Modal";
+import { LiveWinnersTicker } from "./LiveWinnersTicker";
+import { TournamentSection } from "./TournamentSection";
+import { VipPromotionsSection } from "./VipPromotionsSection";
+import { SmartPCHelpBar } from "./SmartPCHelpBar";
 
 interface GameGridProps {
   balance: number;
+  machineType?: MachineType;
   onBalanceChange?: (newBalance: number) => void;
   showToast?: (message: string) => void;
+  onOpenCashout?: () => void;
 }
 
 const CATEGORIES = [
@@ -20,160 +31,259 @@ const CATEGORIES = [
   { id: "instant", label: "Instant", icon: "fa-solid fa-bolt text-warning" },
 ];
 
-const POPULAR_GAMES = [
+const FEATURED_GAMES: GameItem[] = [
   {
-    id: "spribe-aviator",
+    id: 101,
+    name: "aviator",
+    title: "AVIATOR HIGH ROLLER",
+    subtitle: "10,000X MAX WIN • 97.0% RTP",
+    category: "crash",
+    categories: ["crash", "featured", "spribe"],
+    theme: "theme-red",
+    badge: { text: "TOP CHOICE", type: "hot", icon: "fa-solid fa-crown" },
+    image: "/assets/games/SPRIBE/AVIATOR.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: 102,
+    name: "mines",
+    title: "MINES VIP DIAMOND",
+    subtitle: "HIGH VOLATILITY • CUSTOM GRIDS",
+    category: "table",
+    categories: ["table", "instant", "featured", "spribe"],
+    theme: "theme-green",
+    badge: { text: "VIP PICK", type: "green", icon: "fa-solid fa-gem" },
+    image: "/assets/games/SPRIBE/MINES.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: 103,
+    name: "plinko",
+    title: "PLINKO 1000X",
+    subtitle: "16 PIN ROWS • 99.0% RTP",
+    category: "instant",
+    categories: ["instant", "featured", "spribe"],
+    theme: "theme-magenta",
+    badge: { text: "HOT MULTI", type: "gold", icon: "fa-solid fa-bolt" },
+    image: "/assets/games/SPRIBE/PLINKO.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: 104,
+    name: "balloon",
+    title: "BALLOON MULTIPLIER",
+    subtitle: "HOLD TO INFLATE • INSTANT WIN",
+    category: "crash",
+    categories: ["crash", "featured", "spribe"],
+    theme: "theme-gold",
+    badge: { text: "NEW", type: "hot", icon: "fa-solid fa-fire" },
+    image: "/assets/games/SPRIBE/BALLON.png",
+    actionText: "PLAY NOW",
+  },
+  {
+    id: 105,
+    name: "dice",
+    title: "DICE ULTRA",
+    subtitle: "ROLL & WIN • 98.6% RTP",
+    category: "table",
+    categories: ["table", "featured", "spribe"],
+    theme: "theme-purple",
+    badge: { text: "TOP RTP", type: "cyan", icon: "fa-solid fa-dice" },
+    image: "/assets/games/SPRIBE/DICE.png",
+    actionText: "ROLL NOW",
+  },
+  {
+    id: 106,
+    name: "mini roulette",
+    title: "GOLDEN ROULETTE",
+    subtitle: "12 NUMBERS • HIGH PAYOUT",
+    category: "table",
+    categories: ["table", "featured", "spribe"],
+    theme: "theme-blue",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-circle" },
+    image: "/assets/games/SPRIBE/MINIROULETTE.png",
+    actionText: "SPIN NOW",
+  },
+  {
+    id: 107,
+    name: "goal soccer",
+    title: "GOAL CHAMPIONS",
+    subtitle: "PENALTY RUN • SCORE BIG",
+    category: "sports",
+    categories: ["sports", "featured", "spribe"],
+    theme: "theme-gold",
+    badge: { text: "POPULAR", type: "cyan", icon: "fa-solid fa-futbol" },
+    image: "/assets/games/SPRIBE/SOCCER.png",
+    actionText: "KICK NOW",
+  },
+  {
+    id: 108,
+    name: "hotline",
+    title: "HOTLINE MULTIPLIER",
+    subtitle: "FAST ACTION • HIGH PAY",
+    category: "instant",
+    categories: ["instant", "featured", "spribe"],
+    theme: "theme-red",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-fire" },
+    image: "/assets/games/SPRIBE/HOTLINE.png",
+    actionText: "PLAY NOW",
+  },
+];
+
+const POPULAR_GAMES: GameItem[] = [
+  {
+    id: 201,
     name: "aviator",
     title: "AVIATOR",
     subtitle: "FLY HIGH • 10,000X MAX",
     category: "crash",
     categories: ["popular", "crash", "spribe"],
-    theme: "theme-red" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-fire" },
+    theme: "theme-red",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-fire" },
     image: "/assets/games/SPRIBE/AVIATOR.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-balloon",
+    id: 202,
     name: "balloon",
     title: "BALLOON",
     subtitle: "DON'T LET IT POP",
     category: "crash",
     categories: ["popular", "crash", "spribe"],
-    theme: "theme-gold" as const,
-    badge: { text: "FUN", type: "gold" as const, icon: "fa-solid fa-wind" },
+    theme: "theme-gold",
+    badge: { text: "FUN", type: "gold", icon: "fa-solid fa-wind" },
     image: "/assets/games/SPRIBE/BALLON.png",
     actionText: "INFLATE NOW",
   },
   {
-    id: "spribe-dice",
+    id: 203,
     name: "dice",
     title: "DICE",
     subtitle: "ROLL & WIN • 98.6% RTP",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-purple" as const,
-    badge: { text: "TOP", type: "cyan" as const, icon: "fa-solid fa-dice" },
+    theme: "theme-purple",
+    badge: { text: "TOP", type: "cyan", icon: "fa-solid fa-dice" },
     image: "/assets/games/SPRIBE/DICE.png",
     actionText: "ROLL NOW",
   },
   {
-    id: "spribe-hilo",
+    id: 204,
     name: "hilo",
     title: "HILO",
     subtitle: "GUESS NEXT CARD",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-blue" as const,
-    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-diamond" },
+    theme: "theme-blue",
+    badge: { text: "NEW", type: "cyan", icon: "fa-solid fa-diamond" },
     image: "/assets/games/SPRIBE/HILO.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-hotline",
+    id: 205,
     name: "hotline",
     title: "HOTLINE",
     subtitle: "FAST ACTION • HIGH PAY",
     category: "instant",
     categories: ["popular", "instant", "spribe"],
-    theme: "theme-red" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-fire" },
+    theme: "theme-red",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-fire" },
     image: "/assets/games/SPRIBE/HOTLINE.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-keno",
+    id: 206,
     name: "keno",
     title: "KENO",
     subtitle: "CLASSIC LOTTERY DRAW",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-purple" as const,
-    badge: { text: "CLASSIC", type: "cyan" as const, icon: "fa-solid fa-list-ol" },
+    theme: "theme-purple",
+    badge: { text: "CLASSIC", type: "cyan", icon: "fa-solid fa-list-ol" },
     image: "/assets/games/SPRIBE/KENO.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-keno80",
+    id: 207,
     name: "keno 80",
     title: "KENO 80",
     subtitle: "80 BALLS • BIG WINS",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-magenta" as const,
-    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-gem" },
+    theme: "theme-magenta",
+    badge: { text: "VIP", type: "green", icon: "fa-solid fa-gem" },
     image: "/assets/games/SPRIBE/KENO80.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-mines",
+    id: 208,
     name: "mines",
     title: "MINES",
     subtitle: "AVOID MINES • CASH OUT",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-green" as const,
-    badge: { text: "VIP", type: "green" as const, icon: "fa-solid fa-shield-halved" },
+    theme: "theme-green",
+    badge: { text: "VIP", type: "green", icon: "fa-solid fa-shield-halved" },
     image: "/assets/games/SPRIBE/MINES.png",
     actionText: "PLAY NOW",
   },
   {
-    id: "spribe-miniroulette",
+    id: 209,
     name: "mini roulette",
     title: "MINI ROULETTE",
     subtitle: "QUICK SPINS • 12 NUMBERS",
     category: "table",
     categories: ["popular", "table", "spribe"],
-    theme: "theme-blue" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-circle" },
+    theme: "theme-blue",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-circle" },
     image: "/assets/games/SPRIBE/MINIROULETTE.png",
     actionText: "SPIN NOW",
   },
   {
-    id: "spribe-pilot",
+    id: 210,
     name: "pilot",
     title: "PILOT",
     subtitle: "FLYING HIGH • CASH OUT",
     category: "crash",
     categories: ["popular", "crash", "spribe"],
-    theme: "theme-red" as const,
-    badge: { text: "FUN", type: "hot" as const, icon: "fa-solid fa-plane" },
+    theme: "theme-red",
+    badge: { text: "FUN", type: "hot", icon: "fa-solid fa-plane" },
     image: "/assets/games/SPRIBE/PILOT.png",
     actionText: "FLY NOW",
   },
   {
-    id: "spribe-plinko",
+    id: 211,
     name: "plinko",
     title: "PLINKO",
     subtitle: "DROP BALL • 1,000X MULTI",
     category: "instant",
     categories: ["popular", "instant", "spribe"],
-    theme: "theme-magenta" as const,
-    badge: { text: "HOT", type: "hot" as const, icon: "fa-solid fa-bullseye" },
+    theme: "theme-magenta",
+    badge: { text: "HOT", type: "hot", icon: "fa-solid fa-bullseye" },
     image: "/assets/games/SPRIBE/PLINKO.png",
     actionText: "DROP NOW",
   },
   {
-    id: "spribe-soccer",
+    id: 212,
     name: "goal soccer",
     title: "GOAL / SOCCER",
     subtitle: "PENALTY RUN • SCORE BIG",
     category: "sports",
     categories: ["popular", "sports", "spribe"],
-    theme: "theme-gold" as const,
-    badge: { text: "POPULAR", type: "cyan" as const, icon: "fa-solid fa-futbol" },
+    theme: "theme-gold",
+    badge: { text: "POPULAR", type: "cyan", icon: "fa-solid fa-futbol" },
     image: "/assets/games/SPRIBE/SOCCER.png",
     actionText: "KICK NOW",
   },
   {
-    id: "spribe-trader",
+    id: 213,
     name: "trader",
     title: "TRADER",
     subtitle: "MARKET CHART • CASH OUT",
     category: "crash",
     categories: ["popular", "crash", "spribe"],
-    theme: "theme-green" as const,
-    badge: { text: "NEW", type: "cyan" as const, icon: "fa-solid fa-chart-line" },
+    theme: "theme-green",
+    badge: { text: "NEW", type: "cyan", icon: "fa-solid fa-chart-line" },
     image: "/assets/games/SPRIBE/TRADER.png",
     actionText: "TRADE NOW",
   },
@@ -183,9 +293,12 @@ const SLOT_SYMBOLS = ["🍒", "🍋", "🍇", "💎", "👑", "⚡", "7️⃣"];
 
 export const GameGrid: React.FC<GameGridProps> = ({
   balance,
+  machineType = "smart-pc",
   onBalanceChange,
   showToast,
+  onOpenCashout,
 }) => {
+  const isTerminal = machineType === "terminal";
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -224,7 +337,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const handleSpinReels = () => {
     if (isSpinning) return;
     if (balance < currentBet) {
-      showToast?.("Insufficient Balance! Please adjust bet.");
+      showToast?.("Insufficient Balance! Please adjust bet or top up.");
       return;
     }
 
@@ -253,54 +366,61 @@ export const GameGrid: React.FC<GameGridProps> = ({
       ]);
     }, 750);
 
-    // Reel 3 & Win Calculation
+    // Reel 3 + Win Calculation
     setTimeout(() => {
-      const sym1 = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      const sym2 = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      const sym3 =
-        Math.random() < 0.4
-          ? sym2
-          : SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      const finalSymbol = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      setReels((prev) => [prev[0], prev[1], finalSymbol]);
 
-      setReels([sym1, sym2, sym3]);
-
-      const isThreeMatch = sym1 === sym2 && sym2 === sym3;
-      const isTwoMatch = sym1 === sym2 || sym2 === sym3;
-
-      if (isThreeMatch) {
-        const winVal = currentBet * 10;
-        if (onBalanceChange) onBalanceChange(balance - currentBet + winVal);
-        setWinAmount(winVal);
-        showToast?.(`🎉 Jackpot Win! N$ ${winVal.toFixed(2)}`);
-      } else if (isTwoMatch) {
-        const winVal = currentBet * 2.5;
-        if (onBalanceChange) onBalanceChange(balance - currentBet + winVal);
-        setWinAmount(winVal);
-        showToast?.(`🎉 Winner! N$ ${winVal.toFixed(2)}`);
+      // Calculate pseudo payout
+      const isJackpot = Math.random() > 0.45;
+      if (isJackpot) {
+        const multipliers = [1.5, 2.0, 3.5, 5.0, 10.0];
+        const multi = multipliers[Math.floor(Math.random() * multipliers.length)];
+        const won = currentBet * multi;
+        setWinAmount(won);
+        if (onBalanceChange) {
+          onBalanceChange(balance - currentBet + won);
+        }
+        showToast?.(`WIN! N$ ${won.toFixed(2)} added to Smart PC balance!`);
       }
 
       setIsSpinning(false);
     }, 1100);
   };
 
+  const handleJoinTournament = (tourName: string) => {
+    showToast?.(`Successfully enrolled in ${tourName}! Your points are now tracking.`);
+  };
+
+  const handleClaimPromo = (promoName: string) => {
+    showToast?.(`${promoName} activated! Approach Cashier Desk to claim.`);
+  };
+
   return (
     <>
       {/* ==============================================================
-           SECTION 1: CATEGORY FILTER SECTION (GAMES BY CATEGORY)
+           SECTION 1: LIVE WINNERS REAL-TIME ROLLING FEED (Smart PC Only)
       =============================================================== */}
-      {false && (
+      {!isTerminal && <LiveWinnersTicker />}
+
+      {/* ==============================================================
+           SECTION 2: SEARCH & CATEGORY FILTER BAR
+      =============================================================== */}
       <section id="categorySection" className="mb-5 showcase-block-panel">
         <div className="section-header-bar">
           <h2 className="section-header-title">
-            <i className="fa-solid fa-layer-group text-info"></i> Games by Category
+            <i className="fa-solid fa-layer-group text-info"></i> Browse & Filter Games
           </h2>
-          <div className="d-none d-sm-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2">
             <button
               type="button"
-              className="btn-view-all"
-              onClick={() => setSelectedCategory("all")}
+              className={`btn btn-sm ${selectedCategory === "all" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"} rounded-pill px-3`}
+              onClick={() => {
+                setSelectedCategory("all");
+                setSearchQuery("");
+              }}
             >
-              <span>View All</span> <i className="fa-solid fa-arrow-right"></i>
+              <i className="fa-solid fa-arrows-rotate me-1"></i> Reset Filters
             </button>
           </div>
         </div>
@@ -314,7 +434,6 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 className={`cat-pill ${selectedCategory === cat.id ? "active" : ""}`}
                 onClick={() => {
                   setSelectedCategory(cat.id);
-                  setSearchQuery("");
                 }}
               >
                 <i className={cat.icon}></i>
@@ -339,18 +458,27 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="btn btn-sm text-secondary p-0 ms-1"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              )}
             </div>
             <div className="game-count-hud d-none d-sm-inline-flex">
               <span id="gameCountBadge" className="count-num">
                 {filteredGames.length}
               </span>
-              <span>Games Available</span>
+              <span>Available</span>
             </div>
           </div>
         </div>
 
         {/* Filtered Games Grid */}
-        <div className="games-grid" id="categoryGamesGridContainer">
+        <div className="games-grid mt-3" id="categoryGamesGridContainer">
           {filteredGames.map((game) => (
             <GameCard key={game.id} game={game} onPlay={handleLaunchGame} />
           ))}
@@ -364,7 +492,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
             </div>
             <h3 className="fw-bold text-light mb-2">No Games Found</h3>
             <p className="text-secondary small mb-4">
-              No matching games in this category. Try another filter or search term.
+              No matching games found for "{searchQuery}". Try another filter or keyword.
             </p>
             <button
               className="btn btn-outline-warning rounded-pill px-4 py-2"
@@ -373,274 +501,139 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 setSearchQuery("");
               }}
             >
-              Reset Filters
+              Show All Games
             </button>
           </div>
         )}
       </section>
+
+      {/* ==============================================================
+           SMART PC SECTIONS (Hidden on Terminal):
+           - Featured Picks Swiper
+           - Popular Games Swiper
+           - Daily Tournaments Arena
+           - VIP Promotions & Perks
+           - Smart PC Help Bar
+      =============================================================== */}
+      {!isTerminal && (
+        <>
+          {/* SECTION 3: FEATURED / GRAND VIP PICKS (SWIPER SLIDER) */}
+          <section id="featuredSection" className="mb-5 showcase-block-panel">
+            <div className="section-header-bar" id="featuredHeader">
+              <h2 className="section-header-title">
+                <i className="fa-solid fa-crown text-warning"></i> Grand VIP & High Roller Picks
+              </h2>
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill d-none d-sm-inline-flex" style={{ fontSize: "0.72rem" }}>
+                  <i className="fa-solid fa-bolt me-1"></i> HIGH MULTIPLIERS
+                </span>
+                <button type="button" className="swiper-nav-btn swiper-featured-prev" aria-label="Previous Featured">
+                  <i className="fa-solid fa-chevron-left"></i>
+                </button>
+                <button type="button" className="swiper-nav-btn swiper-featured-next" aria-label="Next Featured">
+                  <i className="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <Swiper
+              modules={[Navigation, Autoplay, FreeMode]}
+              navigation={{
+                prevEl: ".swiper-featured-prev",
+                nextEl: ".swiper-featured-next",
+              }}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              freeMode={true}
+              slidesPerView={2}
+              spaceBetween={12}
+              breakpoints={{
+                480: { slidesPerView: 2, spaceBetween: 12 },
+                576: { slidesPerView: 3, spaceBetween: 12 },
+                768: { slidesPerView: 4, spaceBetween: 12 },
+                992: { slidesPerView: 6, spaceBetween: 12 },
+                1200: { slidesPerView: 8, spaceBetween: 12 },
+              }}
+              className="casino-swiper-slider"
+            >
+              {FEATURED_GAMES.map((game) => (
+                <SwiperSlide key={`featured-${game.id}`}>
+                  <GameCard game={game} onPlay={handleLaunchGame} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </section>
+
+          {/* SECTION 4: POPULAR SPRIBE ARCADE & CRASH GAMES (SWIPER SLIDER) */}
+          <section id="popularSection" className="mb-5 showcase-block-panel">
+            <div className="section-header-bar" id="popularHeader">
+              <h2 className="section-header-title">
+                <i className="fa-solid fa-fire text-danger"></i> Popular Arcade & Crash Games
+              </h2>
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge bg-danger text-light fw-bold px-3 py-1 rounded-pill d-none d-sm-inline-flex" style={{ fontSize: "0.72rem" }}>
+                  <i className="fa-solid fa-users me-1"></i> TOP 13 PLAYED
+                </span>
+                <button type="button" className="swiper-nav-btn swiper-popular-prev" aria-label="Previous Popular">
+                  <i className="fa-solid fa-chevron-left"></i>
+                </button>
+                <button type="button" className="swiper-nav-btn swiper-popular-next" aria-label="Next Popular">
+                  <i className="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <Swiper
+              modules={[Navigation, Autoplay, FreeMode]}
+              navigation={{
+                prevEl: ".swiper-popular-prev",
+                nextEl: ".swiper-popular-next",
+              }}
+              autoplay={{
+                delay: 3500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              freeMode={true}
+              slidesPerView={2}
+              spaceBetween={12}
+              breakpoints={{
+                480: { slidesPerView: 2, spaceBetween: 12 },
+                576: { slidesPerView: 3, spaceBetween: 12 },
+                768: { slidesPerView: 4, spaceBetween: 12 },
+                992: { slidesPerView: 6, spaceBetween: 12 },
+                1200: { slidesPerView: 8, spaceBetween: 12 },
+              }}
+              className="casino-swiper-slider"
+            >
+              {POPULAR_GAMES.map((game) => (
+                <SwiperSlide key={`popular-${game.id}`}>
+                  <GameCard game={game} onPlay={handleLaunchGame} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </section>
+
+          {/* SECTION 5: DAILY TOURNAMENTS & CHALLENGES ARENA */}
+          <TournamentSection onJoinTournament={handleJoinTournament} />
+
+          {/* SECTION 6: VIP REWARDS & CASHIER PERKS */}
+          <VipPromotionsSection
+            onClaimPromo={handleClaimPromo}
+            onOpenCashout={onOpenCashout}
+          />
+
+          {/* SECTION 7: SMART PC HELP & FAIR PLAY ASSURANCE */}
+          <SmartPCHelpBar />
+        </>
       )}
 
       {/* ==============================================================
-           SECTION 2: FEATURED GAMES
+           INTERACTIVE SLOT THEATER MODAL
       =============================================================== */}
-      {/* <section id="featuredSection" className="mb-5 showcase-block-panel">
-        <div className="section-header-bar" id="featuredHeader">
-          <h2 className="section-header-title">
-            <i className="fa-solid fa-star text-warning"></i> Featured Games
-          </h2>
-          <a href="#categorySection" className="btn-view-all">
-            <span>View All</span> <i className="fa-solid fa-arrow-right"></i>
-          </a>
-        </div>
-
-        <div className="games-grid" id="gamesGridContainer">
-          {FEATURED_GAMES.map((game) => (
-            <GameCard key={`featured-${game.id}`} game={game} onPlay={handleLaunchGame} />
-          ))}
-        </div>
-      </section> */}
-
-      {/* ==============================================================
-           SECTION 3: POPULAR GAMES (8 CARDS WITH PLAYERS COUNT)
-      =============================================================== */}
-      <section id="popularSection" className="mb-5 showcase-block-panel">
-        <div className="section-header-bar" id="popularHeader">
-          <h2 className="section-header-title">
-            <i className="fa-solid fa-fire text-danger"></i> Popular Games
-          </h2>
-          <a href="#categorySection" className="btn-view-all">
-            <span>View All</span> <i className="fa-solid fa-arrow-right"></i>
-          </a>
-        </div>
-
-        <div className="games-grid" id="popularGamesGridContainer">
-          {POPULAR_GAMES.map((game) => (
-            <GameCard key={`popular-${game.id}`} game={game as unknown as GameItem} onPlay={handleLaunchGame} />
-          ))}
-        </div>
-      </section>
-
-      {/* ==============================================================
-           SECTION 4: 3-COLUMN SHOWCASE (NEW & HOT, LIVE CASINO, SPORTS)
-      =============================================================== */}
-      <div className="tri-showcase-grid mb-5">
-        {/* Block 1: New & Hot */}
-        <div className="showcase-block-panel">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <span
-              className="fw-bold text-light text-uppercase d-flex align-items-center gap-2"
-              style={{ fontSize: "0.88rem", fontFamily: "'Rajdhani', sans-serif" }}
-            >
-              <i className="fa-solid fa-fire text-danger"></i> New & Hot
-            </span>
-            <a href="javascript:void(0)" className="btn-view-all py-1 px-2" style={{ fontSize: "0.72rem" }}>
-              View All <i className="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
-          <div className="mini-showcase-grid">
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Aviator" })}
-            >
-              <span className="mini-badge mini-badge-hot">HOT</span>
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/AVIATOR.png"
-                  alt="Aviator"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/1.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Aviator</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Balloon" })}
-            >
-              <span className="mini-badge mini-badge-new">NEW</span>
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/BALLON.png"
-                  alt="Balloon"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Balloon</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Mines" })}
-            >
-              <span className="mini-badge mini-badge-hot">HOT</span>
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/MINES.png"
-                  alt="Mines"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/4.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Mines</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Plinko" })}
-            >
-              <span className="mini-badge mini-badge-new">NEW</span>
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/PLINKO.png"
-                  alt="Plinko"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Plinko</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Block 2: Live Casino */}
-        <div className="showcase-block-panel">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <span
-              className="fw-bold text-light text-uppercase d-flex align-items-center gap-2"
-              style={{ fontSize: "0.88rem", fontFamily: "'Rajdhani', sans-serif" }}
-            >
-              <i className="fa-solid fa-user-tie text-warning"></i> Live Casino
-            </span>
-            <a href="javascript:void(0)" className="btn-view-all py-1 px-2" style={{ fontSize: "0.72rem" }}>
-              View All <i className="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
-          <div className="mini-showcase-grid">
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Mini Roulette" })}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/MINIROULETTE.png"
-                  alt="Mini Roulette"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Roulette</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "HiLo" })}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/HILO.png"
-                  alt="HiLo"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">HiLo Cards</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Dice" })}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/DICE.png"
-                  alt="Dice"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/2.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Dice</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => handleLaunchGame({ title: "Dragon Tiger" })}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/ede12845-5bed-410c-adc3-148d0d0abe79.png"
-                  alt="Dragon Tiger"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/4.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Dragon Tiger</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Block 3: Sports & Virtual */}
-        <div className="showcase-block-panel">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <span
-              className="fw-bold text-light text-uppercase d-flex align-items-center gap-2"
-              style={{ fontSize: "0.88rem", fontFamily: "'Rajdhani', sans-serif" }}
-            >
-              <i className="fa-solid fa-futbol text-info"></i> Sports & Virtual
-            </span>
-            <a href="javascript:void(0)" className="btn-view-all py-1 px-2" style={{ fontSize: "0.72rem" }}>
-              View All <i className="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
-          <div className="mini-showcase-grid">
-            <div
-              className="mini-game-card"
-              onClick={() => showToast?.("Live Sports Loaded")}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/SOCCER.png"
-                  alt="Live Sports"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/5.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Live Soccer</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => showToast?.("Pilot Arcade Loaded")}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/PILOT.png"
-                  alt="Pilot"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/avi.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Pilot</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => showToast?.("Crypto Trader Loaded")}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/TRADER.png"
-                  alt="Trader"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/6.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Trader</div>
-            </div>
-            <div
-              className="mini-game-card"
-              onClick={() => showToast?.("Keno 80 Loaded")}
-            >
-              <div className="mini-art-thumb">
-                <img
-                  src="/assets/games/SPRIBE/KENO80.png"
-                  alt="Keno 80"
-                  onError={(e) => { e.currentTarget.src = "/assets/games/3.png"; }}
-                />
-              </div>
-              <div className="mini-game-label">Keno 80</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ==============================================================
-           SECTION 5: PROMOTIONS & JACKPOTS BANNER (REMOVED)
-      =============================================================== */}
-
-      {/* Interactive Slot Theater Modal */}
       <Modal isOpen={!!activeTheaterGame} onClose={handleCloseTheater} maxWidth="480px">
         <div className="modal-body p-4 text-center">
           <div className="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3" style={{ borderColor: "rgba(139, 92, 246, 0.3)" }}>

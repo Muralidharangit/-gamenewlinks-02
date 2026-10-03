@@ -91,9 +91,11 @@ export const SmartPCLobby: React.FC = () => {
         toastMessage={toastMessage}
       >
         <GameGrid
+          machineType="smart-pc"
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}
+          onOpenCashout={handleOpenCashout}
         />
       </GamingLayout>
 

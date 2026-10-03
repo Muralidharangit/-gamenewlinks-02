@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import type { MachineType } from "../../types";
 import { GamingHeader } from "./GamingHeader";
 import { ShopLocation } from "./ShopLocation";
+import { SmartPCHeroBanner } from "../gaming/SmartPCHeroBanner";
 
 interface GamingLayoutProps {
   machineType: MachineType;
@@ -13,6 +14,8 @@ interface GamingLayoutProps {
   onPrimaryAction: () => void;
   onToggleMachineType?: (type: MachineType) => void;
   toastMessage?: string | null;
+  showJackpotBanner?: boolean;
+  showFooterTrustBar?: boolean;
   children: React.ReactNode;
 }
 
@@ -26,17 +29,14 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   onPrimaryAction,
   onToggleMachineType,
   toastMessage,
+  showJackpotBanner,
+  showFooterTrustBar,
   children,
 }) => {
-  const [jackpot, setJackpot] = useState(1483061.04);
+  const isSmartPc = machineType === "smart-pc";
+  const shouldShowJackpot = showJackpotBanner !== undefined ? showJackpotBanner : isSmartPc;
+  const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
   const [defaultBet, setDefaultBet] = useState(10);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setJackpot((prev) => prev + Math.random() * 0.45 + 0.1);
-    }, 1500);
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <div className="game-lobby-body d-flex flex-column min-vh-100">
@@ -53,66 +53,10 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
 
       {/* Main Content Area */}
       <main className="container-fluid px-lg-4 py-3 flex-grow-1">
-        {/* Live Jackpot Ticker Hero Banner */}
-        <div className="jackpot-hero-stage">
-          <div className="jp-chamfer-wrap">
-            <div className="jackpot-hero-card">
-              {/* Decorative art background */}
-              <div className="jackpot-bg-layer">
-                <img src="/assets/games/3.png" alt="" className="jp-deco-img jp-deco-left" aria-hidden="true" />
-                <img src="/assets/games/6.png" alt="" className="jp-deco-img jp-deco-center-top" aria-hidden="true" />
-                <img src="/assets/games/avi.png" alt="" className="jp-deco-img jp-deco-right" aria-hidden="true" />
-                <div className="jp-particle jp-p1"></div>
-                <div className="jp-particle jp-p2"></div>
-                <div className="jp-particle jp-p3"></div>
-                <div className="jp-particle jp-p4"></div>
-                <div className="jp-particle jp-p5"></div>
-              </div>
-
-              {/* Inner Row */}
-              <div className="jackpot-inner-row">
-                {/* Left: Gold Coin Vault */}
-                <div className="jackpot-player-badge">
-                  <div className="gold-coin-vault">
-                    <div className="gold-coin-disc">
-                      <i className="fa-solid fa-coins"></i>
-                    </div>
-                    <i className="fa-solid fa-crown gold-crown-floater"></i>
-                    <i className="fa-solid fa-sparkles gold-coin-sparkle"></i>
-                  </div>
-                  <div className="jackpot-meta-col">
-                    <div className="jackpot-info-title">
-                      <span>WINBET GRAND JACKPOT</span>
-                      <span className="jp-live-pill">
-                        <i className="fa-solid fa-circle"></i> LIVE
-                      </span>
-                    </div>
-                    <div className="jackpot-ticker-val" id="liveJackpotMeter">
-                      N$ {jackpot.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <div className="jp-sub-label">
-                      <i className="fa-solid fa-users me-1"></i>24,891 Players Active Right Now
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: Tournament */}
-                <div className="jackpot-cta-wrap">
-                  <div className="jp-tournament-card">
-                    <div className="jp-tour-label">
-                      <i className="fa-solid fa-fire-flame-curved"></i> HOT TOURNAMENT
-                    </div>
-                    <div className="jp-tour-prize">N$ 50,000 Prize Pool</div>
-                    <div className="jp-tour-game">Zeus Blitz • Ends in 04:22:38</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Accent */}
-              <div className="jp-bottom-accent"></div>
-            </div>
-          </div>
-        </div>
+        {/* Dynamic & Engaging Smart PC Hero Showcase Banner (Shown on Smart PC or when enabled) */}
+        {shouldShowJackpot && (
+          <SmartPCHeroBanner onOpenCashout={onPrimaryAction} />
+        )}
 
         {/* Dynamic Children (GameGrid, etc.) */}
         {children}
@@ -160,50 +104,52 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
       </footer>
 
       {/* Full Footer Trust Bar */}
-      <div className="winbet-full-footer">
-        <div className="container-fluid">
-          <div className="row g-4 justify-content-between">
-            <div className="col-12 col-md-4">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <span className="brand-name fs-5">
-                  <span style={{ color: "#f5b300" }}>WIN</span>
-                  <span style={{ color: "#ffffff" }}>BET</span>
-                </span>
-                <span className="badge bg-dark border border-warning-subtle text-warning" style={{ fontSize: "0.7rem" }}>
-                  OFFICIAL STATION
-                </span>
+      {shouldShowFooterTrust && (
+        <div className="winbet-full-footer">
+          <div className="container-fluid">
+            <div className="row g-4 justify-content-between">
+              <div className="col-12 col-md-4">
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <span className="brand-name fs-5">
+                    <span style={{ color: "#f5b300" }}>WIN</span>
+                    <span style={{ color: "#ffffff" }}>BET</span>
+                  </span>
+                  <span className="badge bg-dark border border-warning-subtle text-warning" style={{ fontSize: "0.7rem" }}>
+                    OFFICIAL STATION
+                  </span>
+                </div>
+                <p className="text-dim small mb-3">
+                  Authorized Gaming Terminal and Smart PC system. Powered by WinBet Gaming Central.
+                </p>
+                <div className="security-badge-row">
+                  <span className="ssl-badge">
+                    <i className="fa-solid fa-lock me-1"></i> 256-BIT ENCRYPTION
+                  </span>
+                  <span className="age-badge">18+</span>
+                </div>
               </div>
-              <p className="text-dim small mb-3">
-                Authorized Gaming Terminal and Smart PC system. Powered by WinBet Gaming Central.
-              </p>
-              <div className="security-badge-row">
-                <span className="ssl-badge">
-                  <i className="fa-solid fa-lock me-1"></i> 256-BIT ENCRYPTION
-                </span>
-                <span className="age-badge">18+</span>
+
+              <div className="col-6 col-md-3">
+                <h4 className="footer-col-title">Quick Information</h4>
+                <ul className="footer-links-list">
+                  <li><span className="text-dim">Shop: {shopName}</span></li>
+                  <li><span className="text-dim">Station: {machineName}</span></li>
+                  <li><span className="text-dim">Mode: {machineType === "terminal" ? "Terminal (Ticket)" : "Smart PC (Cashier)"}</span></li>
+                </ul>
               </div>
-            </div>
 
-            <div className="col-6 col-md-3">
-              <h4 className="footer-col-title">Quick Information</h4>
-              <ul className="footer-links-list">
-                <li><span className="text-dim">Shop: {shopName}</span></li>
-                <li><span className="text-dim">Station: {machineName}</span></li>
-                <li><span className="text-dim">Mode: {machineType === "terminal" ? "Terminal (Ticket)" : "Smart PC (Cashier)"}</span></li>
-              </ul>
-            </div>
-
-            <div className="col-6 col-md-3">
-              <h4 className="footer-col-title">Player Assistance</h4>
-              <ul className="footer-links-list">
-                <li><span className="text-dim">Ask shop cashier for assistance</span></li>
-                <li><span className="text-dim">Always keep your cashout vouchers safe</span></li>
-                <li><span className="text-dim">Play responsibly (18+ only)</span></li>
-              </ul>
+              <div className="col-6 col-md-3">
+                <h4 className="footer-col-title">Player Assistance</h4>
+                <ul className="footer-links-list">
+                  <li><span className="text-dim">Ask shop cashier for assistance</span></li>
+                  <li><span className="text-dim">Always keep your cashout vouchers safe</span></li>
+                  <li><span className="text-dim">Play responsibly (18+ only)</span></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Toast Notification */}
       <div className={`winbet-toast ${toastMessage ? "show" : ""}`} id="customToast">

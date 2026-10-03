@@ -32,6 +32,7 @@ export const TicketSuccess: React.FC = () => {
         toastMessage={toastMessage}
       >
         <GameGrid
+          machineType="terminal"
           balance={0.0}
           onBalanceChange={updateBalance}
           showToast={showToast}
