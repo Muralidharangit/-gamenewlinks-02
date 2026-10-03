@@ -644,6 +644,55 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
             </div>
           </div>
         )}
+
+        {/* =========================================================================
+            SMART PC: Cash-In (Load Chips) Received from Shop Panel
+            ========================================================================= */}
+        {alertType === "CHIPS_LOADED" && (
+          <div>
+            <div className="neon-success-circle-wrap mb-3">
+              <div
+                className="neon-success-circle"
+                style={{
+                  background: "radial-gradient(circle at 35% 30%, #34d399 0%, #059669 65%, #064e3b 100%)",
+                  boxShadow: "0 0 35px rgba(16, 185, 129, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.6)",
+                }}
+              >
+                <i className="fa-solid fa-coins"></i>
+              </div>
+            </div>
+
+            <h3 className="success-text-heading text-success mb-2" style={{ textShadow: "0 0 15px rgba(16, 185, 129, 0.6)" }}>
+              Chips Loaded!
+            </h3>
+
+            <div
+              className="p-3 mb-3 rounded border text-center"
+              style={{
+                background: "radial-gradient(circle at 50% 0%, #0d3824 0%, #041f13 100%)",
+                borderColor: "rgba(16, 185, 129, 0.5)",
+                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.2)",
+              }}
+            >
+              <div className="text-secondary small fw-semibold text-uppercase mb-1" style={{ letterSpacing: "0.5px" }}>
+                Added by Cashier Desk
+              </div>
+              <div className="fs-2 fw-bold text-success" style={{ textShadow: "0 0 15px rgba(16, 185, 129, 0.6)" }}>
+                +{formatCurrency(amount)}
+              </div>
+            </div>
+
+            <p className="text-light small mb-4" style={{ lineHeight: "1.45" }}>
+              The shop cashier loaded chips into your Smart PC session. You're ready to place bets and play!
+            </p>
+
+            <div className="d-flex flex-column gap-2 mt-2">
+              <Button variant="primary" onClick={onClose} icon="fa-solid fa-gamepad">
+                Let's Play!
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </Modal>
   );

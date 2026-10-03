@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { shop } from "../../constants/machine";
-import type { MachineType } from "../../types";
+import type { MachineType, SmartPCRegisterData } from "../../types";
+import { api } from "../../services/api";
 
 interface RegistrationProps {
   defaultMachineType?: MachineType;
@@ -11,19 +12,21 @@ export const Registration: React.FC<RegistrationProps> = ({
   defaultMachineType = "smart-pc",
 }) => {
   const navigate = useNavigate();
-  const [portal, setPortal] = useState("Winbet");
-  const [registrationToken, setRegistrationToken] = useState("ABC1234567890123456");
+  const [portal, setPortal] = useState("betwise");
+  const [registrationToken, setRegistrationToken] = useState("TES4122000111554535");
   const [machineType] = useState<MachineType>(defaultMachineType);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [wizardStep, setWizardStep] = useState<1 | 2>(1);
+  const [registeredData, setRegisteredData] = useState<SmartPCRegisterData | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 2800);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
@@ -35,18 +38,30 @@ export const Registration: React.FC<RegistrationProps> = ({
       return;
     }
 
-    // Save registration state to localStorage
-    const machineName = machineType === "terminal" ? "Terminal-02" : "Smart PC-03";
-    localStorage.setItem("winbet_machine_type", machineType);
-    localStorage.setItem("winbet_machine_name", machineName);
-    localStorage.setItem("winbet_setup_code", inputToken.toUpperCase());
-    localStorage.setItem("winbet_portal", inputPortal);
-    localStorage.setItem("winbet_shop_name", shop.name);
-    localStorage.setItem("winbet_shop_location", shop.location);
+    setIsLoading(true);
 
-    // Switch to step 2
-    setWizardStep(2);
-    showToast(`Registration Successful for ${machineName}!`);
+    try {
+      // PDF Flow #1: POST /smart-pcs/register (live API call)
+      const data = await api.registerSmartPC({
+        portal_slug: inputPortal.toLowerCase(),
+        registration_token: inputToken.toUpperCase(),
+        device_fingerprint: api.getDeviceFingerprint(),
+        operating_system: navigator.userAgent.includes("Windows") ? "Windows 11" : "Linux",
+      });
+
+      setRegisteredData(data);
+      localStorage.setItem("winbet_machine_type", machineType);
+
+      // Switch to step 2 (Screen 2: Registration Successful)
+      setWizardStep(2);
+      showToast(`Registration Successful for ${data.machine_id}!`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Registration failed";
+      setErrorMessage(msg);
+      showToast(msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleContinueToPlatform = () => {
@@ -155,8 +170,19 @@ export const Registration: React.FC<RegistrationProps> = ({
                         <button type="button" className="btn btn-secondary fw-semibold" style={{ borderRadius: "8px", background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)", padding: "0.5rem 1.5rem" }} onClick={() => navigate(-1)}>
                           Close
                         </button>
-                        <button type="submit" className="btn-winbet" style={{ width: "auto", padding: "0.5rem 1.5rem" }}>
-                          Register
+                        <button
+                          type="submit"
+                          className="btn-winbet"
+                          style={{ width: "auto", padding: "0.5rem 1.5rem" }}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <i className="fa-solid fa-circle-notch fa-spin me-2"></i> Registering...
+                            </>
+                          ) : (
+                            "Register"
+                          )}
                         </button>
                       </div>
                     </form>
@@ -175,9 +201,9 @@ export const Registration: React.FC<RegistrationProps> = ({
                       {/* Registration Summary */}
                       <div className="receipt-list mb-3">
                         <div className="receipt-row">
-                          <span className="receipt-label">Machine Name:</span>
+                          <span className="receipt-label">Machine ID:</span>
                           <span className="receipt-value text-warning fw-bold" id="successMachineName">
-                            {machineType === "terminal" ? "Terminal-02" : "Smart PC-03"}
+                            {registeredData?.machine_id || (machineType === "terminal" ? "Terminal-02" : "Smart PC-03")}
                           </span>
                         </div>
                         <div className="receipt-row">
@@ -188,11 +214,11 @@ export const Registration: React.FC<RegistrationProps> = ({
                         </div>
                         <div className="receipt-row">
                           <span className="receipt-label">Shop Name:</span>
-                          <span className="receipt-value">{shop.name}</span>
+                          <span className="receipt-value">{registeredData?.shop_name || shop.name}</span>
                         </div>
                         <div className="receipt-row">
-                          <span className="receipt-label">Location:</span>
-                          <span className="receipt-value text-secondary">{shop.location}</span>
+                          <span className="receipt-label">Player ID:</span>
+                          <span className="receipt-value text-info font-monospace">{registeredData?.player_id || 8841}</span>
                         </div>
                         <div className="receipt-row">
                           <span className="receipt-label">Portal:</span>

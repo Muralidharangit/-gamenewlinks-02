@@ -4,6 +4,7 @@ import { Registration } from "../pages/Registration/Registration";
 import { RegistrationSuccess } from "../pages/RegistrationSuccess/RegistrationSuccess";
 import { SmartPCLobby } from "../pages/SmartPC/SmartPCLobby";
 import { SmartPCCashOut } from "../pages/SmartPC/SmartPCCashOut";
+import { GamePlayPage } from "../pages/SmartPC/GamePlayPage";
 import { TerminalLobby } from "../pages/Terminal/TerminalLobby";
 import { TerminalCashOut } from "../pages/Terminal/TerminalCashOut";
 import { TicketSuccess } from "../pages/Terminal/TicketSuccess";
@@ -37,6 +38,9 @@ export const AppRoutes: React.FC = () => {
 
       {/* Smart PC Flow */}
       <Route path="/smart-pc" element={<SmartPCLobby />} />
+      <Route path="/smart-pc/play/:gameId" element={<GamePlayPage />} />
+      <Route path="/smart-pc/play" element={<GamePlayPage />} />
+      <Route path="/play/:gameId" element={<GamePlayPage />} />
       <Route path="/smart-pc/cashout" element={<SmartPCCashOut />} />
 
       {/* Terminal Flow */}

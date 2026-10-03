@@ -1,17 +1,19 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import { games } from "../../constants/machine";
+import { games as initialGames } from "../../constants/machine";
 import type { GameItem, MachineType } from "../../types";
+import { api } from "../../services/api";
 import { GameCard } from "./GameCard";
-import { Modal } from "../common/Modal";
 import { LiveWinnersTicker } from "./LiveWinnersTicker";
 import { TournamentSection } from "./TournamentSection";
 import { VipPromotionsSection } from "./VipPromotionsSection";
 import { SmartPCHelpBar } from "./SmartPCHelpBar";
+import { GameLauncherModal } from "./GameLauncherModal";
 
 interface GameGridProps {
   balance: number;
@@ -289,8 +291,6 @@ const POPULAR_GAMES: GameItem[] = [
   },
 ];
 
-const SLOT_SYMBOLS = ["🍒", "🍋", "🍇", "💎", "👑", "⚡", "7️⃣"];
-
 export const GameGrid: React.FC<GameGridProps> = ({
   balance,
   machineType = "smart-pc",
@@ -299,18 +299,48 @@ export const GameGrid: React.FC<GameGridProps> = ({
   onOpenCashout,
 }) => {
   const isTerminal = machineType === "terminal";
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [catalogGames, setCatalogGames] = useState<GameItem[]>(initialGames);
 
-  // Interactive Slot Game Theater Modal State
-  const [activeTheaterGame, setActiveTheaterGame] = useState<{ title: string } | null>(null);
-  const [currentBet, setCurrentBet] = useState(10);
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [reels, setReels] = useState(["💎", "7️⃣", "👑"]);
-  const [winAmount, setWinAmount] = useState<number | null>(null);
+  // Active Game Launcher State (PDF Sections 4.6 & 4.7)
+  const [activeGame, setActiveGame] = useState<GameItem | null>(null);
+
+  // Fetch live games from GET /smart-pcs/games
+  useEffect(() => {
+    let isMounted = true;
+    api.getGames(selectedCategory === "all" ? undefined : selectedCategory)
+      .then((items) => {
+        if (isMounted && items && items.length > 0) {
+          const mapped: GameItem[] = items.map((item, idx) => ({
+            id: item.id || idx + 1,
+            name: item.name.toLowerCase(),
+            title: item.name.toUpperCase(),
+            subtitle: item.description || "LIVE PROVIDER GAME",
+            category: item.category.toLowerCase(),
+            categories: [item.category.toLowerCase(), item.provider.toLowerCase()],
+            theme: (["theme-red", "theme-gold", "theme-green", "theme-purple", "theme-blue"] as const)[idx % 5],
+            badge: item.payout_label ? { text: item.payout_label, type: "hot" } : undefined,
+            image: item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png",
+            actionText: "PLAY NOW",
+            kind: item.kind,
+            provider: item.provider,
+            uuid: item.uuid,
+            choices: item.choices,
+          }));
+          setCatalogGames(mapped);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCategory]);
 
   const filteredGames = useMemo(() => {
-    return games.filter((game) => {
+    return catalogGames.filter((game) => {
       const matchesCategory =
         selectedCategory === "all" || game.categories.includes(selectedCategory);
       const q = searchQuery.toLowerCase().trim();
@@ -321,71 +351,21 @@ export const GameGrid: React.FC<GameGridProps> = ({
         game.categories.some((c) => c.includes(q));
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [catalogGames, selectedCategory, searchQuery]);
 
-  const handleLaunchGame = (game: { title: string }) => {
-    setActiveTheaterGame(game);
-    setWinAmount(null);
+  const handleLaunchGame = (game: GameItem) => {
+    if (!isTerminal) {
+      // Smart PC Dedicated Game Page (Header on top, full game stage below)
+      navigate(`/smart-pc/play/${encodeURIComponent(game.uuid || game.id || game.name)}`, {
+        state: { game },
+      });
+    } else {
+      setActiveGame(game);
+    }
   };
 
-  const handleCloseTheater = () => {
-    setActiveTheaterGame(null);
-    setIsSpinning(false);
-    setWinAmount(null);
-  };
-
-  const handleSpinReels = () => {
-    if (isSpinning) return;
-    if (balance < currentBet) {
-      showToast?.("Insufficient Balance! Please adjust bet or top up.");
-      return;
-    }
-
-    if (onBalanceChange) {
-      onBalanceChange(balance - currentBet);
-    }
-
-    setIsSpinning(true);
-    setWinAmount(null);
-
-    // Reel 1
-    setTimeout(() => {
-      setReels((prev) => [
-        SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)],
-        prev[1],
-        prev[2],
-      ]);
-    }, 450);
-
-    // Reel 2
-    setTimeout(() => {
-      setReels((prev) => [
-        prev[0],
-        SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)],
-        prev[2],
-      ]);
-    }, 750);
-
-    // Reel 3 + Win Calculation
-    setTimeout(() => {
-      const finalSymbol = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      setReels((prev) => [prev[0], prev[1], finalSymbol]);
-
-      // Calculate pseudo payout
-      const isJackpot = Math.random() > 0.45;
-      if (isJackpot) {
-        const multipliers = [1.5, 2.0, 3.5, 5.0, 10.0];
-        const multi = multipliers[Math.floor(Math.random() * multipliers.length)];
-        const won = currentBet * multi;
-        setWinAmount(won);
-        if (onBalanceChange) {
-          onBalanceChange(balance - currentBet + won);
-        }
-        showToast?.(`WIN! N$ ${won.toFixed(2)} added to Smart PC balance!`);
-      }
-
-      setIsSpinning(false);
-    }, 1100);
+  const handleCloseGame = () => {
+    setActiveGame(null);
   };
 
   const handleJoinTournament = (tourName: string) => {
@@ -632,138 +612,16 @@ export const GameGrid: React.FC<GameGridProps> = ({
       )}
 
       {/* ==============================================================
-           INTERACTIVE SLOT THEATER MODAL
+           GAME LAUNCHER MODAL (Supports Provider Games & Local Games via API)
       =============================================================== */}
-      <Modal isOpen={!!activeTheaterGame} onClose={handleCloseTheater} maxWidth="480px">
-        <div className="modal-body p-4 text-center">
-          <div className="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3" style={{ borderColor: "rgba(139, 92, 246, 0.3)" }}>
-            <div className="text-start pe-4">
-              <h3 className="fw-bold text-warning mb-1" id="theaterGameTitle" style={{ textShadow: "0 0 12px rgba(245, 179, 0, 0.5)", fontSize: "1.5rem", letterSpacing: "1px", textTransform: "uppercase" }}>
-                {activeTheaterGame?.title}
-              </h3>
-              <div className="d-flex align-items-center gap-2 mt-2">
-                <span
-                  className="badge"
-                  style={{ fontSize: "0.65rem", background: "linear-gradient(90deg, #3b0764, #1b0c38)", border: "1px solid #7c3aed", color: "#e9d5ff", letterSpacing: "0.5px", padding: "4px 8px" }}
-                >
-                  <i className="fa-solid fa-gamepad me-1 text-purple-400"></i> WINBET ARCADE
-                </span>
-                <span className="badge px-2 py-1" style={{ fontSize: "0.65rem", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.4)", color: "#34d399", letterSpacing: "0.5px" }}>
-                  <i className="fa-solid fa-circle text-success" style={{ fontSize: "0.4rem", verticalAlign: "middle", marginRight: "4px", filter: "drop-shadow(0 0 4px #34d399)" }}></i>
-                  ONLINE
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Slot Reels Machine Window */}
-          <div 
-            className="reels-container p-4 mb-4 rounded-4"
-            style={{ 
-              background: "radial-gradient(circle at 50% 50%, #150630 0%, #080214 100%)",
-              border: "3px solid #6d28d9", 
-              boxShadow: "0 0 25px rgba(109, 40, 217, 0.4), inset 0 15px 30px rgba(0,0,0,0.9)",
-              position: "relative"
-            }}
-          >
-            {/* Glossy overlay effect for screen */}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%)", borderRadius: "12px 12px 0 0", pointerEvents: "none" }}></div>
-            
-            <div className="d-flex justify-content-center gap-3">
-              {[0, 1, 2].map((i) => (
-                <div 
-                  key={i}
-                  className={`reel-window ${isSpinning ? "reel-spinning" : ""}`}
-                  style={{
-                    width: "85px",
-                    height: "105px",
-                    background: "linear-gradient(180deg, #f1f5f9 0%, #ffffff 40%, #e2e8f0 100%)",
-                    border: "2px solid #94a3b8",
-                    borderRadius: "14px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "3.5rem",
-                    boxShadow: "0 8px 15px rgba(0,0,0,0.6), inset 0 2px 8px rgba(255,255,255,0.9)",
-                    color: "#0f172a",
-                    position: "relative",
-                    overflow: "hidden"
-                  }}
-                >
-                  <span style={{ filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.3))" }}>{reels[i]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Win Banner */}
-          {winAmount !== null && (
-            <div 
-              className="alert py-3 mb-4 rounded-4 text-center border-0" 
-              style={{ 
-                background: "linear-gradient(135deg, #f5b300 0%, #d97706 100%)", 
-                boxShadow: "0 0 30px rgba(245, 179, 0, 0.6), inset 0 2px 10px rgba(255,255,255,0.5)",
-                animation: "pulse3DGlow 1.5s infinite alternate ease-in-out" 
-              }}
-            >
-              <div className="d-flex align-items-center justify-content-center gap-3">
-                <i className="fa-solid fa-trophy text-dark fs-2"></i>
-                <div style={{ lineHeight: "1.2" }}>
-                  <div className="text-dark fw-bold fs-6 text-uppercase" style={{ letterSpacing: "1px" }}>BIG WIN! YOU WON</div>
-                  <strong className="text-dark fw-bold" style={{ fontSize: "2.2rem", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}>N$ {winAmount.toFixed(2)}</strong>
-                </div>
-                <i className="fa-solid fa-trophy text-dark fs-2"></i>
-              </div>
-            </div>
-          )}
-
-          {/* Bet Controls */}
-          <div
-            className="d-flex align-items-center justify-content-between p-3 rounded-4 mb-4"
-            style={{ background: "rgba(0, 0, 0, 0.4)", border: "1.5px solid rgba(139, 92, 246, 0.3)", boxShadow: "inset 0 4px 15px rgba(0,0,0,0.6)" }}
-          >
-            <span className="text-secondary small fw-bold text-uppercase ms-2" style={{ letterSpacing: "1px" }}>Bet Per Spin</span>
-            <div className="d-flex align-items-center gap-3">
-              <button
-                type="button"
-                className="btn btn-sm text-light rounded-circle d-flex align-items-center justify-content-center"
-                style={{ width: "36px", height: "36px", background: "linear-gradient(180deg, #3b0764 0%, #1b0c38 100%)", border: "1px solid #7c3aed", boxShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
-                onClick={() => setCurrentBet((prev) => Math.max(5, prev - 5))}
-                disabled={isSpinning}
-              >
-                <i className="fa-solid fa-minus text-purple-300"></i>
-              </button>
-              <div className="fw-bold text-warning fs-4 text-center" style={{ minWidth: "100px", textShadow: "0 0 10px rgba(245,179,0,0.4)" }}>
-                N$ {currentBet.toFixed(2)}
-              </div>
-              <button
-                type="button"
-                className="btn btn-sm text-light rounded-circle d-flex align-items-center justify-content-center"
-                style={{ width: "36px", height: "36px", background: "linear-gradient(180deg, #3b0764 0%, #1b0c38 100%)", border: "1px solid #7c3aed", boxShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
-                onClick={() => setCurrentBet((prev) => Math.min(200, prev + 5))}
-                disabled={isSpinning}
-              >
-                <i className="fa-solid fa-plus text-purple-300"></i>
-              </button>
-            </div>
-          </div>
-
-          {/* Spin Button */}
-          <button
-            type="button"
-            className="btn-gold-action w-100 py-3 fw-bold rounded-4 d-flex justify-content-center align-items-center gap-2"
-            onClick={handleSpinReels}
-            disabled={isSpinning}
-            style={{ fontSize: "1.2rem", letterSpacing: "1.5px" }}
-          >
-            {isSpinning ? (
-              <><i className="fa-solid fa-arrows-rotate fa-spin text-dark"></i><span>SPINNING...</span></>
-            ) : (
-              <><i className="fa-solid fa-bolt text-dark"></i><span>SPIN REELS</span></>
-            )}
-          </button>
-        </div>
-      </Modal>
+      <GameLauncherModal
+        isOpen={!!activeGame}
+        game={activeGame}
+        onClose={handleCloseGame}
+        balance={balance}
+        onBalanceChange={onBalanceChange}
+        showToast={showToast}
+      />
     </>
   );
 };
