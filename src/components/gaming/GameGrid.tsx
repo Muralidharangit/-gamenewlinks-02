@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, FreeMode } from "swiper/modules";
@@ -45,52 +45,97 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [catalogGames, setCatalogGames] = useState<GameItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalGames, setTotalGames] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Fetch 100% live games from GET /smart-pcs/games (50 Games limit)
+  // Helper mapper for live API items
+  const mapApiGame = useCallback(
+    (
+      item: {
+        id?: string | number;
+        uuid?: string;
+        name: string;
+        description?: string;
+        category?: string;
+        provider?: string;
+        payout_label?: string;
+        image?: string | null;
+        provider_image?: string | null;
+        kind?: "provider" | "local";
+        choices?: string[];
+      },
+      idx: number
+    ): GameItem => ({
+      id: item.id || item.uuid || idx + 1,
+      name: item.name.toLowerCase(),
+      title: item.name.toUpperCase(),
+      subtitle: item.description || "LIVE PROVIDER GAME",
+      category: (item.category || "slots").toLowerCase(),
+      categories: [
+        (item.category || "slots").toLowerCase(),
+        (item.provider || "provider").toLowerCase(),
+      ],
+      theme: (["theme-gold", "theme-red", "theme-green", "theme-purple", "theme-blue"] as const)[
+        idx % 5
+      ],
+      badge: item.payout_label
+        ? { text: item.payout_label, type: "hot" }
+        : { text: "LIVE", type: "live" },
+      image: item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png",
+      actionText: "PLAY NOW",
+      kind: item.kind || "provider",
+      provider: item.provider || "Game Provider",
+      uuid: item.uuid || String(item.id),
+      choices: item.choices || [],
+    }),
+    []
+  );
+
+  const getProviderQuery = useCallback(() => {
+    return selectedFilter === "spribe"
+      ? "Spribe"
+      : selectedFilter === "endorphina"
+      ? "Endorphina"
+      : selectedFilter === "kagaming"
+      ? "KAGaming"
+      : selectedFilter === "evoplay"
+      ? "Evoplay"
+      : undefined;
+  }, [selectedFilter]);
+
+  // Fast querySelector smooth scroll & filter changer
+  const scrollToCatalog = useCallback((category = "all") => {
+    setSelectedFilter(category);
+    setSearchQuery("");
+    const catalogElement = document.querySelector("#categorySection");
+    if (catalogElement) {
+      catalogElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  // Fetch Page 1 on filter change
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
+    setCurrentPage(1);
 
-    const providerQuery =
-      selectedFilter === "spribe"
-        ? "Spribe"
-        : selectedFilter === "endorphina"
-        ? "Endorphina"
-        : selectedFilter === "kagaming"
-        ? "KAGaming"
-        : selectedFilter === "evoplay"
-        ? "Evoplay"
-        : undefined;
+    const providerQuery = getProviderQuery();
 
     api
-      .getGames(providerQuery, 1, 50)
-      .then((items) => {
+      .getGamesPage(providerQuery, 1, 50)
+      .then((res) => {
         if (isMounted) {
-          if (items && Array.isArray(items) && items.length > 0) {
-            const mapped: GameItem[] = items.map((item, idx) => ({
-              id: item.id || item.uuid || idx + 1,
-              name: item.name.toLowerCase(),
-              title: item.name.toUpperCase(),
-              subtitle: item.description || "LIVE PROVIDER GAME",
-              category: (item.category || "slots").toLowerCase(),
-              categories: [
-                (item.category || "slots").toLowerCase(),
-                (item.provider || "provider").toLowerCase(),
-              ],
-              theme: (["theme-gold", "theme-red", "theme-green", "theme-purple", "theme-blue"] as const)[idx % 5],
-              badge: item.payout_label
-                ? { text: item.payout_label, type: "hot" }
-                : { text: "LIVE", type: "live" },
-              image: item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png",
-              actionText: "PLAY NOW",
-              kind: item.kind || "provider",
-              provider: item.provider || "Game Provider",
-              uuid: item.uuid || String(item.id),
-              choices: item.choices || [],
-            }));
+          if (res.games && Array.isArray(res.games) && res.games.length > 0) {
+            const mapped = res.games.map((item, idx) => mapApiGame(item, idx));
             setCatalogGames(mapped);
+            setHasMore(res.hasMore);
+            setTotalGames(res.total);
           } else {
             setCatalogGames([]);
+            setHasMore(false);
+            setTotalGames(0);
           }
           setIsLoading(false);
         }
@@ -99,6 +144,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
         if (isMounted) {
           console.warn("Could not load games from API:", err);
           setCatalogGames([]);
+          setHasMore(false);
           setIsLoading(false);
         }
       });
@@ -106,7 +152,33 @@ export const GameGrid: React.FC<GameGridProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [selectedFilter]);
+  }, [selectedFilter, mapApiGame, getProviderQuery]);
+
+  // Load Next Page of Games ("View More Games")
+  const handleLoadMore = async () => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+
+    const providerQuery = getProviderQuery();
+    const nextPage = currentPage + 1;
+
+    try {
+      const res = await api.getGamesPage(providerQuery, nextPage, 50);
+      if (res.games && Array.isArray(res.games) && res.games.length > 0) {
+        const mapped = res.games.map((item, idx) => mapApiGame(item, catalogGames.length + idx));
+        setCatalogGames((prev) => [...prev, ...mapped]);
+        setCurrentPage(nextPage);
+        setHasMore(res.hasMore);
+        setTotalGames(res.total);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.warn("Failed to load more games:", err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const [isMobileDevice, setIsMobileDevice] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -145,7 +217,10 @@ export const GameGrid: React.FC<GameGridProps> = ({
         game.category.includes(filterLower) ||
         (game.provider && game.provider.toLowerCase().includes(filterLower)) ||
         game.categories?.some((c) => c.includes(filterLower)) ||
-        (filterLower === "instant" && (game.category.includes("instant") || game.category.includes("crash") || game.provider?.toLowerCase() === "spribe"));
+        (filterLower === "instant" &&
+          (game.category.includes("instant") ||
+            game.category.includes("crash") ||
+            game.provider?.toLowerCase() === "spribe"));
 
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
@@ -168,13 +243,13 @@ export const GameGrid: React.FC<GameGridProps> = ({
     return catalogGames.length > 10 ? catalogGames.slice(10, 20) : catalogGames;
   }, [catalogGames]);
 
-  // Open Game directly on dedicated GamePlayPage with Header (Past design with clean header)
+  // Open Game directly on dedicated GamePlayPage with Header
   const handleLaunchGame = (game: GameItem) => {
     const gameIdentifier = game.uuid || game.id || game.name;
     const playRoute = isTerminal
       ? `/terminal/play/${encodeURIComponent(gameIdentifier)}`
       : `/smart-pc/play/${encodeURIComponent(gameIdentifier)}`;
-    
+
     navigate(playRoute, { state: { game } });
   };
 
@@ -198,19 +273,37 @@ export const GameGrid: React.FC<GameGridProps> = ({
       =============================================================== */}
       <section id="categorySection" className="mb-5 showcase-block-panel">
         <div className="section-header-bar">
-          <h2 className="section-header-title">
-            <i className="fa-solid fa-layer-group text-warning"></i> Live Casino Catalog
-          </h2>
+          <div className="d-flex align-items-center gap-3">
+            <h2 className="section-header-title mb-0">
+              <i className="fa-solid fa-layer-group text-warning"></i> Live Casino Catalog
+            </h2>
+            <span className="badge bg-purple-dark border border-purple-subtle text-warning px-3 py-1 rounded-pill d-none d-md-inline-flex align-items-center gap-1" style={{ fontSize: "0.78rem" }}>
+              <i className="fa-solid fa-circle-check text-success"></i>
+              {totalGames > 0 ? `${totalGames} Live Games Online` : "Catalog Active"}
+            </span>
+          </div>
           <div className="d-flex align-items-center gap-2">
             <button
               type="button"
-              className={`btn btn-sm ${selectedFilter === "all" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"} rounded-pill px-3`}
+              id="viewAllGamesBtn"
+              className={`btn btn-sm ${
+                selectedFilter === "all"
+                  ? "btn-warning text-dark fw-bold shadow-sm"
+                  : "btn-outline-warning text-warning"
+              } rounded-pill px-3 d-inline-flex align-items-center gap-1`}
+              onClick={() => scrollToCatalog("all")}
+            >
+              <i className="fa-solid fa-grid-2"></i> All Games ({totalGames || catalogGames.length})
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary text-light rounded-pill px-3"
               onClick={() => {
                 setSelectedFilter("all");
                 setSearchQuery("");
               }}
             >
-              <i className="fa-solid fa-arrows-rotate me-1"></i> Reset Filters
+              <i className="fa-solid fa-arrows-rotate me-1"></i> Reset
             </button>
           </div>
         </div>
@@ -262,7 +355,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
               <span id="gameCountBadge" className="count-num">
                 {filteredGames.length}
               </span>
-              <span>Available</span>
+              <span>Showing</span>
             </div>
           </div>
         </div>
@@ -295,6 +388,78 @@ export const GameGrid: React.FC<GameGridProps> = ({
             {filteredGames.map((game) => (
               <GameCard key={game.id} game={game} onPlay={handleLaunchGame} />
             ))}
+          </div>
+        )}
+
+        {/* View More Games Pagination Loader Section (Left-Right Layout) */}
+        {!isLoading && filteredGames.length > 0 && (
+          <div className="d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 pt-3 pb-2 border-top border-purple-subtle gap-3 px-2">
+            {hasMore ? (
+              <>
+                {/* Left Side: Game Count & Progress Bar */}
+                <div className="d-flex align-items-center gap-3">
+                  <div className="text-secondary small">
+                    Showing <strong className="text-warning">{catalogGames.length}</strong> of{" "}
+                    <strong className="text-light">{totalGames}</strong> Live Games
+                  </div>
+                  <div
+                    className="progress"
+                    style={{
+                      width: "140px",
+                      height: "7px",
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    <div
+                      className="progress-bar bg-warning"
+                      style={{
+                        width: `${Math.min(100, Math.round((catalogGames.length / (totalGames || 1)) * 100))}%`,
+                        borderRadius: "10px",
+                      }}
+                    ></div>
+                  </div>
+                  <span className="badge bg-dark text-warning border border-warning border-opacity-25 rounded-pill px-2 py-1 small">
+                    {Math.min(100, Math.round((catalogGames.length / (totalGames || 1)) * 100))}%
+                  </span>
+                </div>
+
+                {/* Right Side: View More Games Button */}
+                <div>
+                  <button
+                    id="viewMoreGamesBtn"
+                    type="button"
+                    className="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 shadow-sm transition-all"
+                    onClick={handleLoadMore}
+                    disabled={isLoadingMore}
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Loading more games...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-angles-down"></i>
+                        View More Games (+50)
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-secondary small">
+                  Showing all <strong className="text-warning">{totalGames || catalogGames.length}</strong> games
+                </div>
+                <div className="d-flex align-items-center gap-2 text-secondary small py-2 px-3 rounded-pill bg-dark border border-secondary border-opacity-25">
+                  <i className="fa-solid fa-circle-check text-success"></i>
+                  <span>
+                    All <strong className="text-warning">{totalGames || catalogGames.length}</strong> Live Games Loaded
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -340,13 +505,25 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 <i className="fa-solid fa-crown text-warning"></i> Featured Live Provider Picks
               </h2>
               <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill d-none d-sm-inline-flex" style={{ fontSize: "0.72rem" }}>
-                  <i className="fa-solid fa-bolt me-1"></i> TOP PROVIDERS
-                </span>
-                <button type="button" className="swiper-nav-btn swiper-featured-prev" aria-label="Previous Featured">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-warning rounded-pill px-3 d-none d-sm-inline-flex align-items-center gap-1"
+                  onClick={() => scrollToCatalog("all")}
+                >
+                  <i className="fa-solid fa-layer-group"></i> View In Catalog
+                </button>
+                <button
+                  type="button"
+                  className="swiper-nav-btn swiper-featured-prev"
+                  aria-label="Previous Featured"
+                >
                   <i className="fa-solid fa-chevron-left"></i>
                 </button>
-                <button type="button" className="swiper-nav-btn swiper-featured-next" aria-label="Next Featured">
+                <button
+                  type="button"
+                  className="swiper-nav-btn swiper-featured-next"
+                  aria-label="Next Featured"
+                >
                   <i className="fa-solid fa-chevron-right"></i>
                 </button>
               </div>
@@ -390,13 +567,25 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 <i className="fa-solid fa-fire text-danger"></i> Popular High-Action Games
               </h2>
               <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-danger text-light fw-bold px-3 py-1 rounded-pill d-none d-sm-inline-flex" style={{ fontSize: "0.72rem" }}>
-                  <i className="fa-solid fa-users me-1"></i> HIGH ACTIVITY
-                </span>
-                <button type="button" className="swiper-nav-btn swiper-popular-prev" aria-label="Previous Popular">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-danger rounded-pill px-3 d-none d-sm-inline-flex align-items-center gap-1"
+                  onClick={() => scrollToCatalog("all")}
+                >
+                  <i className="fa-solid fa-fire"></i> View All Games
+                </button>
+                <button
+                  type="button"
+                  className="swiper-nav-btn swiper-popular-prev"
+                  aria-label="Previous Popular"
+                >
                   <i className="fa-solid fa-chevron-left"></i>
                 </button>
-                <button type="button" className="swiper-nav-btn swiper-popular-next" aria-label="Next Popular">
+                <button
+                  type="button"
+                  className="swiper-nav-btn swiper-popular-next"
+                  aria-label="Next Popular"
+                >
                   <i className="fa-solid fa-chevron-right"></i>
                 </button>
               </div>
@@ -451,3 +640,4 @@ export const GameGrid: React.FC<GameGridProps> = ({
     </>
   );
 };
+

@@ -6,6 +6,7 @@ import type {
   SmartPCSessionData,
   SmartPCProviderItem,
   SmartPCGameItem,
+  SmartPCGamesPageResponse,
   SmartPCLaunchGameResponse,
   SmartPCPlaceBetResponse,
   SmartPCCashoutData,
@@ -267,10 +268,18 @@ export const api = {
   },
 
   /**
-   * 4.5 Games (GET /smart-pcs/games?page=1&limit=80 or ?provider=...)
+   * 4.5 Games (GET /smart-pcs/games?page=1&limit=50 or ?provider=...)
    * 100% Live API only - no static mock games.
    */
-  async getGames(provider?: string, page = 1, limit = 80): Promise<SmartPCGameItem[]> {
+  async getGames(provider?: string, page = 1, limit = 50): Promise<SmartPCGameItem[]> {
+    const res = await this.getGamesPage(provider, page, limit);
+    return res.games;
+  },
+
+  /**
+   * 4.5 Games with Full Pagination Data
+   */
+  async getGamesPage(provider?: string, page = 1, limit = 50): Promise<SmartPCGamesPageResponse> {
     const providerParam = provider && provider.toLowerCase() !== "all" ? `&provider=${encodeURIComponent(provider)}` : "";
     const url = buildShopUrl(`/smart-pcs/games?page=${page}&limit=${limit}${providerParam}`);
 
@@ -280,13 +289,28 @@ export const api = {
       });
       const json = await res.json();
       if (res.ok && json.success && Array.isArray(json.data)) {
-        return json.data;
+        const total = json.pagination?.total || json.data.length;
+        const lastPage = json.pagination?.last_page || 1;
+        const currentPage = json.pagination?.current_page || page;
+        return {
+          games: json.data,
+          currentPage,
+          lastPage,
+          total,
+          hasMore: currentPage < lastPage,
+        };
       }
     } catch (err) {
-      console.warn("API getGames failed:", err);
+      console.warn("API getGamesPage failed:", err);
     }
 
-    return [];
+    return {
+      games: [],
+      currentPage: page,
+      lastPage: 1,
+      total: 0,
+      hasMore: false,
+    };
   },
 
   /**

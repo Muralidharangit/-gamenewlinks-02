@@ -131,6 +131,14 @@ export interface SmartPCGameItem {
   launcher?: string;
 }
 
+export interface SmartPCGamesPageResponse {
+  games: SmartPCGameItem[];
+  currentPage: number;
+  lastPage: number;
+  total: number;
+  hasMore: boolean;
+}
+
 // PDF 4.6 Launch Provider Game Contract
 export interface SmartPCLaunchGameResponse {
   game_url: string;
