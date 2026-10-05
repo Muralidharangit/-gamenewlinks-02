@@ -45,6 +45,7 @@ export const AppRoutes: React.FC = () => {
 
       {/* Terminal Flow */}
       <Route path="/terminal" element={<TerminalLobby />} />
+      <Route path="/terminal/play/:gameId" element={<GamePlayPage />} />
       <Route path="/terminal/cashout" element={<TerminalCashOut />} />
       <Route path="/terminal/ticket-success" element={<TicketSuccess />} />
 

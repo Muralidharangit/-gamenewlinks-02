@@ -16,8 +16,8 @@ export const TerminalLobby: React.FC = () => {
   // Step 4 & 5 Happy Path Modals
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [ticketNumber, setTicketNumber] = useState("TKT-88421");
-  const [printedAmount, setPrintedAmount] = useState(100.0);
+  const [ticketNumber, setTicketNumber] = useState("");
+  const [printedAmount, setPrintedAmount] = useState(0.0);
 
   // Failure & Validation Alert Popups (06 - 11)
   const [activeAlert, setActiveAlert] = useState<ValidationAlertType>("NONE");

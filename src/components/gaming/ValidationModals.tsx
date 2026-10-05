@@ -19,8 +19,8 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
   isOpen,
   onClose,
   amount = 0,
-  onSimulateApprove,
-  onSimulateReject,
+  onSimulateApprove: _onSimulateApprove,
+  onSimulateReject: _onSimulateReject,
   onRetry,
 }) => {
   if (!isOpen || alertType === "NONE") return null;
@@ -437,16 +437,18 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
         {alertType === "CASHOUT_PENDING" && (
           <div>
             <div className="step-pill-box justify-content-center mb-3">
-              <span className="pill-text fw-bold text-warning">Pending Desk Queue</span>
+              <span className="pill-text fw-bold text-warning">
+                <i className="fa-solid fa-clock me-1"></i> Pending Desk Queue
+              </span>
             </div>
 
-            {/* Glowing Amber Pulse Circle */}
+            {/* Glowing Amber Pulse Circle with micro-animation */}
             <div className="neon-alert-circle-wrap mb-3">
               <div
-                className="neon-alert-circle"
+                className="neon-alert-circle status-ring-pulse-amber"
                 style={{
-                  width: "78px",
-                  height: "78px",
+                  width: "82px",
+                  height: "82px",
                   borderRadius: "50%",
                   background: "radial-gradient(circle at 35% 30%, #f5b300 0%, #b45309 65%, #451a03 100%)",
                   border: "2.5px solid #fde68a",
@@ -455,18 +457,19 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
-                  fontSize: "2rem",
-                  animation: "cashout3DPulse 2.2s infinite ease-in-out",
+                  fontSize: "2.1rem",
                 }}
               >
-                <i className="fa-solid fa-hourglass-half fa-spin" style={{ animationDuration: "3s" }}></i>
+                <i className="fa-solid fa-hourglass-half fa-spin" style={{ animationDuration: "3.5s" }}></i>
               </div>
             </div>
 
-            <h3 className="success-text-heading text-warning mb-2">Cash Out Pending</h3>
+            <h3 className="success-text-heading text-warning mb-2" style={{ textShadow: "0 0 15px rgba(245, 179, 0, 0.6)" }}>
+              Cash Out Pending
+            </h3>
 
             <div
-              className="p-3 mb-3 rounded border text-center position-relative overflow-hidden"
+              className="p-3 mb-3 rounded-4 border text-center position-relative overflow-hidden"
               style={{
                 background: "radial-gradient(circle at 50% 0%, #1e0d3d 0%, #0e041f 100%)",
                 borderColor: "rgba(245, 179, 0, 0.45)",
@@ -476,7 +479,7 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               <div className="text-secondary small text-uppercase fw-semibold mb-1" style={{ letterSpacing: "0.5px" }}>
                 Requested Payout
               </div>
-              <div className="fs-2 fw-bold text-warning" style={{ textShadow: "0 0 15px rgba(245, 179, 0, 0.5)" }}>
+              <div className="fs-1 fw-bold text-warning" style={{ textShadow: "0 0 20px rgba(245, 179, 0, 0.6)" }}>
                 {formatCurrency(amount)}
               </div>
               <div
@@ -492,52 +495,16 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               </div>
             </div>
 
-            <p className="text-light small mb-3" style={{ lineHeight: "1.4" }}>
+            <p className="text-light small mb-4" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
               Waiting for cashier at the desk to approve and pay cash.
               <br />
-              <span className="text-secondary">Please proceed to the counter.</span>
+              <span className="text-warning-subtle fw-semibold">Please proceed to the cashier counter.</span>
             </p>
 
-            {/* Back Office Cashier Simulator Controls */}
-            <div
-              className="p-3 mb-2 rounded border"
-              style={{
-                background: "rgba(30, 12, 60, 0.7)",
-                borderColor: "rgba(168, 85, 247, 0.4)",
-                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.4)",
-              }}
-            >
-              <div className="text-dim small mb-2 text-start fw-semibold d-flex align-items-center gap-1" style={{ fontSize: "0.76rem" }}>
-                <i className="fa-solid fa-desktop text-info"></i> Cashier Back Office Simulation:
-              </div>
-              <div className="d-flex gap-2">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-success flex-grow-1 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1"
-                  style={{
-                    fontSize: "0.78rem",
-                    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.35)",
-                    border: "none",
-                  }}
-                  onClick={onSimulateApprove}
-                >
-                  <i className="fa-solid fa-check"></i> Cashier Approves
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger flex-grow-1 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1"
-                  style={{
-                    fontSize: "0.78rem",
-                    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-                    boxShadow: "0 4px 12px rgba(239, 68, 68, 0.35)",
-                    border: "none",
-                  }}
-                  onClick={onSimulateReject}
-                >
-                  <i className="fa-solid fa-xmark"></i> Cashier Rejects
-                </button>
-              </div>
+            <div className="d-flex flex-column gap-2 mt-2">
+              <Button variant="cancel" onClick={onClose} icon="fa-solid fa-xmark">
+                Close Window
+              </Button>
             </div>
           </div>
         )}
@@ -548,55 +515,57 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
         {alertType === "CASHOUT_REJECTED" && (
           <div>
             <div className="step-pill-box justify-content-center mb-3">
-              <span className="pill-text fw-bold text-danger">Cashier Action</span>
+              <span className="pill-text fw-bold text-danger">
+                <i className="fa-solid fa-ban me-1"></i> Cashier Declined
+              </span>
             </div>
 
-            <div className="neon-alert-circle-wrap mb-4 text-center">
+            {/* Glowing Crimson Pulse Circle with animated shake */}
+            <div className="neon-alert-circle-wrap mb-3 text-center">
               <div
-                className="neon-alert-circle"
+                className="neon-alert-circle status-ring-pulse-red"
                 style={{
-                  width: "84px",
-                  height: "84px",
+                  width: "86px",
+                  height: "86px",
                   borderRadius: "50%",
                   background: "radial-gradient(circle at 35% 30%, #ff5252 0%, #b91c1c 65%, #7f1d1d 100%)",
                   border: "2.5px solid #fca5a5",
-                  boxShadow: "0 0 35px rgba(239, 68, 68, 0.8), inset 0 2px 6px rgba(255, 255, 255, 0.8)",
+                  boxShadow: "0 0 40px rgba(239, 68, 68, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.8)",
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
-                  fontSize: "2.4rem",
-                  animation: "pulse3DGlow 2.5s infinite alternate ease-in-out"
+                  fontSize: "2.5rem",
                 }}
               >
-                <i className="fa-solid fa-ban"></i>
+                <i className="fa-solid fa-circle-xmark"></i>
               </div>
             </div>
 
             <h3 className="card-heading text-danger text-center mb-2" style={{ textShadow: "0 0 15px rgba(239, 68, 68, 0.6)" }}>
-              Cash-out Rejected
+              Cash-Out Rejected
             </h3>
 
-            <p className="text-light small text-center mb-4" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
-              Cashier rejected the cash out request in Back Office.
+            <p className="text-light small text-center mb-3" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
+              Cashier rejected the cash out request at the desk.
             </p>
 
             <div
-              className="p-3 mb-4 rounded border text-center"
+              className="p-3 mb-4 rounded-4 border text-center"
               style={{
                 background: "radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(6, 78, 59, 0.15) 100%)",
                 borderColor: "rgba(16, 185, 129, 0.5)",
                 boxShadow: "0 8px 25px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(16, 185, 129, 0.2)",
               }}
             >
-              <span className="badge bg-success text-dark fw-bold px-2 py-1 mb-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
+              <span className="badge bg-success text-dark fw-bold px-3 py-1 mb-2 rounded-pill" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                 <i className="fa-solid fa-rotate-left me-1"></i> CREDITS RESTORED
               </span>
               <div className="fw-bold text-success mb-1" style={{ fontSize: "2.2rem", textShadow: "0 0 15px rgba(16, 185, 129, 0.6)" }}>
                 +{formatCurrency(amount)}
               </div>
               <div className="text-light small" style={{ fontSize: "0.8rem", opacity: 0.9 }}>
-                Credits stay on this Smart PC so you can play again.
+                Credits are back in your Smart PC session to continue playing.
               </div>
             </div>
 
@@ -613,32 +582,60 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
             ========================================================================= */}
         {alertType === "CASHOUT_APPROVED" && (
           <div>
-            <div className="neon-success-circle-wrap mb-3">
-              <div className="neon-success-circle">
+            <div className="step-pill-box justify-content-center mb-3">
+              <span className="pill-text fw-bold text-success">
+                <i className="fa-solid fa-circle-check me-1"></i> Payout Approved
+              </span>
+            </div>
+
+            {/* Glowing Emerald Pulse Circle with animated spring bounce */}
+            <div className="neon-success-circle-wrap mb-3 text-center">
+              <div
+                className="neon-success-circle status-ring-pulse-green"
+                style={{
+                  width: "86px",
+                  height: "86px",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle at 35% 30%, #34d399 0%, #059669 65%, #064e3b 100%)",
+                  border: "2.5px solid #a7f3d0",
+                  boxShadow: "0 0 45px rgba(16, 185, 129, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.8)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  fontSize: "2.5rem",
+                }}
+              >
                 <i className="fa-solid fa-check"></i>
               </div>
             </div>
 
-            <h3 className="success-text-heading mb-2">Cash Paid at Desk</h3>
+            <h3 className="success-text-heading text-success mb-2" style={{ textShadow: "0 0 15px rgba(16, 185, 129, 0.6)" }}>
+              Cash Paid at Desk!
+            </h3>
 
             <div
-              className="p-3 mb-3 rounded border text-center"
+              className="p-3 mb-3 rounded-4 border text-center"
               style={{
                 background: "radial-gradient(circle at 50% 0%, #1e0d3d 0%, #0e041f 100%)",
-                borderColor: "rgba(245, 179, 0, 0.45)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(245, 179, 0, 0.1)",
+                borderColor: "rgba(16, 185, 129, 0.5)",
+                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.15)",
               }}
             >
-              <div className="text-secondary small">Paid by Cashier</div>
-              <div className="fs-3 fw-bold text-warning">{formatCurrency(amount)}</div>
+              <div className="text-secondary small fw-semibold text-uppercase mb-1" style={{ letterSpacing: "0.5px" }}>
+                Paid in Cash
+              </div>
+              <div className="fs-1 fw-bold text-success" style={{ textShadow: "0 0 20px rgba(16, 185, 129, 0.6)" }}>
+                {formatCurrency(amount)}
+              </div>
             </div>
 
-            <p className="text-light small mb-3">
-              Cashier approved your request and paid cash. Session complete.
+            <p className="text-light small mb-4" style={{ lineHeight: "1.45" }}>
+              Cashier approved your request and paid your cash at the desk. Session complete.
             </p>
 
             <div className="d-flex flex-column gap-2 mt-2">
-              <Button variant="primary" onClick={onClose} icon="fa-solid fa-circle-check">
+              <Button variant="success" onClick={onClose} icon="fa-solid fa-circle-check">
                 Done
               </Button>
             </div>

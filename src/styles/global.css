@@ -2411,10 +2411,12 @@ body.game-lobby-body,
   text-shadow: 0 0 8px rgba(245, 179, 0, 0.7);
 }
 
-/* Games Grid */
+/* ==========================================================================
+   CASINO GAMES GRID & UNIFORM 8-COLUMN SYSTEM
+   ========================================================================== */
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px;
   transition: all 0.3s ease;
   align-items: stretch;
@@ -2428,372 +2430,271 @@ body.game-lobby-body,
   }
 }
 
+@media (min-width: 992px) and (max-width: 1199px) {
+  .games-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .games-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
 /* ==========================================================================
-   CASINO CARD SYSTEM
+   OCTAGONAL / CHAMFER CASINO CARD SYSTEM (Exact Match to User Reference)
    ========================================================================== */
-:root {
-  --card-w: 100%;
-  --card-h: 275px;
-  --cut-size: 14px;
-  --cut-inner: 12px;
-}
-
-.theme-red {
-  --neon-primary: #ff123d;
-  --neon-glow: rgba(255, 18, 61, 0.38);
-  --neon-glow-soft: rgba(255, 18, 61, 0.14);
-  --neon-accent: #ff4866;
-  --sub-color: #facc15;
-  --btn-base: #5a0712;
-  --btn-border: #ff334b;
-}
-
-.theme-magenta {
-  --neon-primary: #d900c4;
-  --neon-glow: rgba(217, 0, 196, 0.38);
-  --neon-glow-soft: rgba(217, 0, 196, 0.14);
-  --neon-accent: #f472b6;
-  --sub-color: #f0abfc;
-  --btn-base: #57054f;
-  --btn-border: #f472b6;
-}
-
-.theme-gold {
-  --neon-primary: #ff9900;
-  --neon-glow: rgba(255, 153, 0, 0.38);
-  --neon-glow-soft: rgba(255, 153, 0, 0.14);
-  --neon-accent: #fbbf24;
-  --sub-color: #fde047;
-  --btn-base: #5a2e00;
-  --btn-border: #fbbf24;
-}
-
-.theme-blue {
-  --neon-primary: #0088ff;
-  --neon-glow: rgba(0, 136, 255, 0.38);
-  --neon-glow-soft: rgba(0, 136, 255, 0.14);
-  --neon-accent: #38bdf8;
-  --sub-color: #93c5fd;
-  --btn-base: #062b5c;
-  --btn-border: #38bdf8;
-}
-
-.theme-purple {
-  --neon-primary: #9900ff;
-  --neon-glow: rgba(153, 0, 255, 0.38);
-  --neon-glow-soft: rgba(153, 0, 255, 0.14);
-  --neon-accent: #c084fc;
-  --sub-color: #d8b4fe;
-  --btn-base: #3b0660;
-  --btn-border: #c084fc;
-}
-
-.theme-green {
-  --neon-primary: #00e65b;
-  --neon-glow: rgba(0, 230, 91, 0.38);
-  --neon-glow-soft: rgba(0, 230, 91, 0.14);
-  --neon-accent: #4ade80;
-  --sub-color: #86efac;
-  --btn-base: #054a1d;
-  --btn-border: #4ade80;
-}
-
-.perspective-stage {
-  perspective: 1100px;
+.chamfer-card-wrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  padding: 4px 0 10px 0;
 }
 
-.casino-card-container {
+.chamfer-casino-card {
   position: relative;
   width: 100%;
-  max-width: 255px;
-  height: var(--card-h);
+  height: 250px;
   cursor: pointer;
   user-select: none;
-  transform-style: preserve-3d;
-  transition: transform 0.12s ease-out;
-  will-change: transform;
-}
-
-.card-ground-reflection {
-  position: absolute;
-  bottom: -14px;
-  left: 14%;
-  width: 72%;
-  height: 18px;
-  background: radial-gradient(ellipse at center, var(--neon-primary) 0%, var(--neon-glow-soft) 55%, transparent 75%);
-  filter: blur(8px);
-  border-radius: 50%;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 1;
-  transform: translateZ(-20px);
-  opacity: 0.25;
-}
-
-.casino-card-container:hover .card-ground-reflection {
-  filter: blur(8px);
-  opacity: 0.5;
-  transform: scaleX(1.1) translateZ(-20px);
-}
-
-.neon-filter-wrap {
-  position: absolute;
-  inset: 0;
-  filter: drop-shadow(0 0 5px var(--neon-glow)) drop-shadow(0 0 10px var(--neon-glow-soft));
-  transition: filter 0.3s ease;
-  transform-style: preserve-3d;
-}
-
-.casino-card-container:hover .neon-filter-wrap {
-  filter: drop-shadow(0 0 8px var(--neon-primary)) drop-shadow(0 0 16px var(--neon-glow));
-}
-
-.card-outer-bezel {
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(
-    var(--cut-size) 0%, 
-    calc(100% - var(--cut-size)) 0%, 
-    100% var(--cut-size), 
-    100% calc(100% - var(--cut-size)), 
-    calc(100% - var(--cut-size)) 100%, 
-    var(--cut-size) 100%, 
-    0% calc(100% - var(--cut-size)), 
-    0% var(--cut-size)
-  );
-  background: linear-gradient(
-    135deg,
-    var(--neon-accent) 0%,
-    rgba(255, 255, 255, 0.35) 35%,
-    var(--neon-primary) 65%,
-    #050811 100%
-  );
-  padding: 2px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
   display: flex;
+  flex-direction: column;
 }
 
-.card-inner-chassis {
+/* Theme Neon Variables */
+.chamfer-casino-card.theme-gold {
+  --neon-primary: #f59e0b;
+  --neon-accent: #fde047;
+  --btn-base: #3b1900;
+  --btn-border: #f59e0b;
+}
+
+.chamfer-casino-card.theme-red {
+  --neon-primary: #ef4444;
+  --neon-accent: #f87171;
+  --btn-base: #450a0a;
+  --btn-border: #ef4444;
+}
+
+.chamfer-casino-card.theme-green {
+  --neon-primary: #10b981;
+  --neon-accent: #34d399;
+  --btn-base: #022c22;
+  --btn-border: #10b981;
+}
+
+.chamfer-casino-card.theme-purple {
+  --neon-primary: #a855f7;
+  --neon-accent: #c084fc;
+  --btn-base: #2e1065;
+  --btn-border: #a855f7;
+}
+
+.chamfer-casino-card.theme-blue {
+  --neon-primary: #0ea5e9;
+  --neon-accent: #38bdf8;
+  --btn-base: #082f49;
+  --btn-border: #0ea5e9;
+}
+
+.chamfer-casino-card:hover {
+  transform: translateY(-5px) scale(1.025);
+  filter: drop-shadow(0 0 16px var(--neon-primary));
+}
+
+.chamfer-border-wrap {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #090d18;
   clip-path: polygon(
-    var(--cut-inner) 0%, 
-    calc(100% - var(--cut-inner)) 0%, 
-    100% var(--cut-inner), 
-    100% calc(100% - var(--cut-inner)), 
-    calc(100% - var(--cut-inner)) 100%, 
-    var(--cut-inner) 100%, 
-    0% calc(100% - var(--cut-inner)), 
-    0% var(--cut-inner)
+    14px 0%, 
+    calc(100% - 14px) 0%, 
+    100% 14px, 
+    100% calc(100% - 14px), 
+    calc(100% - 14px) 100%, 
+    14px 100%, 
+    0% calc(100% - 14px), 
+    0% 14px
   );
+  background: var(--neon-primary);
+  padding: 1.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  transition: all 0.25s ease;
+}
+
+.chamfer-inner-deck {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(
+    13px 0%, 
+    calc(100% - 13px) 0%, 
+    100% 13px, 
+    100% calc(100% - 13px), 
+    calc(100% - 13px) 100%, 
+    13px 100%, 
+    0% calc(100% - 13px), 
+    0% 13px
+  );
+  background: #090217;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.card-inner-chassis::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  clip-path: polygon(
-    15px 0%, calc(100% - 15px) 0%,
-    100% 15px, 100% calc(100% - 15px),
-    calc(100% - 15px) 100%, 15px 100%,
-    0% calc(100% - 15px), 0% 15px
-  );
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.top-notch-tab {
+.card-top-neon-stripe {
   position: absolute;
   top: 0;
-  left: 32%;
-  right: 32%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
   height: 3.5px;
-  background: var(--neon-primary);
-  box-shadow: 0 0 10px var(--neon-primary), 0 0 14px var(--neon-accent);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  z-index: 15;
+  background: var(--neon-accent);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 0 10px var(--neon-accent), 0 0 20px var(--neon-primary);
+  z-index: 12;
 }
 
-.card-floating-badge {
+.card-top-badge-row {
   position: absolute;
   top: 8px;
-  right: 10px;
+  right: 8px;
   z-index: 12;
+}
+
+.chamfer-badge {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 900;
   font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   padding: 2px 7px;
   border-radius: 6px;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
-.badge-hot { background: linear-gradient(135deg, #ef4444, #f97316); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); }
-.badge-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900; box-shadow: 0 0 10px rgba(245, 158, 11, 0.7); }
-.badge-live { background: #dc2626; color: #fff; animation: pulseLive 1.5s infinite alternate; }
-.badge-cyan { background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff; box-shadow: 0 0 10px rgba(6, 182, 212, 0.7); }
-.badge-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 0 10px rgba(16, 185, 129, 0.7); }
 
-.card-artwork-layer {
+.chamfer-badge.badge-fun { background: #ea580c; color: #ffffff; }
+.chamfer-badge.badge-hot { background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: #ffffff; }
+.chamfer-badge.badge-new { background: #0284c7; color: #ffffff; }
+.chamfer-badge.badge-bonus { background: #dc2626; color: #ffffff; }
+.chamfer-badge.badge-live { background: #ef4444; color: #ffffff; }
+
+.chamfer-artwork-frame {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: 2;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #1e0b3d 0%, #090217 100%);
 }
 
-.card-artwork-layer img {
+.chamfer-poster-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  object-position: center;
+  filter: contrast(1.05) saturate(1.15);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 
-.casino-card-container:hover .card-artwork-layer img {
-  transform: scale(1.08) translateY(-4px);
+.chamfer-casino-card:hover .chamfer-poster-img {
+  transform: scale(1.08);
+  filter: contrast(1.08) saturate(1.22);
 }
 
-.card-grid-texture {
+.chamfer-bottom-vignette {
   position: absolute;
-  inset: 0;
-  background-size: 20px 20px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  z-index: 3;
-  pointer-events: none;
-  mask-image: radial-gradient(circle at 50% 35%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at 50% 35%, black 20%, transparent 80%);
-}
-
-.card-vignette {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg, 
-    rgba(5, 8, 17, 0.05) 0%, 
-    rgba(5, 8, 17, 0.20) 38%, 
-    rgba(6, 9, 18, 0.80) 65%, 
-    #050811 92%
-  );
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52%;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 2, 22, 0.45) 30%, rgba(8, 2, 22, 0.96) 100%);
   z-index: 4;
   pointer-events: none;
 }
 
-.card-specular-glare {
-  position: absolute;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle 160px at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 45%,
-    transparent 65%
-  );
-  z-index: 6;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-.card-content-deck {
+.chamfer-content-deck {
   position: relative;
-  z-index: 8;
+  z-index: 6;
   margin-top: auto;
-  padding: 0 12px 14px;
+  padding: 0 8px 10px 8px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateZ(24px);
+  width: 100%;
 }
 
-.card-title-text {
-  font-family: 'Orbitron', 'Rajdhani', sans-serif;
-  font-weight: 900;
+.chamfer-game-title {
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
   font-style: italic;
-  font-size: 1.15rem;
-  letter-spacing: 1.2px;
+  font-weight: 900;
+  font-size: 0.98rem;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  line-height: 1.15;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
   margin-bottom: 2px;
-  background: linear-gradient(180deg, #ffffff 15%, #d1e2f5 50%, #ffffff 75%, #889bb4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
-.card-subtitle-text {
+.chamfer-game-subtitle {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 800;
-  font-size: 0.76rem;
-  letter-spacing: 1px;
+  font-size: 0.65rem;
+  letter-spacing: 0.6px;
+  color: #fde047;
   text-transform: uppercase;
-  color: var(--sub-color);
-  margin-bottom: 8px;
-  text-shadow: 0 0 8px var(--neon-glow);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
-.btn-play-neon {
+.btn-chamfer-neon-pill {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(0, 0, 0, 0.65) 100%), var(--btn-base);
+  border: 1.5px solid var(--btn-border);
+  border-radius: 20px;
+  color: #ffffff;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 800;
-  font-size: 0.78rem;
-  letter-spacing: 1.2px;
-  color: #ffffff !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.8px;
+  padding: 3px 14px;
   text-transform: uppercase;
-  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.55) 100%), var(--btn-base);
-  border: 1.2px solid var(--btn-border);
-  padding: 4px 18px;
-  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-decoration: none;
-  box-shadow: 
-    0 0 10px var(--neon-glow),
-    inset 0 1px 2px rgba(255,255,255,0.7),
-    inset 0 -1px 3px rgba(0,0,0,0.5);
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  transform: translateZ(10px);
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.btn-play-neon i {
-  font-size: 0.68rem;
-  transition: transform 0.2s ease;
-}
-
-.casino-card-container:hover .btn-play-neon {
+.chamfer-casino-card:hover .btn-chamfer-neon-pill {
   background: var(--neon-primary);
+  color: #000000;
   border-color: #ffffff;
-  box-shadow: 
-    0 0 18px var(--neon-primary),
-    0 0 28px var(--neon-glow),
-    inset 0 1px 3px #ffffff;
-  transform: translateZ(16px) scale(1.04);
-}
-
-.casino-card-container:hover .btn-play-neon i {
-  transform: translateX(2px);
+  box-shadow: 0 0 14px var(--neon-primary), inset 0 1px 2px #ffffff;
 }
 
 /* Slot Theater Modal */
@@ -2840,6 +2741,52 @@ body.game-lobby-body,
   0% { transform: translateY(-30%); filter: blur(3px); }
   50% { transform: translateY(30%); filter: blur(3px); }
   100% { transform: translateY(-30%); filter: blur(3px); }
+}
+
+/* ==========================================================================
+   ANIMATED CASHIER STATUS POPUP ORBS
+   ========================================================================== */
+.status-animated-orb {
+  animation: statusPopInBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.status-ring-pulse-green {
+  animation: ringPulseGreen 2s infinite ease-out, statusPopInBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.status-ring-pulse-red {
+  animation: ringPulseRed 2s infinite ease-out, statusPopInBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.status-ring-pulse-amber {
+  animation: ringPulseAmber 2.2s infinite ease-in-out, statusPopInBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes statusPopInBounce {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes ringPulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7), 0 0 30px rgba(16, 185, 129, 0.5); }
+  70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0), 0 0 45px rgba(16, 185, 129, 0.7); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 30px rgba(16, 185, 129, 0.5); }
+}
+
+@keyframes ringPulseRed {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5); }
+  15% { transform: scale(1.04) rotate(-3deg); }
+  30% { transform: scale(0.98) rotate(3deg); }
+  45% { transform: scale(1) rotate(0deg); }
+  70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0), 0 0 45px rgba(239, 68, 68, 0.7); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 0 30px rgba(239, 68, 68, 0.5); }
+}
+
+@keyframes ringPulseAmber {
+  0% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 179, 0, 0.6); }
+  50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(245, 179, 0, 0.9); }
+  100% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 179, 0, 0.6); }
 }
 
 /* Section Headers */

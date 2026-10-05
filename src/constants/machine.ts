@@ -1,27 +1,27 @@
 import type { GameItem, Machine, ShopInfo } from "../types";
 
-export const VALID_SETUP_CODE = "WB-SHOP-4821";
+export const VALID_SETUP_CODE = "";
 
 export const shop: ShopInfo = {
-  name: "Windhoek Central",
-  location: "Independence Ave, Windhoek",
-  tagline: "Independent. Fair. Reliable. Windhoek Central.",
+  name: localStorage.getItem("winbet_shop_name") || "WinBet Shop",
+  location: "Betting Station Central",
+  tagline: "Live Gaming Station • Official Terminal",
 };
 
 export const machineConfig: { smartPc: Machine; terminal: Machine } = {
   smartPc: {
-    name: "Smart PC-03",
+    name: localStorage.getItem("winbet_machine_name") || "Smart PC",
     type: "smart-pc",
-    balance: 250.00,
-    shopName: shop.name,
+    balance: 0.0,
+    shopName: localStorage.getItem("winbet_shop_name") || "WinBet Shop",
     location: shop.location,
     action: "Cash Out",
   },
   terminal: {
-    name: "Terminal-02",
+    name: localStorage.getItem("winbet_machine_name") || "Terminal",
     type: "terminal",
-    balance: 100.00,
-    shopName: shop.name,
+    balance: 0.0,
+    shopName: localStorage.getItem("winbet_shop_name") || "WinBet Shop",
     location: shop.location,
     action: "Print Cashout Ticket",
   },

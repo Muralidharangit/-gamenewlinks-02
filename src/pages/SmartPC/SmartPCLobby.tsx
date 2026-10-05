@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { GamingLayout } from "../../components/layout/GamingLayout";
 import { GameGrid } from "../../components/gaming/GameGrid";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
@@ -20,39 +20,61 @@ export const SmartPCLobby: React.FC = () => {
   const [pendingCashoutAmount, setPendingCashoutAmount] = useState<number>(0);
   const [loadedChipsAmount, setLoadedChipsAmount] = useState<number>(0);
 
+  const syncSession = useCallback(() => {
+    const machineId = api.getStoredMachineId();
+    const fingerprint = api.getDeviceFingerprint();
+
+    api
+      .getSession(machineId, fingerprint)
+      .then((session) => {
+        if (session) {
+          if (typeof session.current_balance === "number") {
+            updateBalance(session.current_balance);
+          }
+          if (session.pending_cash_out && session.pending_cash_out.requested_amount) {
+            setPendingCashoutAmount(session.pending_cash_out.requested_amount);
+            setActiveAlert("CASHOUT_PENDING");
+          }
+        }
+      })
+      .catch(() => {});
+  }, [updateBalance]);
+
   // 1. PDF Flow #2: Background Heartbeat (POST /smart-pcs/heartbeat - timer only, no button)
   useEffect(() => {
     const machineId = api.getStoredMachineId();
     const fingerprint = api.getDeviceFingerprint();
 
+    const doHeartbeat = () => {
+      api
+        .sendHeartbeat(machineId, fingerprint)
+        .then((res) => {
+          if (res.data && typeof res.data.current_balance === "number") {
+            updateBalance(res.data.current_balance);
+          }
+        })
+        .catch(() => {});
+    };
+
     // Initial heartbeat
-    api.sendHeartbeat(machineId, fingerprint).catch(() => {});
+    doHeartbeat();
 
-    // Periodic heartbeat every 20 seconds to keep Smart PC ONLINE in Betting Shop panel
-    const heartbeatTimer = setInterval(() => {
-      api.sendHeartbeat(machineId, fingerprint).catch(() => {});
-    }, 20000);
+    // Periodic heartbeat every 15 seconds to keep Smart PC ONLINE and sync balance
+    const heartbeatTimer = setInterval(doHeartbeat, 15000);
 
-    return () => clearInterval(heartbeatTimer);
-  }, []);
+    // Also sync on window focus (e.g. after returning from provider popout or iframe)
+    window.addEventListener("focus", syncSession);
+
+    return () => {
+      clearInterval(heartbeatTimer);
+      window.removeEventListener("focus", syncSession);
+    };
+  }, [updateBalance, syncSession]);
 
   // 2. PDF Flow #3: Initial Session Check (GET /smart-pcs/session)
   useEffect(() => {
-    const machineId = localStorage.getItem("winbet_machine_id") || "WIND-PC-001";
-    const fingerprint = api.getDeviceFingerprint();
-
-    api.getSession(machineId, fingerprint).then((session) => {
-      if (session) {
-        if (typeof session.current_balance === "number") {
-          updateBalance(session.current_balance);
-        }
-        if (session.pending_cash_out && session.pending_cash_out.requested_amount) {
-          setPendingCashoutAmount(session.pending_cash_out.requested_amount);
-          setActiveAlert("CASHOUT_PENDING");
-        }
-      }
-    }).catch(() => {});
-  }, []);
+    syncSession();
+  }, [syncSession]);
 
   // 3. PDF Flow #7: Step 3 -> 4: Open Cash Out Confirm Modal
   const handleOpenCashout = () => {
@@ -100,7 +122,7 @@ export const SmartPCLobby: React.FC = () => {
 
   // 7. PDF Flow #5 / #8: Staff Cash-In (Load chips) (POST /terminals/load-coins -> Broadcast: LOAD_SUCCESS)
   const handleStaffLoadCoins = async (amount: number, noteMessage: string) => {
-    const machineId = localStorage.getItem("winbet_machine_id") || "SPC-4821";
+    const machineId = api.getStoredMachineId();
     await api.loadCoinsByStaff(machineId, amount);
     addBalance(amount);
     setLoadedChipsAmount(amount);
