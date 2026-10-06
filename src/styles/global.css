@@ -1189,7 +1189,8 @@ body.game-lobby-body,
 
 .smartpc-slide {
   position: relative;
-  min-height: 275px;
+  /* min-height: 275px; */
+  min-height: 300px;
   display: flex;
   align-items: center;
   overflow: hidden;
