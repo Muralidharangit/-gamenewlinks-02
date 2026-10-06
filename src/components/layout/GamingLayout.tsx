@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import type { MachineType } from "../../types";
 import { GamingHeader } from "./GamingHeader";
 import { ShopLocation } from "./ShopLocation";
@@ -36,7 +36,6 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   const isSmartPc = machineType === "smart-pc";
   const shouldShowJackpot = showJackpotBanner !== undefined ? showJackpotBanner : isSmartPc;
   const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
-  const [defaultBet, setDefaultBet] = useState(10);
 
   return (
     <div className="game-lobby-body d-flex flex-column min-vh-100">
