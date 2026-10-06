@@ -11,7 +11,7 @@
 
 body {
   background-color: var(--bg-deep);
-  background-image: 
+  background-image:
     radial-gradient(circle at 50% 0%, rgba(94, 23, 187, 0.35) 0%, transparent 60%),
     radial-gradient(circle at 100% 100%, rgba(76, 12, 148, 0.25) 0%, transparent 50%),
     radial-gradient(circle at 0% 100%, rgba(38, 8, 82, 0.35) 0%, transparent 40%),
@@ -29,7 +29,7 @@ body {
 body.game-lobby-body,
 .game-lobby-body {
   background-color: #060212 !important;
-  background-image: 
+  background-image:
     linear-gradient(180deg, rgba(6, 2, 18, 0.72) 0%, rgba(10, 3, 26, 0.82) 40%, rgba(4, 1, 11, 0.92) 100%),
     radial-gradient(circle at 50% 10%, rgba(115, 27, 240, 0.3) 0%, transparent 65%),
     url('/assets/images/bg-1.png') !important;
@@ -45,13 +45,16 @@ body.game-lobby-body,
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #090317;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #4d1d8f;
   border-radius: 6px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #7a2bd6;
 }
@@ -59,7 +62,8 @@ body.game-lobby-body,
 /* ==========================================================================
    HEADER & NAVBAR SECTION
    ========================================================================== */
-.custom-navbar, .smart-pc-header {
+.custom-navbar,
+.smart-pc-header {
   background: var(--navbar-bg);
   border-bottom: 1.5px solid var(--card-border);
   box-shadow: 0 4px 20px var(--card-border-glow), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
@@ -70,7 +74,8 @@ body.game-lobby-body,
   width: 100%;
 }
 
-.brand-logo-wrap, .winbet-logo {
+.brand-logo-wrap,
+.winbet-logo {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,11 +84,13 @@ body.game-lobby-body,
   transition: transform 0.25s ease;
   margin-bottom: 16px;
 }
+
 .brand-logo-wrap:hover {
   transform: scale(1.03);
 }
 
-.brand-logo-img, .header-logo {
+.brand-logo-img,
+.header-logo {
   height: 64px;
   width: auto;
   max-width: 250px;
@@ -103,7 +110,8 @@ body.game-lobby-body,
   max-width: 390px;
 }
 
-.brand-logo-wrap:hover .brand-logo-img, .winbet-logo:hover .brand-logo-img {
+.brand-logo-wrap:hover .brand-logo-img,
+.winbet-logo:hover .brand-logo-img {
   transform: scale(1.05);
   filter: drop-shadow(0 0 18px rgba(245, 179, 0, 0.85));
 }
@@ -116,11 +124,19 @@ body.game-lobby-body,
 }
 
 @keyframes pulseCrown {
-  0% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(245, 179, 0, 0.5)); }
-  100% { transform: scale(1.06); filter: drop-shadow(0 0 12px rgba(255, 220, 105, 0.9)); }
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(245, 179, 0, 0.5));
+  }
+
+  100% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 12px rgba(255, 220, 105, 0.9));
+  }
 }
 
-.brand-name, .brand-logo-text {
+.brand-name,
+.brand-logo-text {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 800;
   font-size: 1.65rem;
@@ -135,16 +151,14 @@ body.game-lobby-body,
 .station-badge {
   background: linear-gradient(90deg, #240b54, #150630);
   border: 1px solid var(--card-border);
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
+  clip-path: polygon(8px 0%,
+      calc(100% - 8px) 0%,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% calc(100% - 8px),
+      0% 8px);
   border-radius: 0;
   padding: 5px 14px;
   display: inline-flex;
@@ -167,24 +181,29 @@ body.game-lobby-body,
 }
 
 @keyframes blinker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* Balance Display Chip */
 .balance-chip {
   background: linear-gradient(135deg, rgba(31, 11, 72, 0.95), rgba(16, 5, 38, 0.95));
   border: 1.5px solid var(--card-border);
-  clip-path: polygon(
-    10px 0%, 
-    calc(100% - 10px) 0%, 
-    100% 10px, 
-    100% calc(100% - 10px), 
-    calc(100% - 10px) 100%, 
-    10px 100%, 
-    0% calc(100% - 10px), 
-    0% 10px
-  );
+  clip-path: polygon(10px 0%,
+      calc(100% - 10px) 0%,
+      100% 10px,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      10px 100%,
+      0% calc(100% - 10px),
+      0% 10px);
   border-radius: 0;
   padding: 6px 18px;
   display: flex;
@@ -215,7 +234,8 @@ body.game-lobby-body,
 /* ==========================================================================
    CARDS & FRAMES
    ========================================================================== */
-.winbet-card, .winbet-card-frame {
+.winbet-card,
+.winbet-card-frame {
   background: var(--card-bg-gradient);
   border: 1.5px solid var(--card-border);
   border-radius: var(--card-radius);
@@ -229,7 +249,8 @@ body.game-lobby-body,
   transition: all 0.3s ease;
 }
 
-.winbet-card:hover, .winbet-card-frame:hover {
+.winbet-card:hover,
+.winbet-card-frame:hover {
   border-color: #8b3dff;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8), 0 0 35px rgba(139, 61, 255, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.25);
   transform: translateY(-2px);
@@ -364,12 +385,14 @@ body.game-lobby-body,
   flex-shrink: 0;
 }
 
-.radio-dot.gold-ring, .option-row.selected .radio-dot {
+.radio-dot.gold-ring,
+.option-row.selected .radio-dot {
   border-color: var(--gold-accent);
   box-shadow: 0 0 8px rgba(245, 179, 0, 0.5);
 }
 
-.radio-dot.gold-ring-filled::after, .option-row.selected .radio-dot::after {
+.radio-dot.gold-ring-filled::after,
+.option-row.selected .radio-dot::after {
   content: '';
   width: 10px;
   height: 10px;
@@ -437,7 +460,8 @@ body.game-lobby-body,
 /* ==========================================================================
    BUTTONS (FRIENDLY 3D UI/UX GAMING STYLE)
    ========================================================================== */
-.btn-winbet, .btn-purple-action {
+.btn-winbet,
+.btn-purple-action {
   background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 55%, #5b21b6 100%);
   border: 1.5px solid #a78bfa;
   color: #ffffff;
@@ -448,7 +472,7 @@ body.game-lobby-body,
   border-radius: 14px;
   width: 100%;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #3b0764,
     0 6px 18px rgba(109, 40, 217, 0.45),
     inset 0 2px 2px rgba(255, 255, 255, 0.45),
@@ -462,20 +486,32 @@ body.game-lobby-body,
   gap: 9px;
 }
 
-.btn-winbet i, .btn-purple-action i {
+.btn-winbet i,
+.btn-purple-action i {
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
   font-size: 1.05rem;
 }
 
 @keyframes liquidWobble {
-  0%, 100% { border-radius: 14px; }
-  33% { border-radius: 18px 10px 18px 10px; }
-  66% { border-radius: 10px 18px 10px 18px; }
+
+  0%,
+  100% {
+    border-radius: 14px;
+  }
+
+  33% {
+    border-radius: 18px 10px 18px 10px;
+  }
+
+  66% {
+    border-radius: 10px 18px 10px 18px;
+  }
 }
 
-.btn-winbet:hover, .btn-purple-action:hover {
+.btn-winbet:hover,
+.btn-purple-action:hover {
   background: linear-gradient(180deg, #9f75ff 0%, #7c3aed 55%, #6d28d9 100%);
-  box-shadow: 
+  box-shadow:
     0 5px 0 #3b0764,
     0 8px 24px rgba(139, 92, 246, 0.6),
     inset 0 2px 3px rgba(255, 255, 255, 0.6);
@@ -484,9 +520,10 @@ body.game-lobby-body,
   animation: liquidWobble 1s ease-in-out infinite alternate;
 }
 
-.btn-winbet:active, .btn-purple-action:active {
+.btn-winbet:active,
+.btn-purple-action:active {
   transform: translateY(3px);
-  box-shadow: 
+  box-shadow:
     0 1px 0 #3b0764,
     0 2px 8px rgba(109, 40, 217, 0.4),
     inset 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -503,7 +540,7 @@ body.game-lobby-body,
   border-radius: 14px;
   width: 100%;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #064e3b,
     0 6px 18px rgba(5, 150, 105, 0.45),
     inset 0 2px 2px rgba(255, 255, 255, 0.45),
@@ -524,7 +561,7 @@ body.game-lobby-body,
 
 .btn-success-action:hover {
   background: linear-gradient(180deg, #34d399 0%, #10b981 55%, #059669 100%);
-  box-shadow: 
+  box-shadow:
     0 5px 0 #064e3b,
     0 8px 24px rgba(16, 185, 129, 0.6),
     inset 0 2px 3px rgba(255, 255, 255, 0.6);
@@ -535,7 +572,7 @@ body.game-lobby-body,
 
 .btn-success-action:active {
   transform: translateY(3px);
-  box-shadow: 
+  box-shadow:
     0 1px 0 #064e3b,
     0 2px 8px rgba(5, 150, 105, 0.4),
     inset 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -552,7 +589,7 @@ body.game-lobby-body,
   border-radius: 14px;
   width: 100%;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #7f1d1d,
     0 6px 18px rgba(220, 38, 38, 0.45),
     inset 0 2px 2px rgba(255, 255, 255, 0.45),
@@ -573,7 +610,7 @@ body.game-lobby-body,
 
 .btn-danger-action:hover {
   background: linear-gradient(180deg, #f87171 0%, #ef4444 55%, #dc2626 100%);
-  box-shadow: 
+  box-shadow:
     0 5px 0 #7f1d1d,
     0 8px 24px rgba(239, 68, 68, 0.6),
     inset 0 2px 3px rgba(255, 255, 255, 0.6);
@@ -584,7 +621,7 @@ body.game-lobby-body,
 
 .btn-danger-action:active {
   transform: translateY(3px);
-  box-shadow: 
+  box-shadow:
     0 1px 0 #7f1d1d,
     0 2px 8px rgba(220, 38, 38, 0.4),
     inset 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -607,7 +644,7 @@ body.game-lobby-body,
   align-items: center;
   justify-content: center;
   gap: 9px;
-  box-shadow: 
+  box-shadow:
     0 3px 0 #0d041a,
     0 5px 12px rgba(0, 0, 0, 0.6),
     inset 0 1px 2px rgba(255, 255, 255, 0.12);
@@ -624,7 +661,7 @@ body.game-lobby-body,
   background: linear-gradient(180deg, #381528 0%, #1f0815 100%);
   border-color: #ff6b81;
   color: #ffffff;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #590d22,
     0 7px 18px rgba(255, 107, 129, 0.35),
     inset 0 2px 2px rgba(255, 255, 255, 0.25);
@@ -639,7 +676,7 @@ body.game-lobby-body,
 
 .btn-cancel-action:active {
   transform: translateY(3px);
-  box-shadow: 
+  box-shadow:
     0 1px 0 #590d22,
     0 2px 6px rgba(0, 0, 0, 0.8);
 }
@@ -653,16 +690,14 @@ body.game-lobby-body,
   font-size: 0.96rem;
   letter-spacing: 0.5px;
   padding: 9px 22px;
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
+  clip-path: polygon(8px 0%,
+      calc(100% - 8px) 0%,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% calc(100% - 8px),
+      0% 8px);
   border-radius: 0;
   box-shadow: 0 4px 18px var(--gold-glow), inset 0 1px 1px #fff;
   cursor: pointer;
@@ -689,16 +724,14 @@ body.game-lobby-body,
   color: #cfbdf5;
   width: 38px;
   height: 38px;
-  clip-path: polygon(
-    6px 0%, 
-    calc(100% - 6px) 0%, 
-    100% 6px, 
-    100% calc(100% - 6px), 
-    calc(100% - 6px) 100%, 
-    6px 100%, 
-    0% calc(100% - 6px), 
-    0% 6px
-  );
+  clip-path: polygon(6px 0%,
+      calc(100% - 6px) 0%,
+      100% 6px,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      6px 100%,
+      0% calc(100% - 6px),
+      0% 6px);
   border-radius: 0;
   display: flex;
   align-items: center;
@@ -791,7 +824,8 @@ body.game-lobby-body,
 /* ==========================================================================
    SUCCESS & CONFIRMATION STATES
    ========================================================================== */
-.success-circle-container, .neon-success-circle-wrap {
+.success-circle-container,
+.neon-success-circle-wrap {
   display: flex;
   justify-content: center;
   margin-bottom: 12px;
@@ -808,7 +842,7 @@ body.game-lobby-body,
   color: #ffffff;
   font-size: 2rem;
   background: radial-gradient(circle at 35% 25%, #0d381e 0%, #051a0d 60%, #020b05 100%);
-  box-shadow: 
+  box-shadow:
     0 5px 0 #0d5225,
     0 8px 20px rgba(0, 0, 0, 0.85),
     0 0 25px rgba(34, 197, 94, 0.6),
@@ -825,17 +859,19 @@ body.game-lobby-body,
 }
 
 @keyframes pulse3DGlow {
-  0% { 
+  0% {
     transform: translateY(0);
-    box-shadow: 0 5px 0 #0d5225, 0 8px 20px rgba(0, 0, 0, 0.85), 0 0 20px rgba(34, 197, 94, 0.5); 
+    box-shadow: 0 5px 0 #0d5225, 0 8px 20px rgba(0, 0, 0, 0.85), 0 0 20px rgba(34, 197, 94, 0.5);
   }
-  100% { 
+
+  100% {
     transform: translateY(-2px);
-    box-shadow: 0 7px 0 #0d5225, 0 12px 28px rgba(0, 0, 0, 0.9), 0 0 35px rgba(34, 197, 94, 0.9); 
+    box-shadow: 0 7px 0 #0d5225, 0 12px 28px rgba(0, 0, 0, 0.9), 0 0 35px rgba(34, 197, 94, 0.9);
   }
 }
 
-.success-banner-text, .success-text-heading {
+.success-banner-text,
+.success-text-heading {
   color: var(--neon-green);
   font-size: 1.18rem;
   font-weight: 700;
@@ -929,6 +965,7 @@ body.game-lobby-body,
     opacity: 0;
     backdrop-filter: blur(0px);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(8px);
@@ -940,10 +977,12 @@ body.game-lobby-body,
     opacity: 0;
     transform: scale(0.86) translateY(24px);
   }
+
   70% {
     opacity: 1;
     transform: scale(1.02) translateY(-2px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -966,7 +1005,7 @@ body.game-lobby-body,
   justify-content: center;
   font-size: 1.05rem;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 3px 0 #590d22,
     0 6px 14px rgba(0, 0, 0, 0.65),
     0 0 15px rgba(255, 77, 109, 0.45),
@@ -988,7 +1027,7 @@ body.game-lobby-body,
 .btn-game-modal-close:hover {
   background: radial-gradient(circle at 35% 30%, #ff758f 0%, #e6195e 55%, #a81039 100%);
   border-color: #ffa8ba;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #590d22,
     0 8px 20px rgba(0, 0, 0, 0.8),
     0 0 24px rgba(255, 77, 109, 0.8),
@@ -1002,7 +1041,7 @@ body.game-lobby-body,
 
 .btn-game-modal-close:active {
   transform: translateY(3px);
-  box-shadow: 
+  box-shadow:
     0 1px 0 #590d22,
     0 2px 6px rgba(0, 0, 0, 0.9),
     0 0 10px rgba(255, 77, 109, 0.5);
@@ -1017,7 +1056,7 @@ body.game-lobby-body,
   border-radius: 50%;
   background: radial-gradient(circle at 35% 25%, #ffb703 0%, #fb8500 65%, #9e4700 100%);
   border: 2px solid #ffe699;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #6e3000,
     0 7px 18px rgba(0, 0, 0, 0.75),
     0 0 22px rgba(255, 183, 3, 0.5),
@@ -1034,17 +1073,22 @@ body.game-lobby-body,
 }
 
 @keyframes cashout3DPulse {
-  0%, 100% { 
-    transform: translateY(0) scale(1); 
-    box-shadow: 0 4px 0 #6e3000, 0 7px 18px rgba(0,0,0,0.75), 0 0 18px rgba(255, 183, 3, 0.45); 
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 0 #6e3000, 0 7px 18px rgba(0, 0, 0, 0.75), 0 0 18px rgba(255, 183, 3, 0.45);
   }
-  50% { 
-    transform: translateY(-3px) scale(1.06); 
-    box-shadow: 0 7px 0 #6e3000, 0 11px 24px rgba(0,0,0,0.85), 0 0 28px rgba(255, 183, 3, 0.75); 
+
+  50% {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 7px 0 #6e3000, 0 11px 24px rgba(0, 0, 0, 0.85), 0 0 28px rgba(255, 183, 3, 0.75);
   }
 }
 
-.winbet-toast, #customToast, .custom-toast {
+.winbet-toast,
+#customToast,
+.custom-toast {
   position: fixed;
   bottom: 25px;
   right: 25px;
@@ -1063,7 +1107,9 @@ body.game-lobby-body,
   font-size: 0.9rem;
 }
 
-.winbet-toast.show, #customToast.show, .custom-toast.show {
+.winbet-toast.show,
+#customToast.show,
+.custom-toast.show {
   transform: translateY(0);
 }
 
@@ -1071,16 +1117,14 @@ body.game-lobby-body,
 .mode-toggle-bar {
   background: #100626;
   border: 1px solid var(--card-border);
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
+  clip-path: polygon(8px 0%,
+      calc(100% - 8px) 0%,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% calc(100% - 8px),
+      0% 8px);
   border-radius: 0;
   padding: 3px;
   display: inline-flex;
@@ -1093,16 +1137,14 @@ body.game-lobby-body,
   border: none;
   color: #a796ce;
   padding: 6px 16px;
-  clip-path: polygon(
-    6px 0%, 
-    calc(100% - 6px) 0%, 
-    100% 6px, 
-    100% calc(100% - 6px), 
-    calc(100% - 6px) 100%, 
-    6px 100%, 
-    0% calc(100% - 6px), 
-    0% 6px
-  );
+  clip-path: polygon(6px 0%,
+      calc(100% - 6px) 0%,
+      100% 6px,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      6px 100%,
+      0% calc(100% - 6px),
+      0% 6px);
   border-radius: 0;
   font-size: 0.84rem;
   font-weight: 600;
@@ -1156,21 +1198,21 @@ body.game-lobby-body,
 
 /* Rich, Smooth Slide Variant Backgrounds */
 .slide-jackpot {
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(147, 51, 234, 0.45) 0%, transparent 55%),
     radial-gradient(circle at 85% 70%, rgba(245, 179, 0, 0.25) 0%, transparent 55%),
     linear-gradient(135deg, #1a0638 0%, #0d021f 60%, #070112 100%);
 }
 
 .slide-tournament {
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(220, 38, 38, 0.45) 0%, transparent 55%),
     radial-gradient(circle at 85% 70%, rgba(245, 179, 0, 0.25) 0%, transparent 55%),
     linear-gradient(135deg, #280517 0%, #13020c 60%, #0a0108 100%);
 }
 
 .slide-vip {
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.35) 0%, transparent 55%),
     radial-gradient(circle at 85% 70%, rgba(139, 92, 246, 0.3) 0%, transparent 55%),
     linear-gradient(135deg, #071936 0%, #040d1f 60%, #020610 100%);
@@ -1188,7 +1230,7 @@ body.game-lobby-body,
 .ambient-grid-pattern {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -1204,15 +1246,49 @@ body.game-lobby-body,
   box-shadow: 0 0 10px #fde047;
   animation: sparkFloat 4s infinite ease-in-out alternate;
 }
-.slide-particle-spark.p-1 { top: 20%; left: 35%; animation-delay: 0s; }
-.slide-particle-spark.p-2 { top: 60%; left: 10%; animation-delay: 1.2s; background: #c084fc; box-shadow: 0 0 10px #c084fc; }
-.slide-particle-spark.p-3 { top: 30%; right: 25%; animation-delay: 0.7s; }
-.slide-particle-spark.p-4 { top: 75%; right: 40%; animation-delay: 2.1s; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
+
+.slide-particle-spark.p-1 {
+  top: 20%;
+  left: 35%;
+  animation-delay: 0s;
+}
+
+.slide-particle-spark.p-2 {
+  top: 60%;
+  left: 10%;
+  animation-delay: 1.2s;
+  background: #c084fc;
+  box-shadow: 0 0 10px #c084fc;
+}
+
+.slide-particle-spark.p-3 {
+  top: 30%;
+  right: 25%;
+  animation-delay: 0.7s;
+}
+
+.slide-particle-spark.p-4 {
+  top: 75%;
+  right: 40%;
+  animation-delay: 2.1s;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+}
 
 @keyframes sparkFloat {
-  0% { transform: translateY(0) scale(0.8); opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { transform: translateY(-15px) scale(1.4); opacity: 0.4; }
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-15px) scale(1.4);
+    opacity: 0.4;
+  }
 }
 
 /* Content Typography & Safe Margin Container */
@@ -1248,8 +1324,17 @@ body.game-lobby-body,
 }
 
 @keyframes blinkPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(0.8); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
 }
 
 .badge-boost {
@@ -1335,8 +1420,13 @@ body.game-lobby-body,
 }
 
 @keyframes pulseCoin {
-  0% { transform: scale(1) rotate(0deg); }
-  100% { transform: scale(1.06) rotate(3deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    transform: scale(1.06) rotate(3deg);
+  }
 }
 
 .hero-jackpot-number {
@@ -1734,19 +1824,24 @@ body.game-lobby-body,
   .hero-slide-container {
     padding: 24px 45px 30px 45px;
   }
+
   .smartpc-slide {
     min-height: 280px;
   }
+
   .hero-jackpot-title {
     font-size: 1.15rem;
   }
+
   .hero-jackpot-number {
     font-size: 1.8rem;
   }
+
   .hero-visual-cluster {
     min-height: 140px;
     margin-top: 10px;
   }
+
   .visual-center {
     width: 110px;
   }
@@ -1756,9 +1851,11 @@ body.game-lobby-body,
   .hero-slide-container {
     padding: 20px 16px 28px 16px;
   }
+
   .smartpc-hero-btn {
     display: none;
   }
+
   .hero-jackpot-number {
     font-size: 1.5rem;
   }
@@ -1775,25 +1872,21 @@ body.game-lobby-body,
 .jp-chamfer-wrap {
   position: relative;
   width: 100%;
-  clip-path: polygon(
-    20px 0%, 
-    calc(100% - 20px) 0%, 
-    100% 20px, 
-    100% calc(100% - 20px), 
-    calc(100% - 20px) 100%, 
-    20px 100%, 
-    0% calc(100% - 20px), 
-    0% 20px
-  );
-  background: linear-gradient(
-    135deg, 
-    #f59e0b 0%, 
-    #ffd700 25%, 
-    #ffffff 45%, 
-    #a855f7 70%, 
-    #7c3aed 85%, 
-    #d97706 100%
-  );
+  clip-path: polygon(20px 0%,
+      calc(100% - 20px) 0%,
+      100% 20px,
+      100% calc(100% - 20px),
+      calc(100% - 20px) 100%,
+      20px 100%,
+      0% calc(100% - 20px),
+      0% 20px);
+  background: linear-gradient(135deg,
+      #f59e0b 0%,
+      #ffd700 25%,
+      #ffffff 45%,
+      #a855f7 70%,
+      #7c3aed 85%,
+      #d97706 100%);
   padding: 2.5px;
   filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.45)) drop-shadow(0 10px 30px rgba(0, 0, 0, 0.7));
   transition: filter 0.3s ease, transform 0.3s ease;
@@ -1810,23 +1903,20 @@ body.game-lobby-body,
   height: auto;
   border-radius: 0;
   overflow: hidden;
-  clip-path: polygon(
-    18px 0%, 
-    calc(100% - 18px) 0%, 
-    100% 18px, 
-    100% calc(100% - 18px), 
-    calc(100% - 18px) 100%, 
-    18px 100%, 
-    0% calc(100% - 18px), 
-    0% 18px
-  );
-  background: linear-gradient(105deg, 
-    #0d0025 0%, 
-    #1a0540 20%,
-    #2d0d6b 45%,
-    #1e0852 65%,
-    #0a0120 100%
-  );
+  clip-path: polygon(18px 0%,
+      calc(100% - 18px) 0%,
+      100% 18px,
+      100% calc(100% - 18px),
+      calc(100% - 18px) 100%,
+      18px 100%,
+      0% calc(100% - 18px),
+      0% 18px);
+  background: linear-gradient(105deg,
+      #0d0025 0%,
+      #1a0540 20%,
+      #2d0d6b 45%,
+      #1e0852 65%,
+      #0a0120 100%);
   border: none;
   box-shadow: none;
 }
@@ -1835,12 +1925,10 @@ body.game-lobby-body,
   content: "";
   position: absolute;
   inset: 3px;
-  clip-path: polygon(
-    15px 0%, calc(100% - 15px) 0%,
-    100% 15px, 100% calc(100% - 15px),
-    calc(100% - 15px) 100%, 15px 100%,
-    0% calc(100% - 15px), 0% 15px
-  );
+  clip-path: polygon(15px 0%, calc(100% - 15px) 0%,
+      100% 15px, 100% calc(100% - 15px),
+      calc(100% - 15px) 100%, 15px 100%,
+      0% calc(100% - 15px), 0% 15px);
   border: 1px solid rgba(245, 158, 11, 0.22);
   pointer-events: none;
   z-index: 4;
@@ -1853,9 +1941,9 @@ body.game-lobby-body,
   overflow: hidden;
   z-index: 0;
   background:
-    radial-gradient(ellipse 60% 100% at 50% 50%, rgba(245,158,11,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 80% at 10% 50%, rgba(124,58,237,0.18) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 80% at 90% 50%, rgba(220,38,38,0.12) 0%, transparent 65%);
+    radial-gradient(ellipse 60% 100% at 50% 50%, rgba(245, 158, 11, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 80% at 10% 50%, rgba(124, 58, 237, 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 80% at 90% 50%, rgba(220, 38, 38, 0.12) 0%, transparent 65%);
 }
 
 .jp-deco-img {
@@ -1907,13 +1995,23 @@ body.game-lobby-body,
 }
 
 @keyframes floatDeco {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-8px);
+  }
 }
 
 @keyframes floatDecoCenter {
-  0%   { transform: translateX(-50%) translateY(0) scale(1); }
-  100% { transform: translateX(-50%) translateY(-6px) scale(1.04); }
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(-6px) scale(1.04);
+  }
 }
 
 .jp-particle {
@@ -1923,16 +2021,68 @@ body.game-lobby-body,
   opacity: 0;
   animation: particleRise 4s ease-in infinite;
 }
-.jp-p1 { width: 6px;  height: 6px;  background: #f59e0b; left: 18%;  animation-delay: 0s;    animation-duration: 3.5s; }
-.jp-p2 { width: 4px;  height: 4px;  background: #a855f7; left: 32%;  animation-delay: 1s;    animation-duration: 4.2s; }
-.jp-p3 { width: 5px;  height: 5px;  background: #fde047; left: 55%;  animation-delay: 0.5s;  animation-duration: 3.8s; }
-.jp-p4 { width: 7px;  height: 7px;  background: #ec4899; left: 70%;  animation-delay: 1.5s;  animation-duration: 4.5s; }
-.jp-p5 { width: 4px;  height: 4px;  background: #38bdf8; left: 85%;  animation-delay: 2s;    animation-duration: 3.2s; }
+
+.jp-p1 {
+  width: 6px;
+  height: 6px;
+  background: #f59e0b;
+  left: 18%;
+  animation-delay: 0s;
+  animation-duration: 3.5s;
+}
+
+.jp-p2 {
+  width: 4px;
+  height: 4px;
+  background: #a855f7;
+  left: 32%;
+  animation-delay: 1s;
+  animation-duration: 4.2s;
+}
+
+.jp-p3 {
+  width: 5px;
+  height: 5px;
+  background: #fde047;
+  left: 55%;
+  animation-delay: 0.5s;
+  animation-duration: 3.8s;
+}
+
+.jp-p4 {
+  width: 7px;
+  height: 7px;
+  background: #ec4899;
+  left: 70%;
+  animation-delay: 1.5s;
+  animation-duration: 4.5s;
+}
+
+.jp-p5 {
+  width: 4px;
+  height: 4px;
+  background: #38bdf8;
+  left: 85%;
+  animation-delay: 2s;
+  animation-duration: 3.2s;
+}
 
 @keyframes particleRise {
-  0%   { opacity: 0;   bottom: 0;    transform: translateX(0) scale(0.5); }
-  30%  { opacity: 0.9; }
-  100% { opacity: 0;   bottom: 100%; transform: translateX(20px) scale(1.3); }
+  0% {
+    opacity: 0;
+    bottom: 0;
+    transform: translateX(0) scale(0.5);
+  }
+
+  30% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    bottom: 100%;
+    transform: translateX(20px) scale(1.3);
+  }
 }
 
 .jackpot-inner-row {
@@ -1944,12 +2094,11 @@ body.game-lobby-body,
   flex-wrap: wrap;
   gap: 18px;
   padding: 18px 28px;
-  background: linear-gradient(90deg, 
-    rgba(13, 0, 37, 0.78) 0%,
-    rgba(30, 8, 80, 0.62) 35%,
-    rgba(30, 8, 80, 0.62) 65%,
-    rgba(13, 0, 37, 0.78) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(13, 0, 37, 0.78) 0%,
+      rgba(30, 8, 80, 0.62) 35%,
+      rgba(30, 8, 80, 0.62) 65%,
+      rgba(13, 0, 37, 0.78) 100%);
 }
 
 .jp-live-pill {
@@ -1967,7 +2116,10 @@ body.game-lobby-body,
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.8);
   animation: pulseLive 1.4s infinite alternate;
 }
-.jp-live-pill i { font-size: 6px; }
+
+.jp-live-pill i {
+  font-size: 6px;
+}
 
 .jp-sub-label {
   font-size: 0.75rem;
@@ -1980,22 +2132,20 @@ body.game-lobby-body,
 .jp-tournament-card {
   background: rgba(10, 2, 28, 0.85);
   border: 1px solid rgba(245, 158, 11, 0.45);
-  clip-path: polygon(
-    10px 0%, 
-    calc(100% - 10px) 0%, 
-    100% 10px, 
-    100% calc(100% - 10px), 
-    calc(100% - 10px) 100%, 
-    10px 100%, 
-    0% calc(100% - 10px), 
-    0% 10px
-  );
+  clip-path: polygon(10px 0%,
+      calc(100% - 10px) 0%,
+      100% 10px,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      10px 100%,
+      0% calc(100% - 10px),
+      0% 10px);
   border-radius: 0;
   padding: 10px 16px;
   text-align: center;
   min-width: 160px;
   backdrop-filter: blur(8px);
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), inset 0 1px 1px rgba(255,255,255,0.08);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 
 .jp-tour-label {
@@ -2006,14 +2156,16 @@ body.game-lobby-body,
   letter-spacing: 1.2px;
   text-transform: uppercase;
 }
+
 .jp-tour-prize {
   font-family: 'Rajdhani', sans-serif;
   font-size: 1.18rem;
   font-weight: 800;
   color: #fde047;
-  text-shadow: 0 0 10px rgba(253,224,71,0.6);
+  text-shadow: 0 0 10px rgba(253, 224, 71, 0.6);
   line-height: 1.2;
 }
+
 .jp-tour-game {
   font-size: 0.72rem;
   color: #c4b5fd;
@@ -2027,13 +2179,12 @@ body.game-lobby-body,
   right: 0;
   height: 3px;
   z-index: 3;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    #f59e0b 20%, 
-    #fde047 50%, 
-    #f59e0b 80%, 
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      #f59e0b 20%,
+      #fde047 50%,
+      #f59e0b 80%,
+      transparent 100%);
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.9), 0 0 24px rgba(245, 158, 11, 0.4);
 }
 
@@ -2060,7 +2211,7 @@ body.game-lobby-body,
   height: 52px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #fff176 0%, #ffd54f 25%, #f59e0b 60%, #b45309 100%);
-  box-shadow: 
+  box-shadow:
     0 0 0 3px #fbbf24,
     0 0 16px rgba(251, 191, 36, 0.85),
     inset 0 2px 4px rgba(255, 255, 255, 0.8),
@@ -2073,8 +2224,15 @@ body.game-lobby-body,
 }
 
 @keyframes coinPulseFloat {
-  0% { transform: translateY(0) rotate(0deg); box-shadow: 0 0 12px rgba(251, 191, 36, 0.7); }
-  100% { transform: translateY(-4px) rotate(6deg); box-shadow: 0 0 24px rgba(251, 191, 36, 1), 0 0 35px rgba(245, 158, 11, 0.6); }
+  0% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+  }
+
+  100% {
+    transform: translateY(-4px) rotate(6deg);
+    box-shadow: 0 0 24px rgba(251, 191, 36, 1), 0 0 35px rgba(245, 158, 11, 0.6);
+  }
 }
 
 .gold-coin-disc i {
@@ -2094,8 +2252,13 @@ body.game-lobby-body,
 }
 
 @keyframes crownFloat {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-3px) rotate(8deg); }
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(-3px) rotate(8deg);
+  }
 }
 
 .gold-coin-sparkle {
@@ -2109,8 +2272,17 @@ body.game-lobby-body,
 }
 
 @keyframes sparkleBlink {
-  0%, 100% { opacity: 0.2; transform: scale(0.7); }
-  50% { opacity: 1; transform: scale(1.2); }
+
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 .jackpot-meta-col {
@@ -2154,16 +2326,14 @@ body.game-lobby-body,
 .btn-jackpot-spin {
   position: relative;
   background: linear-gradient(180deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
+  clip-path: polygon(8px 0%,
+      calc(100% - 8px) 0%,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% calc(100% - 8px),
+      0% 8px);
   border: none;
   color: #000000;
   font-family: 'Rajdhani', sans-serif;
@@ -2173,7 +2343,7 @@ body.game-lobby-body,
   text-transform: uppercase;
   padding: 10px 22px;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 0 16px rgba(245, 158, 11, 0.8),
     inset 0 1px 2px rgba(255, 255, 255, 0.8),
     inset 0 -2px 4px rgba(0, 0, 0, 0.4);
@@ -2187,7 +2357,7 @@ body.game-lobby-body,
 .btn-jackpot-spin:hover {
   background: linear-gradient(180deg, #fde047 0%, #f59e0b 50%, #d97706 100%);
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 
+  box-shadow:
     0 0 25px rgba(253, 224, 71, 1),
     0 0 40px rgba(245, 158, 11, 0.8),
     inset 0 1px 3px #ffffff;
@@ -2200,8 +2370,15 @@ body.game-lobby-body,
 }
 
 @keyframes spinPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.25) rotate(15deg); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.25) rotate(15deg);
+  }
 }
 
 /* ==========================================================================
@@ -2232,6 +2409,7 @@ body.game-lobby-body,
   padding: 3px 2px 5px 2px;
   flex-grow: 1;
 }
+
 .category-scroll-container::-webkit-scrollbar {
   display: none;
 }
@@ -2239,16 +2417,14 @@ body.game-lobby-body,
 .cat-pill {
   position: relative;
   background: linear-gradient(180deg, #180838 0%, #0d0422 100%);
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
+  clip-path: polygon(8px 0%,
+      calc(100% - 8px) 0%,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% calc(100% - 8px),
+      0% 8px);
   border: 1px solid #4d1d8f;
   padding: 8px 16px;
   display: inline-flex;
@@ -2292,7 +2468,7 @@ body.game-lobby-body,
   background: linear-gradient(180deg, #781ff5 0%, #590fc9 55%, #3d088f 100%);
   border-color: #a855f7;
   color: #ffffff;
-  box-shadow: 
+  box-shadow:
     0 4px 0 #240459,
     0 6px 16px rgba(120, 31, 245, 0.6),
     inset 0 1px 2px rgba(255, 255, 255, 0.45),
@@ -2342,17 +2518,8 @@ body.game-lobby-body,
 .search-box-station input {
   background: #090317;
   border: 1.5px solid #4d1d8f;
-  clip-path: polygon(
-    8px 0%, 
-    calc(100% - 8px) 0%, 
-    100% 8px, 
-    100% calc(100% - 8px), 
-    calc(100% - 8px) 100%, 
-    8px 100%, 
-    0% calc(100% - 8px), 
-    0% 8px
-  );
-  padding: 8px 14px 8px 38px;
+  border-radius: 8px;
+  padding: 8px 38px 8px 38px;
   color: #ffffff;
   font-family: 'Rajdhani', sans-serif;
   font-size: 0.95rem;
@@ -2375,7 +2542,7 @@ body.game-lobby-body,
   filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.65));
 }
 
-.search-box-station i {
+.search-box-station i.fa-magnifying-glass {
   position: absolute;
   left: 14px;
   top: 50%;
@@ -2384,6 +2551,29 @@ body.game-lobby-body,
   font-size: 0.85rem;
   pointer-events: none;
   text-shadow: 0 0 8px rgba(245, 179, 0, 0.6);
+  z-index: 2;
+}
+
+.search-box-station .clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #f5b300;
+  font-size: 0.95rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-box-station .clear-btn:hover {
+  color: #ffcc33;
+  text-shadow: 0 0 8px rgba(245, 179, 0, 0.8);
 }
 
 .game-count-hud {
@@ -2426,7 +2616,7 @@ body.game-lobby-body,
 
 @media (min-width: 1200px) {
   .games-grid {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
 }
 
@@ -2467,7 +2657,7 @@ body.game-lobby-body,
   height: 250px;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
@@ -2509,24 +2699,22 @@ body.game-lobby-body,
 }
 
 .chamfer-casino-card:hover {
-  transform: translateY(-5px) scale(1.025);
-  filter: drop-shadow(0 0 16px var(--neon-primary));
+  transform: translateY(-5px);
+  filter: drop-shadow(0 0 8px var(--neon-primary));
 }
 
 .chamfer-border-wrap {
   position: relative;
   width: 100%;
   height: 100%;
-  clip-path: polygon(
-    14px 0%, 
-    calc(100% - 14px) 0%, 
-    100% 14px, 
-    100% calc(100% - 14px), 
-    calc(100% - 14px) 100%, 
-    14px 100%, 
-    0% calc(100% - 14px), 
-    0% 14px
-  );
+  clip-path: polygon(14px 0%,
+      calc(100% - 14px) 0%,
+      100% 14px,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      14px 100%,
+      0% calc(100% - 14px),
+      0% 14px);
   background: var(--neon-primary);
   padding: 1.5px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
@@ -2537,16 +2725,14 @@ body.game-lobby-body,
   position: relative;
   width: 100%;
   height: 100%;
-  clip-path: polygon(
-    13px 0%, 
-    calc(100% - 13px) 0%, 
-    100% 13px, 
-    100% calc(100% - 13px), 
-    calc(100% - 13px) 100%, 
-    13px 100%, 
-    0% calc(100% - 13px), 
-    0% 13px
-  );
+  clip-path: polygon(13px 0%,
+      calc(100% - 13px) 0%,
+      100% 13px,
+      100% calc(100% - 13px),
+      calc(100% - 13px) 100%,
+      13px 100%,
+      0% calc(100% - 13px),
+      0% 13px);
   background: #090217;
   overflow: hidden;
   display: flex;
@@ -2587,11 +2773,30 @@ body.game-lobby-body,
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
-.chamfer-badge.badge-fun { background: #ea580c; color: #ffffff; }
-.chamfer-badge.badge-hot { background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: #ffffff; }
-.chamfer-badge.badge-new { background: #0284c7; color: #ffffff; }
-.chamfer-badge.badge-bonus { background: #dc2626; color: #ffffff; }
-.chamfer-badge.badge-live { background: #ef4444; color: #ffffff; }
+.chamfer-badge.badge-fun {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.chamfer-badge.badge-hot {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  color: #ffffff;
+}
+
+.chamfer-badge.badge-new {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.chamfer-badge.badge-bonus {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.chamfer-badge.badge-live {
+  background: #ef4444;
+  color: #ffffff;
+}
 
 .chamfer-artwork-frame {
   position: absolute;
@@ -2613,7 +2818,6 @@ body.game-lobby-body,
 }
 
 .chamfer-casino-card:hover .chamfer-poster-img {
-  transform: scale(1.08);
   filter: contrast(1.08) saturate(1.22);
 }
 
@@ -2728,7 +2932,7 @@ body.game-lobby-body,
   align-items: center;
   justify-content: center;
   font-size: 3rem;
-  box-shadow: inset 0 6px 12px rgba(0,0,0,0.8);
+  box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.8);
   position: relative;
   overflow: hidden;
 }
@@ -2738,9 +2942,20 @@ body.game-lobby-body,
 }
 
 @keyframes reelSpinFast {
-  0% { transform: translateY(-30%); filter: blur(3px); }
-  50% { transform: translateY(30%); filter: blur(3px); }
-  100% { transform: translateY(-30%); filter: blur(3px); }
+  0% {
+    transform: translateY(-30%);
+    filter: blur(3px);
+  }
+
+  50% {
+    transform: translateY(30%);
+    filter: blur(3px);
+  }
+
+  100% {
+    transform: translateY(-30%);
+    filter: blur(3px);
+  }
 }
 
 /* ==========================================================================
@@ -2763,30 +2978,77 @@ body.game-lobby-body,
 }
 
 @keyframes statusPopInBounce {
-  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
-  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  0% {
+    transform: scale(0.3) rotate(-10deg);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.12) rotate(3deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 @keyframes ringPulseGreen {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7), 0 0 30px rgba(16, 185, 129, 0.5); }
-  70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0), 0 0 45px rgba(16, 185, 129, 0.7); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 30px rgba(16, 185, 129, 0.5); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7), 0 0 30px rgba(16, 185, 129, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 18px rgba(16, 185, 129, 0), 0 0 45px rgba(16, 185, 129, 0.7);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 30px rgba(16, 185, 129, 0.5);
+  }
 }
 
 @keyframes ringPulseRed {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5); }
-  15% { transform: scale(1.04) rotate(-3deg); }
-  30% { transform: scale(0.98) rotate(3deg); }
-  45% { transform: scale(1) rotate(0deg); }
-  70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0), 0 0 45px rgba(239, 68, 68, 0.7); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 0 30px rgba(239, 68, 68, 0.5); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5);
+  }
+
+  15% {
+    transform: scale(1.04) rotate(-3deg);
+  }
+
+  30% {
+    transform: scale(0.98) rotate(3deg);
+  }
+
+  45% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  70% {
+    box-shadow: 0 0 0 18px rgba(239, 68, 68, 0), 0 0 45px rgba(239, 68, 68, 0.7);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 0 30px rgba(239, 68, 68, 0.5);
+  }
 }
 
 @keyframes ringPulseAmber {
-  0% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 179, 0, 0.6); }
-  50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(245, 179, 0, 0.9); }
-  100% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 179, 0, 0.6); }
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 25px rgba(245, 179, 0, 0.6);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(245, 179, 0, 0.9);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 25px rgba(245, 179, 0, 0.6);
+  }
 }
 
 /* Section Headers */
@@ -2927,8 +3189,18 @@ body.game-lobby-body,
   letter-spacing: 0.5px;
   z-index: 2;
 }
-.mini-badge-new { background: #06b6d4; color: #fff; box-shadow: 0 0 8px #06b6d4; }
-.mini-badge-hot { background: #ef4444; color: #fff; box-shadow: 0 0 8px #ef4444; }
+
+.mini-badge-new {
+  background: #06b6d4;
+  color: #fff;
+  box-shadow: 0 0 8px #06b6d4;
+}
+
+.mini-badge-hot {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 8px #ef4444;
+}
 
 .mini-game-label {
   font-family: 'Rajdhani', sans-serif;
@@ -3121,8 +3393,17 @@ body.game-lobby-body,
 }
 
 @keyframes pulseDot {
-  0% { transform: scale(0.85); opacity: 0.7; box-shadow: 0 0 4px #22c55e; }
-  100% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 14px #22c55e; }
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+    box-shadow: 0 0 4px #22c55e;
+  }
+
+  100% {
+    transform: scale(1.25);
+    opacity: 1;
+    box-shadow: 0 0 14px #22c55e;
+  }
 }
 
 .live-ticker-header-title {
@@ -3363,18 +3644,39 @@ body.game-lobby-body,
 
 /* 3. VIP Promos Section */
 .vip-promo-card {
-  background: linear-gradient(180deg, #15092e 0%, #0d041e 100%);
-  border: 1.5px solid rgba(139, 92, 246, 0.35);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  background: linear-gradient(145deg, rgba(35, 15, 68, 0.85) 0%, rgba(18, 7, 36, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(139, 92, 246, 0.4);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.vip-promo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(245, 179, 0, 0.25) 0%, transparent 60%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.vip-promo-card:hover::before {
+  opacity: 1;
 }
 
 .vip-promo-card:hover {
   transform: translateY(-4px);
-  border-color: #f5b300;
-  box-shadow: 0 10px 25px rgba(245, 179, 0, 0.25);
+  border-color: rgba(245, 179, 0, 0.9);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 179, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.3);
 }
 
 /* 4. Providers Showcase */
@@ -3398,7 +3700,8 @@ body.game-lobby-body,
   transition: all 0.2s ease;
 }
 
-.provider-chip-card:hover, .provider-chip-card.active {
+.provider-chip-card:hover,
+.provider-chip-card.active {
   border-color: #f5b300;
   background: linear-gradient(135deg, rgba(46, 17, 107, 0.9) 0%, rgba(20, 6, 50, 0.95) 100%);
   box-shadow: 0 6px 20px rgba(245, 179, 0, 0.25);
@@ -3498,5 +3801,3 @@ body.game-lobby-body,
   transform: none !important;
   border-color: rgba(147, 51, 234, 0.2);
 }
-
-

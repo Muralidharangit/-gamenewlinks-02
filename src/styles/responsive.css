@@ -4,13 +4,13 @@
 
 @media (max-width: 1400px) {
   .games-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(7, 1fr);
   }
 }
 
 @media (max-width: 1200px) {
   .games-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 

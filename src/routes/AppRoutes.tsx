@@ -5,12 +5,7 @@ import { RegistrationSuccess } from "../pages/RegistrationSuccess/RegistrationSu
 import { SmartPCLobby } from "../pages/SmartPC/SmartPCLobby";
 import { SmartPCCashOut } from "../pages/SmartPC/SmartPCCashOut";
 import { GamePlayPage } from "../pages/SmartPC/GamePlayPage";
-import { TerminalLobby } from "../pages/Terminal/TerminalLobby";
-import { TerminalCashOut } from "../pages/Terminal/TerminalCashOut";
-import { TicketSuccess } from "../pages/Terminal/TicketSuccess";
 import { NotAuthorized } from "../pages/NotAuthorized/NotAuthorized";
-
-import { TerminalLogin, TerminalRegistration } from "../pages/Terminal/TerminalLogin";
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -24,13 +19,6 @@ export const AppRoutes: React.FC = () => {
       <Route path="/smart-pc/login" element={<Registration defaultMachineType="smart-pc" />} />
       <Route path="/register/smart-pc" element={<Registration defaultMachineType="smart-pc" />} />
 
-      {/* Terminal Registration & Login Flow */}
-      <Route path="/terminal/login" element={<TerminalLogin />} />
-      <Route path="/terminal/register" element={<TerminalRegistration />} />
-      <Route path="/terminal-login" element={<TerminalLogin />} />
-      <Route path="/terminal-register" element={<TerminalRegistration />} />
-      <Route path="/register/terminal" element={<TerminalRegistration />} />
-
       <Route path="/register/success" element={<RegistrationSuccess />} />
 
       {/* Security / Unbind */}
@@ -42,12 +30,6 @@ export const AppRoutes: React.FC = () => {
       <Route path="/smart-pc/play" element={<GamePlayPage />} />
       <Route path="/play/:gameId" element={<GamePlayPage />} />
       <Route path="/smart-pc/cashout" element={<SmartPCCashOut />} />
-
-      {/* Terminal Flow */}
-      <Route path="/terminal" element={<TerminalLobby />} />
-      <Route path="/terminal/play/:gameId" element={<GamePlayPage />} />
-      <Route path="/terminal/cashout" element={<TerminalCashOut />} />
-      <Route path="/terminal/ticket-success" element={<TicketSuccess />} />
 
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/register" replace />} />
