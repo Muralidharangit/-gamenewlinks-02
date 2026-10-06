@@ -4,9 +4,10 @@ import type { GameItem } from "../../types";
 interface GameCardProps {
   game: GameItem;
   onPlay: (game: GameItem) => void;
+  hideTitleAndSubtitle?: boolean;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({ game, onPlay }) => {
+export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, hideTitleAndSubtitle }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const providerName = game.provider || "Live Game";
 
@@ -105,12 +106,16 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onPlay }) => {
 
             {/* Bottom Content Deck with Italic Title, Gold Subtitle & Pill Button */}
             <div className="chamfer-content-deck">
-              <div className="chamfer-game-title" title={game.title}>
-                {game.title}
-              </div>
-              <div className="chamfer-game-subtitle">
-                {game.subtitle || `${game.category.toUpperCase()} • ${providerName.toUpperCase()}`}
-              </div>
+              {!hideTitleAndSubtitle && (
+                <>
+                  <div className="chamfer-game-title" title={game.title}>
+                    {game.title}
+                  </div>
+                  <div className="chamfer-game-subtitle">
+                    {game.subtitle || `${game.category.toUpperCase()} • ${providerName.toUpperCase()}`}
+                  </div>
+                </>
+              )}
               <button type="button" className="btn-chamfer-neon-pill" aria-label={`Play ${game.title}`}>
                 <span>{actionText}</span>
                 <i className="fa-solid fa-chevron-right ms-1"></i>

@@ -44,11 +44,28 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [catalogGames, setCatalogGames] = useState<GameItem[]>([]);
+  const [popularGames, setPopularGames] = useState<GameItem[]>([]);
+  const [featuredSpribeGames, setFeaturedSpribeGames] = useState<GameItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const spribeImageMap: Record<string, string> = {
+    "aviator": "1.jpg",
+    "hilo": "2.jpg",
+    "hotline": "3.jpg",
+    "goal": "4.jpg",
+    "keno": "5.jpg",
+    "mines": "6.jpg",
+    "mini roulette":"7.jpg",
+    "dice": "8.jpg",
+    "plinko": "11.jpg",
+    "balloon": "10.jpg",
+    "pilot": "12.jpg",
+    "trader": "13.jpg"
+  };
 
   // Helper mapper for live API items
   const mapApiGame = useCallback(
@@ -83,7 +100,15 @@ export const GameGrid: React.FC<GameGridProps> = ({
       badge: item.payout_label
         ? { text: item.payout_label, type: "hot" }
         : { text: "LIVE", type: "live" },
-      image: item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png",
+      image: (() => {
+        const n = item.name.toLowerCase();
+        if (item.provider?.toLowerCase().includes("spribe") || item.category?.toLowerCase().includes("spribe") || n.includes("spribe")) {
+          for (const [key, val] of Object.entries(spribeImageMap)) {
+            if (n.includes(key)) return `/assets/images/spribe/${val}`;
+          }
+        }
+        return item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png";
+      })(),
       actionText: "PLAY NOW",
       kind: item.kind || "provider",
       provider: item.provider || "Game Provider",
@@ -115,7 +140,42 @@ export const GameGrid: React.FC<GameGridProps> = ({
     }
   }, []);
 
-  // Fetch Page 1 on filter change
+      // Fetch Spribe games and popular games once on mount (independent of filters)
+  useEffect(() => {
+    let isMounted = true;
+    
+    // Fetch Popular
+    api
+      .getGamesPage(undefined, 1, 50)
+      .then((res) => {
+        if (isMounted && res.games && Array.isArray(res.games)) {
+          const mapped = res.games.map((item, idx) => mapApiGame(item, idx));
+          setPopularGames(mapped.length > 10 ? mapped.slice(10, 25) : mapped);
+        }
+      })
+      .catch((err) => console.warn("Failed to load popular games:", err));
+
+    // Fetch Spribe
+    api
+      .getGamesPage("Spribe", 1, 50)
+      .then((res) => {
+        if (isMounted && res.games && Array.isArray(res.games)) {
+          // Filter out 'mobile' variants so we get unique Spribe games
+          const uniqueSpribeGames = res.games.filter(game => !game.name.toLowerCase().includes('mobile'));
+          
+          const mapped = uniqueSpribeGames.map((item, idx) => mapApiGame(item, idx));
+          setFeaturedSpribeGames(mapped.slice(0, 13));
+        }
+      })
+      .catch((err) => console.warn("Failed to load spribe games:", err));
+
+    return () => { isMounted = false; };
+  }, [mapApiGame]);
+
+  // Use the fetched Spribe games instead of hardcoded
+  const featuredGames = featuredSpribeGames;
+
+  
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -128,7 +188,9 @@ export const GameGrid: React.FC<GameGridProps> = ({
       .then((res) => {
         if (isMounted) {
           if (res.games && Array.isArray(res.games) && res.games.length > 0) {
-            const mapped = res.games.map((item, idx) => mapApiGame(item, idx));
+            // Filter out 'mobile' duplicate games from catalog view
+            const filteredGames = res.games.filter(g => !g.name.toLowerCase().includes('mobile'));
+            const mapped = filteredGames.map((item, idx) => mapApiGame(item, idx));
             setCatalogGames(mapped);
             setHasMore(res.hasMore);
             setTotalGames(res.total);
@@ -165,7 +227,8 @@ export const GameGrid: React.FC<GameGridProps> = ({
     try {
       const res = await api.getGamesPage(providerQuery, nextPage, 50);
       if (res.games && Array.isArray(res.games) && res.games.length > 0) {
-        const mapped = res.games.map((item, idx) => mapApiGame(item, catalogGames.length + idx));
+        const filteredGames = res.games.filter(g => !g.name.toLowerCase().includes('mobile'));
+        const mapped = filteredGames.map((item, idx) => mapApiGame(item, catalogGames.length + idx));
         setCatalogGames((prev) => [...prev, ...mapped]);
         setCurrentPage(nextPage);
         setHasMore(res.hasMore);
@@ -235,13 +298,8 @@ export const GameGrid: React.FC<GameGridProps> = ({
   }, [catalogGames, selectedFilter, searchQuery, isMobileDevice]);
 
   // Derived dynamically from live API games
-  const featuredGames = useMemo(() => {
-    return catalogGames.slice(0, 10);
-  }, [catalogGames]);
+  
 
-  const popularGames = useMemo(() => {
-    return catalogGames.length > 10 ? catalogGames.slice(10, 20) : catalogGames;
-  }, [catalogGames]);
 
   // Open Game directly on dedicated GamePlayPage with Header
   const handleLaunchGame = (game: GameItem) => {
@@ -277,10 +335,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
             <h2 className="section-header-title mb-0">
               <i className="fa-solid fa-layer-group text-warning"></i> Live Casino Catalog
             </h2>
-            <span className="badge bg-purple-dark border border-purple-subtle text-warning px-3 py-1 rounded-pill d-none d-md-inline-flex align-items-center gap-1" style={{ fontSize: "0.78rem" }}>
-              <i className="fa-solid fa-circle-check text-success"></i>
-              {totalGames > 0 ? `${totalGames} Live Games Online` : "Catalog Active"}
-            </span>
+
           </div>
           <div className="d-flex align-items-center gap-2">
             <button
@@ -340,23 +395,19 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 placeholder="Search live games..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                spellCheck={false}
               />
               {searchQuery && (
                 <button
                   type="button"
-                  className="btn btn-sm text-secondary p-0 ms-1"
+                  className="clear-btn"
                   onClick={() => setSearchQuery("")}
                 >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               )}
             </div>
-            <div className="game-count-hud d-none d-sm-inline-flex">
-              <span id="gameCountBadge" className="count-num">
-                {filteredGames.length}
-              </span>
-              <span>Showing</span>
-            </div>
+
           </div>
         </div>
 
@@ -548,13 +599,13 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 576: { slidesPerView: 3, spaceBetween: 14 },
                 768: { slidesPerView: 4, spaceBetween: 14 },
                 992: { slidesPerView: 5, spaceBetween: 16 },
-                1200: { slidesPerView: 6, spaceBetween: 16 },
+                1200: { slidesPerView: 7, spaceBetween: 16 },
               }}
               className="casino-swiper-slider"
             >
               {featuredGames.map((game) => (
                 <SwiperSlide key={`featured-${game.id}`}>
-                  <GameCard game={game} onPlay={handleLaunchGame} />
+                  <GameCard game={game} onPlay={handleLaunchGame} hideTitleAndSubtitle={true} />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -610,7 +661,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 576: { slidesPerView: 3, spaceBetween: 14 },
                 768: { slidesPerView: 4, spaceBetween: 14 },
                 992: { slidesPerView: 5, spaceBetween: 16 },
-                1200: { slidesPerView: 6, spaceBetween: 16 },
+                1200: { slidesPerView: 7, spaceBetween: 16 },
               }}
               className="casino-swiper-slider"
             >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import type { MachineType } from "../../types";
 import { GamingHeader } from "./GamingHeader";
 import { ShopLocation } from "./ShopLocation";
@@ -36,7 +36,6 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   const isSmartPc = machineType === "smart-pc";
   const shouldShowJackpot = showJackpotBanner !== undefined ? showJackpotBanner : isSmartPc;
   const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
-  const [defaultBet, setDefaultBet] = useState(10);
 
   return (
     <div className="game-lobby-body d-flex flex-column min-vh-100">
@@ -69,7 +68,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
           <ShopLocation shopName={shopName} location={shopLocation} />
 
           {/* Middle: Quick Bet Presets */}
-          <div className="d-none d-lg-flex align-items-center gap-2">
+          {/* <div className="d-none d-lg-flex align-items-center gap-2">
             <span className="text-secondary small fw-semibold">DEFAULT BET:</span>
             {[10, 25, 50, 100].map((val) => (
               <button
@@ -86,7 +85,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
                 N$ {val}
               </button>
             ))}
-          </div>
+          </div> */}
 
           {/* Right: Dock Action Button */}
           <div className="d-flex align-items-center gap-2">
