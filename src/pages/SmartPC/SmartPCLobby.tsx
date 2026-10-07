@@ -148,6 +148,21 @@ export const SmartPCLobby: React.FC = () => {
     setActiveAlert("NONE");
   };
 
+  // Freeze scrolling when balance is zero
+  useEffect(() => {
+    if (machine.balance === 0) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [machine.balance]);
+
   return (
     <>
       <GamingLayout
@@ -171,13 +186,15 @@ export const SmartPCLobby: React.FC = () => {
       </GamingLayout>
 
       {/* Hardware & Desk Simulator Bar (Pure Web Testing of PDF Flow) */}
+      {/* 
       <HardwareSimulatorBar
         machineType="smart-pc"
         balance={machine.balance}
         onAddBalance={handleStaffLoadCoins}
         onTriggerAlert={handleTriggerAlert}
         onOpenCashoutFlow={handleOpenCashout}
-      />
+      /> 
+      */}
 
       {/* Smart PC Step 4: Cash Out Confirmation Modal */}
       <CashOutModal

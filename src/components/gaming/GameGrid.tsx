@@ -25,11 +25,10 @@ const DEFAULT_CATEGORIES = [
   { id: "all", label: "All Games", icon: "fa-solid fa-table-cells-large" },
   { id: "spribe", label: "Spribe Live", icon: "fa-solid fa-plane-departure text-warning", isHot: true },
   { id: "endorphina", label: "Endorphina", icon: "fa-solid fa-gem text-info" },
-  { id: "kagaming", label: "KA Gaming", icon: "fa-solid fa-crown text-warning" },
-  { id: "evoplay", label: "Evoplay", icon: "fa-solid fa-fire text-danger" },
+  // { id: "kagaming", label: "KA Gaming", icon: "fa-solid fa-crown text-warning" },
+  // { id: "evoplay", label: "Evoplay", icon: "fa-solid fa-fire text-danger" },
   { id: "slots", label: "Slots", icon: "fa-solid fa-clover text-success" },
-  { id: "instant", label: "Crash & Instant", icon: "fa-solid fa-bolt text-warning" },
-  { id: "table", label: "Table Games", icon: "fa-solid fa-dice text-light" },
+  
 ];
 
 export const GameGrid: React.FC<GameGridProps> = ({
