@@ -594,6 +594,22 @@ export const api = {
       machineName,
       shopName: shop.name,
     };
+
+    if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
+      try {
+        const { printTicketNative } = await import("./tauri");
+        await printTicketNative({
+          ticket_number: ticket.ticketNumber,
+          amount: ticket.amount,
+          machine_name: ticket.machineName,
+          shop_name: ticket.shopName,
+          created_at: ticket.createdAt,
+        });
+      } catch (err) {
+        console.warn("Native printer dispatch notice:", err);
+      }
+    }
+
     return { success: true, ticket };
   },
 };

@@ -49,11 +49,15 @@ export const useMachine = (initialType?: MachineType) => {
   const previousPendingStatusRef = useRef<string | null>(null);
   const previousBalanceRef = useRef<number>(machine.balance);
 
+  const clearToast = useCallback(() => {
+    setToastMessage(null);
+  }, []);
+
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000);
+    }, 4000);
   }, []);
 
   const updateBalance = useCallback((newBalance: number) => {
@@ -198,5 +202,6 @@ export const useMachine = (initialType?: MachineType) => {
     selectMachineType,
     toastMessage,
     showToast,
+    clearToast,
   };
 };

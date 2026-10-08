@@ -3,22 +3,23 @@ import { GamingLayout } from "../../components/layout/GamingLayout";
 import { GameGrid } from "../../components/gaming/GameGrid";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
-import { HardwareSimulatorBar } from "../../components/gaming/HardwareSimulatorBar";
+import { ZeroBalanceModal } from "../../components/gaming/ZeroBalanceModal";
 import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { api } from "../../services/api";
 import type { ValidationAlertType } from "../../types";
 
 export const SmartPCLobby: React.FC = () => {
-  const { machine, updateBalance, addBalance, selectMachineType, toastMessage, showToast } =
+  const { machine, updateBalance, selectMachineType, toastMessage, showToast, clearToast } =
     useMachine("smart-pc");
 
   // Step 4 Cash Out Confirm Modal
   const [isCashoutModalOpen, setIsCashoutModalOpen] = useState(false);
+  // Zero Balance Notice Modal
+  const [isZeroBalanceModalOpen, setIsZeroBalanceModalOpen] = useState(false);
 
   // Validation / Queue Alerts (05 Pending, 06 Rejected, 06 Low Shop Balance, Approved, Chips Loaded)
   const [activeAlert, setActiveAlert] = useState<ValidationAlertType>("NONE");
   const [pendingCashoutAmount, setPendingCashoutAmount] = useState<number>(0);
-  const [loadedChipsAmount, setLoadedChipsAmount] = useState<number>(0);
 
   const syncSession = useCallback(() => {
     const machineId = api.getStoredMachineId();
@@ -80,7 +81,7 @@ export const SmartPCLobby: React.FC = () => {
   // 3. PDF Flow #7: Step 3 -> 4: Open Cash Out Confirm Modal
   const handleOpenCashout = () => {
     if (machine.balance <= 0) {
-      showToast("Session balance is N$ 0.00. No funds to cash out.");
+      setIsZeroBalanceModalOpen(true);
       return;
     }
     setIsCashoutModalOpen(true);
@@ -119,30 +120,6 @@ export const SmartPCLobby: React.FC = () => {
     updateBalance(restoredAmt);
     setActiveAlert("CASHOUT_REJECTED");
     showToast(`Cash Out rejected by cashier. N$ ${restoredAmt.toFixed(2)} restored to Smart PC.`);
-  };
-
-  // 7. PDF Flow #5 / #8: Staff Cash-In (Load chips) (POST /terminals/load-coins -> Broadcast: LOAD_SUCCESS)
-  const handleStaffLoadCoins = async (amount: number, noteMessage: string) => {
-    const machineId = api.getStoredMachineId();
-    await api.loadCoinsByStaff(machineId, amount);
-    addBalance(amount);
-    setLoadedChipsAmount(amount);
-    setActiveAlert("CHIPS_LOADED");
-    showToast(noteMessage);
-  };
-
-  const handleTriggerAlert = (type: ValidationAlertType, customAmount?: number) => {
-    const amt = customAmount !== undefined ? customAmount : (machine.balance || 250);
-    setPendingCashoutAmount(amt);
-
-    if (type === "CASHOUT_REJECTED") {
-      // Restore credits to Smart PC
-      if (machine.balance === 0) {
-        updateBalance(amt);
-      }
-    }
-
-    setActiveAlert(type);
   };
 
   const handleCloseAlert = () => {
@@ -193,6 +170,7 @@ export const SmartPCLobby: React.FC = () => {
         onPrimaryAction={handleOpenCashout}
         onToggleMachineType={selectMachineType}
         toastMessage={toastMessage}
+        onDismissToast={clearToast}
       >
         <GameGrid
           machineType="smart-pc"
@@ -205,16 +183,13 @@ export const SmartPCLobby: React.FC = () => {
         />
       </GamingLayout>
 
-      {/* Hardware & Desk Simulator Bar (Pure Web Testing of PDF Flow) */}
-      {/* 
-      <HardwareSimulatorBar
-        machineType="smart-pc"
-        balance={machine.balance}
-        onAddBalance={handleStaffLoadCoins}
-        onTriggerAlert={handleTriggerAlert}
-        onOpenCashoutFlow={handleOpenCashout}
-      /> 
-      */}
+      {/* Zero Balance Friendly Modal */}
+      <ZeroBalanceModal
+        isOpen={isZeroBalanceModalOpen}
+        onClose={() => setIsZeroBalanceModalOpen(false)}
+        shopName={machine.shopName}
+        machineName={machine.name}
+      />
 
       {/* Smart PC Step 4: Cash Out Confirmation Modal */}
       <CashOutModal
@@ -229,7 +204,7 @@ export const SmartPCLobby: React.FC = () => {
         alertType={activeAlert}
         isOpen={activeAlert !== "NONE"}
         onClose={handleCloseAlert}
-        amount={activeAlert === "CHIPS_LOADED" ? loadedChipsAmount : pendingCashoutAmount}
+        amount={pendingCashoutAmount}
         onSimulateApprove={handleCashierApprove}
         onSimulateReject={handleCashierReject}
       />

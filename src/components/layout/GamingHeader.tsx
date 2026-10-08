@@ -95,7 +95,7 @@ export const GamingHeader: React.FC<GamingHeaderProps> = ({
         {/* Right: Balance, Primary Action & Tools */}
         <div className="d-flex align-items-center gap-2 gap-sm-3">
           {/* Balance Display Chip */}
-          <BalanceDisplay balance={balance} />
+          <BalanceDisplay balance={balance} onClick={onPrimaryAction} />
 
           {/* Primary Action Button */}
           <button
@@ -135,15 +135,6 @@ export const GamingHeader: React.FC<GamingHeaderProps> = ({
           >
             <i className="fa-solid fa-expand"></i>
           </button>
-
-          {/* Exit / Return to Register */}
-          <Link
-            to="/register"
-            className="btn-icon-control text-decoration-none"
-            title="Registration Portal"
-          >
-            <i className="fa-solid fa-arrow-right-from-bracket"></i>
-          </Link>
         </div>
       </div>
     </header>

@@ -5,6 +5,8 @@ import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { BalanceDisplay } from "../../components/gaming/BalanceDisplay";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
+import { ZeroBalanceModal } from "../../components/gaming/ZeroBalanceModal";
+import { ThemeNotificationModal } from "../../components/common/ThemeNotificationModal";
 import { formatCurrency } from "../../utils/formatCurrency";
 import type { GameItem, ValidationAlertType } from "../../types";
 
@@ -12,7 +14,8 @@ export const GamePlayPage: React.FC = () => {
   const navigate = useNavigate();
   const { gameId } = useParams<{ gameId: string }>();
   const location = useLocation();
-  const { machine, updateBalance, toastMessage, showToast } = useMachine("smart-pc");
+  const { machine, updateBalance, toastMessage, showToast, clearToast } = useMachine("smart-pc");
+  const [isZeroBalanceModalOpen, setIsZeroBalanceModalOpen] = useState(false);
 
   // Game data from location state or API
   const passedGame = location.state?.game as GameItem | undefined;
@@ -198,7 +201,7 @@ export const GamePlayPage: React.FC = () => {
 
   const handleOpenCashout = () => {
     if (machine.balance <= 0) {
-      showToast("Session balance is N$ 0.00. No chips to cash out.");
+      setIsZeroBalanceModalOpen(true);
       return;
     }
     setIsCashoutModalOpen(true);
@@ -393,28 +396,10 @@ export const GamePlayPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Live Stream/Fast Bet Switch + Live Balance + Cash Out + Controls */}
+          {/* Right: Live Balance + Cash Out + Controls */}
           <div className="d-flex align-items-center gap-2 gap-sm-3">
-            {/* View Mode Switcher */}
-            <div className="btn-group btn-group-sm d-none d-md-inline-flex">
-              <button
-                type="button"
-                className={`btn btn-sm ${playMode === "stream" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                onClick={() => setPlayMode("stream")}
-              >
-                <i className="fa-solid fa-display me-1"></i> Live Stream
-              </button>
-              <button
-                type="button"
-                className={`btn btn-sm ${playMode === "arcade" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                onClick={() => setPlayMode("arcade")}
-              >
-                <i className="fa-solid fa-bolt me-1"></i> Fast Bet
-              </button>
-            </div>
-
             {/* Live Balance Display (Identical to Lobby) */}
-            <BalanceDisplay balance={machine.balance} />
+            <BalanceDisplay balance={machine.balance} onClick={handleOpenCashout} />
 
             {/* Cash Out Button (Identical to Lobby) */}
             <button
@@ -795,6 +780,14 @@ export const GamePlayPage: React.FC = () => {
         </div>
       )}
 
+      {/* Zero Balance Friendly Modal */}
+      <ZeroBalanceModal
+        isOpen={isZeroBalanceModalOpen}
+        onClose={() => setIsZeroBalanceModalOpen(false)}
+        shopName={machine.shopName}
+        machineName={machine.name}
+      />
+
       {/* Cash Out Confirmation Modal */}
       <CashOutModal
         isOpen={isCashoutModalOpen}
@@ -813,20 +806,12 @@ export const GamePlayPage: React.FC = () => {
         onSimulateReject={handleCashierReject}
       />
 
-      {/* Global Toast */}
-      {toastMessage && (
-        <div
-          className="toast-custom-pill position-fixed bottom-0 start-50 translate-middle-x mb-4 px-4 py-2 rounded-pill text-light fw-semibold shadow-lg z-3"
-          style={{
-            background: "rgba(13, 5, 29, 0.95)",
-            border: "1.5px solid rgba(245, 179, 0, 0.6)",
-            fontSize: "0.85rem",
-          }}
-        >
-          <i className="fa-solid fa-circle-info text-warning me-2"></i>
-          {toastMessage}
-        </div>
-      )}
+      {/* WinBet Theme Modal Popup (Replaces plain toast) */}
+      <ThemeNotificationModal
+        isOpen={Boolean(toastMessage)}
+        message={toastMessage || null}
+        onClose={clearToast}
+      />
     </div>
   );
 };

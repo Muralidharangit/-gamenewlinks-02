@@ -185,24 +185,6 @@ export const GameLauncherModal: React.FC<GameLauncherModalProps> = ({
           </div>
 
           <div className="d-flex align-items-center gap-2">
-            {isProviderGame && (
-              <div className="btn-group btn-group-sm me-2">
-                <button
-                  type="button"
-                  className={`btn btn-sm ${viewMode === "iframe" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                  onClick={() => setViewMode("iframe")}
-                >
-                  <i className="fa-solid fa-display me-1"></i> Live Stream
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-sm ${viewMode === "arcade" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                  onClick={() => setViewMode("arcade")}
-                >
-                  <i className="fa-solid fa-bolt me-1"></i> Fast Bet
-                </button>
-              </div>
-            )}
             <div className="px-3 py-1 rounded-pill bg-dark border border-warning-subtle text-warning fw-bold small">
               {formatCurrency(balance)}
             </div>

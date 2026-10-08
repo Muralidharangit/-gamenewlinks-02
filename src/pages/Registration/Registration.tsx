@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { MachineType, SmartPCRegisterData } from "../../types";
 import { api } from "../../services/api";
+import { ThemeNotificationModal } from "../../components/common/ThemeNotificationModal";
 
 interface RegistrationProps {
   defaultMachineType?: MachineType;
@@ -284,22 +285,12 @@ export const Registration: React.FC<RegistrationProps> = ({
           </div>
         </div>
 
-        {/* Global Toast */}
-        {toastMessage && (
-          <div
-            className="toast-custom-pill position-fixed bottom-0 start-50 translate-middle-x mb-4 px-4 py-2 rounded-pill text-light fw-semibold shadow-lg z-3"
-            style={{
-              background: "rgba(13, 5, 29, 0.95)",
-              border: "1.5px solid rgba(245, 179, 0, 0.6)",
-              boxShadow: "0 0 25px rgba(245, 179, 0, 0.4)",
-              fontSize: "0.85rem",
-              animation: "fadeInUp 0.25s ease forwards",
-            }}
-          >
-            <i className="fa-solid fa-circle-info text-warning me-2"></i>
-            {toastMessage}
-          </div>
-        )}
+        {/* WinBet Theme Modal Popup */}
+        <ThemeNotificationModal
+          isOpen={Boolean(toastMessage)}
+          message={toastMessage || null}
+          onClose={() => setToastMessage(null)}
+        />
       </div>
     </div>
   );

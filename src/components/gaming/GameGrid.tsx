@@ -53,21 +53,6 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const [totalGames, setTotalGames] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const spribeImageMap: Record<string, string> = {
-    "aviator": "1.jpg",
-    "hilo": "2.jpg",
-    "hotline": "3.jpg",
-    "goal": "4.jpg",
-    "keno": "5.jpg",
-    "mines": "6.jpg",
-    "mini roulette":"7.jpg",
-    "dice": "8.jpg",
-    "plinko": "11.jpg",
-    "balloon": "10.jpg",
-    "pilot": "12.jpg",
-    "trader": "13.jpg"
-  };
-
   // Helper mapper for live API items
   const mapApiGame = useCallback(
     (
