@@ -8,7 +8,6 @@ interface GamingLayoutProps {
   machineType: MachineType;
   machineName: string;
   shopName: string;
-  shopLocation?: string;
   balance: number;
   actionText: string;
   onPrimaryAction: () => void;
@@ -23,7 +22,6 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   machineType,
   machineName,
   shopName,
-  shopLocation,
   balance,
   actionText,
   onPrimaryAction,

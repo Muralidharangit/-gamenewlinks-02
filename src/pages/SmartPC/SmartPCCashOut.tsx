@@ -41,6 +41,8 @@ export const SmartPCCashOut: React.FC = () => {
       >
         <GameGrid
           machineType="smart-pc"
+          machineName={machine.name || "Smart PC-03"}
+          shopName={machine.shopName}
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}

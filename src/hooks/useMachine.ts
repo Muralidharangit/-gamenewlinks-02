@@ -128,6 +128,15 @@ export const useMachine = (initialType?: MachineType) => {
         } else if (prevStatus === "PENDING" && currentStatus === "REJECTED") {
           broadcastCashoutStatusChange("REJECTED", session.pending_cash_out?.requested_amount || 0);
           showToast(`Cashier rejected cash out. Credits restored to machine.`);
+        } else if (prevStatus === "PENDING" && currentStatus === "NONE") {
+          // Handle implicit action from admin panel if they delete the pending_cash_out
+          if (session.current_balance > 0) {
+            broadcastCashoutStatusChange("REJECTED", session.current_balance);
+            showToast(`Cashier rejected cash out. Credits restored to machine.`);
+          } else {
+            broadcastCashoutStatusChange("APPROVED", 0);
+            showToast(`Cashier approved your cash out!`);
+          }
         }
 
         previousPendingStatusRef.current = currentStatus;
