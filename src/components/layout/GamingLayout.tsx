@@ -8,7 +8,6 @@ interface GamingLayoutProps {
   machineType: MachineType;
   machineName: string;
   shopName: string;
-  shopLocation?: string;
   balance: number;
   actionText: string;
   onPrimaryAction: () => void;
@@ -23,7 +22,6 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   machineType,
   machineName,
   shopName,
-  shopLocation,
   balance,
   actionText,
   onPrimaryAction,
@@ -38,7 +36,10 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
 
   return (
-    <div className="game-lobby-body d-flex flex-column min-vh-100">
+    <div 
+      className="game-lobby-body d-flex flex-column min-vh-100"
+      style={balance === 0 ? { height: "100vh", overflow: "hidden" } : {}}
+    >
       {/* Header */}
       <GamingHeader
         machineType={machineType}
@@ -65,7 +66,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
       <footer className="smart-pc-dock">
         <div className="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-3">
           {/* Bottom Left: Shop Location */}
-          <ShopLocation shopName={shopName} location={shopLocation} />
+          <ShopLocation shopName={shopName}/>
 
           {/* Middle: Quick Bet Presets */}
           {/* <div className="d-none d-lg-flex align-items-center gap-2">

@@ -1,6 +1,14 @@
 import React from "react";
 
-export const SmartPCHelpBar: React.FC = () => {
+interface SmartPCHelpBarProps {
+  machineName?: string;
+  shopName?: string;
+}
+
+export const SmartPCHelpBar: React.FC<SmartPCHelpBarProps> = ({ 
+  machineName = "Smart PC",
+  shopName = "Central Shop"
+}) => {
   return (
     <section className="smart-pc-help-banner mb-4 p-4 rounded-4">
       <div className="row align-items-center g-4">
@@ -14,7 +22,7 @@ export const SmartPCHelpBar: React.FC = () => {
                 Need Help or Cash Balance Top-Up?
               </h4>
               <p className="text-secondary small mb-0" style={{ lineHeight: "1.4" }}>
-                Approach the Windhoek Central Shop Cashier Counter with your Smart PC Station Number (<strong className="text-warning">Smart PC-03</strong>) for instant deposit, session top-up, or cashout assistance.
+                Approach the {shopName} Cashier Counter with your Smart PC Station Number (<strong className="text-warning">{machineName}</strong>) for instant deposit, session top-up, or cashout assistance.
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
-import { useMachine } from "../../hooks/useMachine";
+import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { BalanceDisplay } from "../../components/gaming/BalanceDisplay";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
@@ -104,7 +104,7 @@ export const GamePlayPage: React.FC = () => {
         }
         if (session?.pending_cash_out?.requested_amount) {
           setPendingCashoutAmount(session.pending_cash_out.requested_amount);
-          setActiveAlert("CASHOUT_PENDING");
+          // Intentionally omitting setActiveAlert("CASHOUT_PENDING") here
         }
       })
       .catch(() => {});
@@ -239,6 +239,22 @@ export const GamePlayPage: React.FC = () => {
       window.open(gameUrl, "_blank", "width=1200,height=800,menubar=no,toolbar=no,location=no,status=no");
     }
   };
+
+  useEffect(() => {
+    const handleCashoutStatus = (e: Event) => {
+      const customEvt = e as CustomEvent<{ status: string; amount: number }>;
+      if (customEvt.detail.status === "REJECTED") {
+        setPendingCashoutAmount(customEvt.detail.amount);
+        setActiveAlert("CASHOUT_REJECTED");
+      } else if (customEvt.detail.status === "APPROVED") {
+        setActiveAlert("CASHOUT_APPROVED");
+      }
+    };
+    window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+    return () => {
+      window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+    };
+  }, []);
 
   const toggleSound = () => {
     setSoundEnabled((prev) => !prev);

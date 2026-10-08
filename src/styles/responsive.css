@@ -2,18 +2,6 @@
    WINBET RESPONSIVE STYLES
    ========================================================================== */
 
-@media (max-width: 1400px) {
-  .games-grid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-}
-
-@media (max-width: 1200px) {
-  .games-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-
 @media (max-width: 991px) {
   .custom-navbar, .smart-pc-header {
     padding: 8px 16px;
@@ -44,10 +32,6 @@
     min-width: 0;
   }
 
-  .games-grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
-  }
 }
 
 @media (max-width: 576px) {

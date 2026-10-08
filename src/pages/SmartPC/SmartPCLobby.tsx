@@ -4,7 +4,7 @@ import { GameGrid } from "../../components/gaming/GameGrid";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
 import { HardwareSimulatorBar } from "../../components/gaming/HardwareSimulatorBar";
-import { useMachine } from "../../hooks/useMachine";
+import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { api } from "../../services/api";
 import type { ValidationAlertType } from "../../types";
 
@@ -33,7 +33,8 @@ export const SmartPCLobby: React.FC = () => {
           }
           if (session.pending_cash_out && session.pending_cash_out.requested_amount) {
             setPendingCashoutAmount(session.pending_cash_out.requested_amount);
-            setActiveAlert("CASHOUT_PENDING");
+            // We intentionally do NOT set activeAlert("CASHOUT_PENDING") here 
+            // so the popup only shows right after they click confirm, not on every page reload.
           }
         }
       })
@@ -148,6 +149,38 @@ export const SmartPCLobby: React.FC = () => {
     setActiveAlert("NONE");
   };
 
+  // Freeze scrolling when balance is zero
+  useEffect(() => {
+    if (machine.balance === 0) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [machine.balance]);
+
+  // Listen to remote cashout events from admin
+  useEffect(() => {
+    const handleCashoutStatus = (e: Event) => {
+      const customEvt = e as CustomEvent<{ status: string; amount: number }>;
+      if (customEvt.detail.status === "REJECTED") {
+        setPendingCashoutAmount(customEvt.detail.amount);
+        setActiveAlert("CASHOUT_REJECTED");
+      } else if (customEvt.detail.status === "APPROVED") {
+        setActiveAlert("CASHOUT_APPROVED");
+      }
+    };
+    window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+    return () => {
+      window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+    };
+  }, []);
+
   return (
     <>
       <GamingLayout
@@ -163,6 +196,8 @@ export const SmartPCLobby: React.FC = () => {
       >
         <GameGrid
           machineType="smart-pc"
+          machineName={machine.name || "Smart PC-03"}
+          shopName={machine.shopName}
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}
@@ -171,13 +206,15 @@ export const SmartPCLobby: React.FC = () => {
       </GamingLayout>
 
       {/* Hardware & Desk Simulator Bar (Pure Web Testing of PDF Flow) */}
+      {/* 
       <HardwareSimulatorBar
         machineType="smart-pc"
         balance={machine.balance}
         onAddBalance={handleStaffLoadCoins}
         onTriggerAlert={handleTriggerAlert}
         onOpenCashoutFlow={handleOpenCashout}
-      />
+      /> 
+      */}
 
       {/* Smart PC Step 4: Cash Out Confirmation Modal */}
       <CashOutModal

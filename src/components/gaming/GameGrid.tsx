@@ -16,6 +16,8 @@ import { SmartPCHelpBar } from "./SmartPCHelpBar";
 interface GameGridProps {
   balance: number;
   machineType?: MachineType;
+  machineName?: string;
+  shopName?: string;
   onBalanceChange?: (newBalance: number) => void;
   showToast?: (message: string) => void;
   onOpenCashout?: () => void;
@@ -25,22 +27,21 @@ const DEFAULT_CATEGORIES = [
   { id: "all", label: "All Games", icon: "fa-solid fa-table-cells-large" },
   { id: "spribe", label: "Spribe Live", icon: "fa-solid fa-plane-departure text-warning", isHot: true },
   { id: "endorphina", label: "Endorphina", icon: "fa-solid fa-gem text-info" },
-  { id: "kagaming", label: "KA Gaming", icon: "fa-solid fa-crown text-warning" },
-  { id: "evoplay", label: "Evoplay", icon: "fa-solid fa-fire text-danger" },
   { id: "slots", label: "Slots", icon: "fa-solid fa-clover text-success" },
-  { id: "instant", label: "Crash & Instant", icon: "fa-solid fa-bolt text-warning" },
-  { id: "table", label: "Table Games", icon: "fa-solid fa-dice text-light" },
 ];
 
 export const GameGrid: React.FC<GameGridProps> = ({
   balance: _balance,
   machineType = "smart-pc",
+  machineName,
+  shopName,
   onBalanceChange: _onBalanceChange,
   showToast,
   onOpenCashout,
 }) => {
   const navigate = useNavigate();
   const isTerminal = machineType === "terminal";
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [catalogGames, setCatalogGames] = useState<GameItem[]>([]);
@@ -101,13 +102,24 @@ export const GameGrid: React.FC<GameGridProps> = ({
         ? { text: item.payout_label, type: "hot" }
         : { text: "LIVE", type: "live" },
       image: (() => {
+        if (item.image && item.image.trim() !== "") return item.image;
+        if (item.provider_image && item.provider_image.trim() !== "") return item.provider_image;
+
         const n = item.name.toLowerCase();
-        if (item.provider?.toLowerCase().includes("spribe") || item.category?.toLowerCase().includes("spribe") || n.includes("spribe")) {
-          for (const [key, val] of Object.entries(spribeImageMap)) {
-            if (n.includes(key)) return `/assets/images/spribe/${val}`;
-          }
-        }
-        return item.image || item.provider_image || "/assets/games/SPRIBE/AVIATOR.png";
+        
+        // Intelligent keyword fallback mapping for dummy games or games missing images
+        if (n.includes("dice") || n.includes("odd") || n.includes("even")) return "/assets/games/SPRIBE/DICE.png";
+        if (n.includes("hi-lo") || n.includes("hilo") || n.includes("hi lo") || n.includes("card")) return "/assets/games/SPRIBE/HILO.png";
+        if (n.includes("roulette")) return "/assets/games/SPRIBE/MINIROULETTE.png";
+        if (n.includes("goal") || n.includes("kick") || n.includes("soccer") || n.includes("football")) return "/assets/games/SPRIBE/SOCCER.png";
+        if (n.includes("wheel") || n.includes("spin")) return "/assets/games/SPRIBE/HOTLINE.png";
+        if (n.includes("plinko")) return "/assets/games/SPRIBE/PLINKO.png";
+        if (n.includes("mine") || n.includes("bomb")) return "/assets/games/SPRIBE/MINES.png";
+        if (n.includes("keno")) return "/assets/games/SPRIBE/KENO.png";
+        if (n.includes("balloon")) return "/assets/games/SPRIBE/BALLON.png";
+        if (n.includes("trade") || n.includes("crash")) return "/assets/games/SPRIBE/TRADER.png";
+
+        return "/assets/games/SPRIBE/AVIATOR.png";
       })(),
       actionText: "PLAY NOW",
       kind: item.kind || "provider",
@@ -119,16 +131,11 @@ export const GameGrid: React.FC<GameGridProps> = ({
   );
 
   const getProviderQuery = useCallback(() => {
-    return selectedFilter === "spribe"
-      ? "Spribe"
-      : selectedFilter === "endorphina"
-      ? "Endorphina"
-      : selectedFilter === "kagaming"
-      ? "KAGaming"
-      : selectedFilter === "evoplay"
-      ? "Evoplay"
-      : undefined;
-  }, [selectedFilter]);
+    if (selectedFilter === "all") return undefined;
+    if (selectedFilter === "slots") return "Slots"; // Fallback for slots if kept
+    const cat = categories.find((c) => c.id === selectedFilter);
+    return cat ? cat.label : undefined;
+  }, [selectedFilter, categories]);
 
   // Fast querySelector smooth scroll & filter changer
   const scrollToCatalog = useCallback((category = "all") => {
@@ -140,9 +147,26 @@ export const GameGrid: React.FC<GameGridProps> = ({
     }
   }, []);
 
-      // Fetch Spribe games and popular games once on mount (independent of filters)
+  // Fetch Spribe games and popular games once on mount (independent of filters)
   useEffect(() => {
     let isMounted = true;
+
+    // Fetch Providers for Categories
+    api.getProviders().then((res) => {
+      if (isMounted && res && res.length > 0) {
+        const dynamicCats = res.map((p) => {
+          const lowerName = p.provider.toLowerCase();
+          const isSpribe = lowerName.includes("spribe");
+          return {
+            id: lowerName.replace(/\s+/g, "_"),
+            label: p.provider,
+            icon: isSpribe ? "fa-solid fa-plane-departure text-warning" : "fa-solid fa-gamepad text-info",
+            isHot: isSpribe
+          };
+        });
+        setCategories([{ id: "all", label: "All Games", icon: "fa-solid fa-table-cells-large" }, ...dynamicCats]);
+      }
+    }).catch(err => console.warn("Failed to load providers:", err));
     
     // Fetch Popular
     api
@@ -366,7 +390,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
         {/* Category Navigation Bar & Search */}
         <div className="category-nav-bar">
           <div className="category-scroll-container" id="categoryTabs">
-            {DEFAULT_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <div
                 key={cat.id}
                 className={`cat-pill ${selectedFilter === cat.id ? "active" : ""}`}
@@ -683,7 +707,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
           />
 
           {/* SECTION 7: SMART PC HELP & FAIR PLAY ASSURANCE */}
-          <SmartPCHelpBar />
+          <SmartPCHelpBar machineName={machineName} shopName={shopName} />
         </>
       )}
 
