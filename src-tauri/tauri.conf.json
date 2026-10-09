@@ -29,9 +29,9 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["deb", "appimage"],
+    "targets": ["deb", "appimage", "nsis", "msi"],
     "shortDescription": "WinBet Smart PC Gaming Terminal",
-    "longDescription": "WinBet Smart PC Dedicated Gaming Terminal and Kiosk Application for Linux",
+    "longDescription": "WinBet Smart PC Dedicated Gaming Terminal and Kiosk Application",
     "category": "Game",
     "icon": [
       "icons/32x32.png",
@@ -47,6 +47,11 @@
           "libgtk-3-0",
           "libsoup-3.0-0 | libsoup2.4-1"
         ]
+      }
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "both"
       }
     }
   }
