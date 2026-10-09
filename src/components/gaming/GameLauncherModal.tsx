@@ -176,7 +176,7 @@ export const GameLauncherModal: React.FC<GameLauncherModalProps> = ({
             </h3>
             <div className="d-flex align-items-center gap-2">
               <span className="badge" style={{ fontSize: "0.68rem", background: "rgba(147, 51, 234, 0.3)", border: "1px solid #9333ea", color: "#ddd6fe" }}>
-                <i className="fa-solid fa-gamepad me-1"></i> {game.provider || "WINBET"}
+                <i className="fa-solid fa-gamepad me-1"></i> {game.provider || "BETWISE"}
               </span>
               <span className="badge" style={{ fontSize: "0.68rem", background: "rgba(16, 185, 129, 0.15)", border: "1px solid #10b981", color: "#6ee7b7" }}>
                 <i className="fa-solid fa-circle text-success me-1" style={{ fontSize: "0.45rem" }}></i> LIVE SESSION

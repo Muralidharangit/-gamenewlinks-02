@@ -56,6 +56,7 @@ export const SmartPCCashOut: React.FC = () => {
           balance={machine.balance}
           onBalanceChange={updateBalance}
           showToast={showToast}
+          onZeroBalance={() => setIsZeroBalanceOpen(true)}
         />
       </GamingLayout>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal } from "../common/Modal";
 import { Button } from "../common/Button";
 import type { ValidationAlertType } from "../../types";
@@ -23,10 +23,24 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
   onSimulateReject: _onSimulateReject,
   onRetry,
 }) => {
+  useEffect(() => {
+    if (isOpen && alertType === "CASHOUT_APPROVED") {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, alertType, onClose]);
+
   if (!isOpen || alertType === "NONE") return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="420px">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="420px"
+      showCloseButton={alertType !== "CASHOUT_PENDING"}
+    >
       <div className="modal-body p-4 text-center">
         {/* =========================================================================
             SCREEN 06 (Terminal & Smart PC): Shop Balance Too Low
@@ -436,11 +450,7 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
             ========================================================================= */}
         {alertType === "CASHOUT_PENDING" && (
           <div>
-            <div className="step-pill-box justify-content-center mb-3">
-              <span className="pill-text fw-bold text-warning">
-                <i className="fa-solid fa-clock me-1"></i> Pending Desk Queue
-              </span>
-            </div>
+            
 
             {/* Glowing Amber Pulse Circle with micro-animation */}
             <div className="neon-alert-circle-wrap mb-3">
@@ -482,30 +492,14 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               <div className="fs-1 fw-bold text-warning" style={{ textShadow: "0 0 20px rgba(245, 179, 0, 0.6)" }}>
                 {formatCurrency(amount)}
               </div>
-              <div
-                className="badge mt-2 px-3 py-1 rounded-pill"
-                style={{
-                  background: "rgba(0, 0, 0, 0.5)",
-                  border: "1px solid rgba(245, 179, 0, 0.3)",
-                  color: "#fde68a",
-                  fontSize: "0.74rem",
-                }}
-              >
-                <i className="fa-solid fa-circle-notch fa-spin me-1 text-warning"></i> Machine Credits: N$ 0.00
-              </div>
+             
             </div>
 
-            <p className="text-light small mb-4" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
+            <p className="text-light small mb-2" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
               Waiting for cashier at the desk to approve and pay cash.
               <br />
               <span className="text-warning-subtle fw-semibold">Please proceed to the cashier counter.</span>
             </p>
-
-            <div className="d-flex flex-column gap-2 mt-2">
-              <Button variant="cancel" onClick={onClose} icon="fa-solid fa-xmark">
-                Close Window
-              </Button>
-            </div>
           </div>
         )}
 
@@ -606,7 +600,15 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
                   fontSize: "2.5rem",
                 }}
               >
-                <i className="fa-solid fa-check"></i>
+                <i
+                  className="fa-solid fa-check"
+                  style={{
+                    color: "#ffffff",
+                    WebkitTextFillColor: "#ffffff",
+                    background: "none",
+                    filter: "drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5))",
+                  }}
+                ></i>
               </div>
             </div>
 
@@ -625,7 +627,7 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               <div className="text-secondary small fw-semibold text-uppercase mb-1" style={{ letterSpacing: "0.5px" }}>
                 Paid in Cash
               </div>
-              <div className="fs-1 fw-bold text-success" style={{ textShadow: "0 0 20px rgba(16, 185, 129, 0.6)" }}>
+              <div className="fs-1 fw-bold text-white" style={{ textShadow: "0 0 20px rgba(255, 255, 255, 0.5)" }}>
                 {formatCurrency(amount)}
               </div>
             </div>

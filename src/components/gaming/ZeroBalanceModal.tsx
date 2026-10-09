@@ -12,8 +12,8 @@ interface ZeroBalanceModalProps {
 export const ZeroBalanceModal: React.FC<ZeroBalanceModalProps> = ({
   isOpen,
   onClose,
-  shopName = "WinBet Central",
-  machineName = "Smart PC",
+  shopName: _shopName,
+  machineName: _machineName = "Smart PC",
 }) => {
   if (!isOpen) return null;
 
@@ -75,15 +75,14 @@ export const ZeroBalanceModal: React.FC<ZeroBalanceModalProps> = ({
               <div>
                 <span>Please visit the </span>
                 <strong className="text-warning">Cashier Desk</strong>
-                <span> at {shopName} to load coins or chips into station </span>
-                <span className="badge bg-dark border border-warning text-warning px-1">{machineName}</span>.
+                <span> to load coins </span>
               </div>
             </div>
           </div>
         </div>
 
         <p className="text-dim small mb-3" style={{ fontSize: "0.78rem" }}>
-          Once coins are loaded by the shop cashier, your balance will update instantly.
+          Once coins are loaded by the cashier, your balance will update instantly.
         </p>
 
         {/* Action Button */}

@@ -208,7 +208,7 @@ export const Registration: React.FC<RegistrationProps> = ({
                         </div>
                       </div>
 
-                      <h2 className="success-banner-text">Station Registered!</h2>
+                      <h2 className="success-banner-text">Machine Registered!</h2>
                       <p className="text-secondary small mb-3" style={{ fontSize: "0.82rem" }}>
                         Assigned live from Betting Shop server
                       </p>
@@ -216,7 +216,7 @@ export const Registration: React.FC<RegistrationProps> = ({
                       {/* Live Registration Summary */}
                       <div className="receipt-list mb-3">
                         <div className="receipt-row">
-                          <span className="receipt-label">Station Name:</span>
+                          <span className="receipt-label">Machine Name:</span>
                           <span className="receipt-value text-warning fw-bold" id="successPcName">
                             {registeredData?.pc_name || registeredData?.terminal_name || registeredData?.machine_id}
                           </span>
@@ -232,16 +232,8 @@ export const Registration: React.FC<RegistrationProps> = ({
                           <span className="receipt-value text-warning-subtle fw-semibold">{registeredData?.shop_name}</span>
                         </div>
                         <div className="receipt-row">
-                          <span className="receipt-label">Player ID:</span>
-                          <span className="receipt-value text-info font-monospace">{registeredData?.player_id}</span>
-                        </div>
-                        <div className="receipt-row">
                           <span className="receipt-label">Status:</span>
                           <span className="badge bg-success text-dark px-2 py-1">{registeredData?.status || "ONLINE"}</span>
-                        </div>
-                        <div className="receipt-row">
-                          <span className="receipt-label">Live Balance:</span>
-                          <span className="receipt-value text-warning fw-bold">N$ {(registeredData?.current_balance || 0).toFixed(2)}</span>
                         </div>
                         <div className="receipt-row">
                           <span className="receipt-label">Portal:</span>
@@ -268,17 +260,6 @@ export const Registration: React.FC<RegistrationProps> = ({
                       </div>
                     </div>
                   )}
-                </div>
-
-                {/* Brand Footer */}
-                <div className="card-footer-brand mt-3">
-                  <div className="brand-badge">
-                    <i className="fa-solid fa-scale-balanced"></i>
-                  </div>
-                  <div className="brand-text-block">
-                    <span className="brand-title">WinBet Station</span>
-                    <span className="brand-sub">Live Backend Integration • Real-Time Cash Balance</span>
-                  </div>
                 </div>
               </div>
             </div>

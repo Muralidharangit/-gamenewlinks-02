@@ -254,10 +254,37 @@ export const GamePlayPage: React.FC = () => {
       }
     };
     window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
+    if (activeAlert === "CASHOUT_PENDING") {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await api.getCashoutStatus();
+          if (res) {
+            const latestStatus = res.latest?.status?.toUpperCase();
+            const pendingStatus = res.pending?.status?.toUpperCase();
+
+            if (latestStatus === "APPROVED" && (!res.pending || pendingStatus === "APPROVED")) {
+              setActiveAlert("CASHOUT_APPROVED");
+              showToast(`Cashier approved payout of N$ ${(res.latest?.requested_amount || pendingCashoutAmount).toFixed(2)}!`);
+            } else if (latestStatus === "REJECTED" && (!res.pending || pendingStatus === "REJECTED")) {
+              const restored = res.latest?.requested_amount || pendingCashoutAmount;
+              updateBalance(restored);
+              setActiveAlert("CASHOUT_REJECTED");
+              showToast(`Cash out declined. N$ ${restored.toFixed(2)} restored.`);
+            }
+          }
+        } catch {
+          // ignore network poll errors
+        }
+      }, 2000);
+    }
+
     return () => {
       window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+      if (pollInterval) clearInterval(pollInterval);
     };
-  }, []);
+  }, [activeAlert, pendingCashoutAmount, showToast, updateBalance]);
 
   const toggleSound = () => {
     setSoundEnabled((prev) => !prev);
@@ -358,11 +385,11 @@ export const GamePlayPage: React.FC = () => {
             <Link
               to="/smart-pc"
               className="d-flex align-items-center gap-2 text-decoration-none me-1"
-              title="WINBET Station"
+              title="Betwise Station"
             >
               <span className="brand-name">
-                <span style={{ color: "#f5b300" }}>WIN</span>
-                <span style={{ color: "#ffffff" }}>BET</span>
+                <span style={{ color: "#f5b300" }}>BET</span>
+                <span style={{ color: "#ffffff" }}>WISE</span>
               </span>
             </Link>
 
@@ -470,7 +497,7 @@ export const GamePlayPage: React.FC = () => {
             ) : gameUrl && gameUrl.startsWith("http") && !gameUrl.includes("/smart-pc") && !gameUrl.includes(window.location.host) && !gameUrl.includes("staging.game-server.winbet.com") ? (
               <iframe
                 src={gameUrl}
-                title={game?.title || "WINBET Game Stream"}
+                title={game?.title || "Betwise Game Stream"}
                 className="w-100 flex-grow-1 border-0"
                 style={{ height: "calc(100vh - 75px)", minHeight: "560px", background: "#05010e" }}
                 allow="autoplay; fullscreen; clipboard-write"

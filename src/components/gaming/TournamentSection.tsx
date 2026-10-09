@@ -36,7 +36,7 @@ export const TournamentSection: React.FC<TournamentSectionProps> = ({ onJoinTour
     <section className="tournament-arena-section mb-5">
       <div className="section-header-bar">
         <h2 className="section-header-title">
-          <i className="fa-solid fa-trophy text-warning"></i> Winbet Daily Tournaments & Arenas
+          <i className="fa-solid fa-trophy text-warning"></i> Betwise Daily Tournaments & Arenas
         </h2>
         <div className="d-flex align-items-center gap-2">
           <span className="badge bg-danger-subtle text-danger border border-danger fw-bold px-3 py-1 rounded-pill" style={{ fontSize: "0.75rem" }}>

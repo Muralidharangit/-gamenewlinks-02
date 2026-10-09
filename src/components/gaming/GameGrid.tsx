@@ -21,28 +21,47 @@ interface GameGridProps {
   onBalanceChange?: (newBalance: number) => void;
   showToast?: (message: string) => void;
   onOpenCashout?: () => void;
+  onZeroBalance?: () => void;
 }
 
-const DEFAULT_CATEGORIES = [
-  { id: "all", label: "All Games", icon: "fa-solid fa-table-cells-large" },
-  { id: "spribe", label: "Spribe Live", icon: "fa-solid fa-plane-departure text-warning", isHot: true },
-  { id: "endorphina", label: "Endorphina", icon: "fa-solid fa-gem text-info" },
-  { id: "slots", label: "Slots", icon: "fa-solid fa-clover text-success" },
+interface CategoryTabItem {
+  id: "all" | "spribe" | "provider";
+  label: string;
+  icon: string;
+  isHot?: boolean;
+}
+
+const CATEGORY_TABS: CategoryTabItem[] = [
+  { id: "all", label: "ALL GAMES", icon: "fa-solid fa-layer-group" },
+  { id: "spribe", label: "SPRIBE", icon: "fa-solid fa-gamepad", isHot: true },
+  { id: "provider", label: "PROVIDER", icon: "fa-solid fa-network-wired" },
 ];
 
+const getProviderIcon = (providerName: string): string => {
+  const n = providerName.toLowerCase();
+  if (n.includes("sport") || n.includes("turbo") || n.includes("book")) return "fa-solid fa-futbol";
+  if (n.includes("spribe")) return "fa-solid fa-gamepad";
+  if (n.includes("evolution") || n.includes("live")) return "fa-solid fa-tower-broadcast";
+  if (n.includes("ruby") || n.includes("gem")) return "fa-solid fa-gem";
+  if (n.includes("barbara") || n.includes("wazdan") || n.includes("popi") || n.includes("avatar")) return "fa-solid fa-gamepad";
+  return "fa-solid fa-gamepad";
+};
+
 export const GameGrid: React.FC<GameGridProps> = ({
-  balance: _balance,
+  balance,
   machineType = "smart-pc",
   machineName,
   shopName,
   onBalanceChange: _onBalanceChange,
   showToast,
   onOpenCashout,
+  onZeroBalance,
 }) => {
   const navigate = useNavigate();
   const isTerminal = machineType === "terminal";
-  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "spribe" | "provider">("all");
+  const [availableProviders, setAvailableProviders] = useState<string[]>([]);
+  const [selectedSubProvider, setSelectedSubProvider] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [catalogGames, setCatalogGames] = useState<GameItem[]>([]);
   const [popularGames, setPopularGames] = useState<GameItem[]>([]);
@@ -87,24 +106,39 @@ export const GameGrid: React.FC<GameGridProps> = ({
         ? { text: item.payout_label, type: "hot" }
         : { text: "LIVE", type: "live" },
       image: (() => {
-        if (item.image && item.image.trim() !== "") return item.image;
-        if (item.provider_image && item.provider_image.trim() !== "") return item.provider_image;
-
         const n = item.name.toLowerCase();
-        
-        // Intelligent keyword fallback mapping for dummy games or games missing images
-        if (n.includes("dice") || n.includes("odd") || n.includes("even")) return "/assets/games/SPRIBE/DICE.png";
-        if (n.includes("hi-lo") || n.includes("hilo") || n.includes("hi lo") || n.includes("card")) return "/assets/games/SPRIBE/HILO.png";
-        if (n.includes("roulette")) return "/assets/games/SPRIBE/MINIROULETTE.png";
-        if (n.includes("goal") || n.includes("kick") || n.includes("soccer") || n.includes("football")) return "/assets/games/SPRIBE/SOCCER.png";
-        if (n.includes("wheel") || n.includes("spin")) return "/assets/games/SPRIBE/HOTLINE.png";
-        if (n.includes("plinko")) return "/assets/games/SPRIBE/PLINKO.png";
-        if (n.includes("mine") || n.includes("bomb")) return "/assets/games/SPRIBE/MINES.png";
-        if (n.includes("keno")) return "/assets/games/SPRIBE/KENO.png";
-        if (n.includes("balloon")) return "/assets/games/SPRIBE/BALLON.png";
-        if (n.includes("trade") || n.includes("crash")) return "/assets/games/SPRIBE/TRADER.png";
+        const prov = (item.provider || "").toLowerCase();
 
-        return "/assets/games/SPRIBE/AVIATOR.png";
+        // Spribe provider or specific Spribe game names
+        if (prov.includes("spribe") || item.category === "spribe") {
+          if (n.includes("pilot")) return "/assets/games/SPRIBE/PILOT.png";
+          if (n.includes("balloon") || n.includes("ballon")) return "/assets/games/SPRIBE/BALLON.png";
+          if (n.includes("dice") || n.includes("odd") || n.includes("even")) return "/assets/games/SPRIBE/DICE.png";
+          if (n.includes("hi-lo") || n.includes("hilo") || n.includes("hi lo") || n.includes("card")) return "/assets/games/SPRIBE/HILO.png";
+          if (n.includes("hotline")) return "/assets/games/SPRIBE/HOTLINE.png";
+          if (n.includes("keno80") || n.includes("keno 80") || (n.includes("keno") && n.includes("80"))) return "/assets/games/SPRIBE/KENO80.png";
+          if (n.includes("keno")) return "/assets/games/SPRIBE/KENO.png";
+          if (n.includes("mines") || n.includes("mine") || n.includes("bomb")) return "/assets/games/SPRIBE/MINES.png";
+          if (n.includes("miniroulette") || n.includes("mini-roulette") || n.includes("roulette")) return "/assets/games/SPRIBE/MINIROULETTE.png";
+          if (n.includes("plinko")) return "/assets/games/SPRIBE/PLINKO.png";
+          if (n.includes("soccer") || n.includes("goal") || n.includes("kick") || n.includes("football")) return "/assets/games/SPRIBE/SOCCER.png";
+          if (n.includes("trader") || n.includes("trade") || n.includes("chart")) return "/assets/games/SPRIBE/TRADER.png";
+          return "/assets/games/SPRIBE/AVIATOR.png";
+        }
+
+        // If provider returned a live image URL, use it as primary
+        if (item.image && item.image.trim() !== "") return item.image.trim();
+        if (item.provider_image && item.provider_image.trim() !== "") return item.provider_image.trim();
+
+        // Exact Spribe flagship game names fallback
+        if (n === "aviator") return "/assets/games/SPRIBE/AVIATOR.png";
+        if (n === "plinko") return "/assets/games/SPRIBE/PLINKO.png";
+        if (n === "mines") return "/assets/games/SPRIBE/MINES.png";
+        if (n === "dice") return "/assets/games/SPRIBE/DICE.png";
+        if (n === "balloon" || n === "ballon") return "/assets/games/SPRIBE/BALLON.png";
+
+        // General default local placeholder
+        return "/assets/games/placeholder.png";
       })(),
       actionText: "PLAY NOW",
       kind: item.kind || "provider",
@@ -117,14 +151,20 @@ export const GameGrid: React.FC<GameGridProps> = ({
 
   const getProviderQuery = useCallback(() => {
     if (selectedFilter === "all") return undefined;
-    if (selectedFilter === "slots") return "Slots"; // Fallback for slots if kept
-    const cat = categories.find((c) => c.id === selectedFilter);
-    return cat ? cat.label : undefined;
-  }, [selectedFilter, categories]);
+    if (selectedFilter === "spribe") return "Spribe";
+    if (selectedFilter === "provider") {
+      if (selectedSubProvider && selectedSubProvider !== "all") {
+        return selectedSubProvider;
+      }
+      return undefined;
+    }
+    return undefined;
+  }, [selectedFilter, selectedSubProvider]);
 
   // Fast querySelector smooth scroll & filter changer
-  const scrollToCatalog = useCallback((category = "all") => {
-    setSelectedFilter(category);
+  const scrollToCatalog = useCallback((filter: "all" | "spribe" | "provider" = "all") => {
+    setSelectedFilter(filter);
+    setSelectedSubProvider("all");
     setSearchQuery("");
     const catalogElement = document.querySelector("#categorySection");
     if (catalogElement) {
@@ -132,24 +172,21 @@ export const GameGrid: React.FC<GameGridProps> = ({
     }
   }, []);
 
-  // Fetch Spribe games and popular games once on mount (independent of filters)
+  // Fetch Providers list, Spribe games and popular games on mount
   useEffect(() => {
     let isMounted = true;
 
-    // Fetch Providers for Categories
+    // Fetch Providers from Backend
     api.getProviders().then((res) => {
       if (isMounted && res && res.length > 0) {
-        const dynamicCats = res.map((p) => {
-          const lowerName = p.provider.toLowerCase();
-          const isSpribe = lowerName.includes("spribe");
-          return {
-            id: lowerName.replace(/\s+/g, "_"),
-            label: p.provider,
-            icon: isSpribe ? "fa-solid fa-plane-departure text-warning" : "fa-solid fa-gamepad text-info",
-            isHot: isSpribe
-          };
-        });
-        setCategories([{ id: "all", label: "All Games", icon: "fa-solid fa-table-cells-large" }, ...dynamicCats]);
+        const uniqueNames = Array.from(
+          new Set(
+            res
+              .map((p) => p.provider.trim())
+              .filter((p) => p && !p.toLowerCase().includes("spribe"))
+          )
+        );
+        setAvailableProviders(uniqueNames);
       }
     }).catch(err => console.warn("Failed to load providers:", err));
     
@@ -223,7 +260,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [selectedFilter, mapApiGame, getProviderQuery]);
+  }, [selectedFilter, selectedSubProvider, mapApiGame, getProviderQuery]);
 
   // Load Next Page of Games ("View More Games")
   const handleLoadMore = async () => {
@@ -283,16 +320,33 @@ export const GameGrid: React.FC<GameGridProps> = ({
         return false;
       }
 
-      const filterLower = selectedFilter.toLowerCase();
-      const matchesFilter =
-        filterLower === "all" ||
-        game.category.includes(filterLower) ||
-        (game.provider && game.provider.toLowerCase().includes(filterLower)) ||
-        game.categories?.some((c) => c.includes(filterLower)) ||
-        (filterLower === "instant" &&
-          (game.category.includes("instant") ||
-            game.category.includes("crash") ||
-            game.provider?.toLowerCase() === "spribe"));
+      if (selectedFilter === "spribe") {
+        const provClean = (game.provider || "").toLowerCase();
+        const catClean = (game.category || "").toLowerCase();
+        const nameClean = (game.name || "").toLowerCase();
+        const isSpribe =
+          provClean.includes("spribe") ||
+          catClean.includes("spribe") ||
+          nameClean.includes("aviator") ||
+          nameClean.includes("balloon") ||
+          nameClean.includes("plinko") ||
+          nameClean.includes("mines") ||
+          nameClean.includes("dice") ||
+          nameClean.includes("hilo") ||
+          nameClean.includes("keno") ||
+          nameClean.includes("roulette") ||
+          nameClean.includes("pilot") ||
+          nameClean.includes("trader") ||
+          nameClean.includes("soccer") ||
+          nameClean.includes("hotline");
+        if (!isSpribe) return false;
+      } else if (selectedFilter === "provider") {
+        if (selectedSubProvider && selectedSubProvider !== "all") {
+          const subClean = selectedSubProvider.toLowerCase().replace(/[^a-z0-9]/g, "");
+          const provClean = (game.provider || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (!provClean.includes(subClean) && !subClean.includes(provClean)) return false;
+        }
+      }
 
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
@@ -302,16 +356,21 @@ export const GameGrid: React.FC<GameGridProps> = ({
         (game.provider && game.provider.toLowerCase().includes(q)) ||
         game.categories?.some((c) => c.includes(q));
 
-      return matchesFilter && matchesSearch;
+      return matchesSearch;
     });
-  }, [catalogGames, selectedFilter, searchQuery, isMobileDevice]);
-
-  // Derived dynamically from live API games
-  
-
+  }, [catalogGames, selectedFilter, selectedSubProvider, searchQuery, isMobileDevice]);
 
   // Open Game directly on dedicated GamePlayPage with Header
   const handleLaunchGame = (game: GameItem) => {
+    if (balance <= 0) {
+      if (onZeroBalance) {
+        onZeroBalance();
+      } else if (onOpenCashout) {
+        onOpenCashout();
+      }
+      return;
+    }
+
     const gameIdentifier = game.uuid || game.id || game.name;
     const playRoute = isTerminal
       ? `/terminal/play/${encodeURIComponent(gameIdentifier)}`
@@ -336,15 +395,14 @@ export const GameGrid: React.FC<GameGridProps> = ({
       {!isTerminal && <LiveWinnersTicker />}
 
       {/* ==============================================================
-           SECTION 2: SEARCH & CATEGORY FILTER BAR
+           SECTION 2: SEARCH & 3 CATEGORY TABS (ALL GAMES, SPRIBE, PROVIDER)
       =============================================================== */}
       <section id="categorySection" className="mb-5 showcase-block-panel">
         <div className="section-header-bar">
           <div className="d-flex align-items-center gap-3">
             <h2 className="section-header-title mb-0">
-              <i className="fa-solid fa-layer-group text-warning"></i> Live Casino Catalog
+              <i className="fa-solid fa-gamepad text-warning"></i> Game Categories
             </h2>
-
           </div>
           <div className="d-flex align-items-center gap-2">
             <button
@@ -364,6 +422,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
               className="btn btn-sm btn-outline-secondary text-light rounded-pill px-3"
               onClick={() => {
                 setSelectedFilter("all");
+                setSelectedSubProvider("all");
                 setSearchQuery("");
               }}
             >
@@ -372,20 +431,29 @@ export const GameGrid: React.FC<GameGridProps> = ({
           </div>
         </div>
 
-        {/* Category Navigation Bar & Search */}
+        {/* Category Navigation Bar (Strictly 3 Tabs: ALL GAMES, SPRIBE, PROVIDER) & Search */}
         <div className="category-nav-bar">
           <div className="category-scroll-container" id="categoryTabs">
-            {categories.map((cat) => (
+            {CATEGORY_TABS.map((tab) => (
               <div
-                key={cat.id}
-                className={`cat-pill ${selectedFilter === cat.id ? "active" : ""}`}
+                key={tab.id}
+                className={`cat-pill ${selectedFilter === tab.id ? "active" : ""}`}
                 onClick={() => {
-                  setSelectedFilter(cat.id);
+                  setSelectedFilter(tab.id);
+                  if (tab.id !== "provider") {
+                    setSelectedSubProvider("all");
+                  }
                 }}
               >
-                <i className={cat.icon}></i>
-                <span>{cat.label}</span>
-                {cat.isHot && (
+                {tab.id === "all" ? (
+                  <i className="fa-solid fa-layer-group text-warning"></i>
+                ) : tab.id === "spribe" ? (
+                  <i className="fa-solid fa-gamepad" style={{ color: selectedFilter === "spribe" ? "#ffffff" : "#00e5ff" }}></i>
+                ) : (
+                  <i className="fa-solid fa-network-wired" style={{ color: selectedFilter === "provider" ? "#ffffff" : "#c084fc" }}></i>
+                )}
+                <span>{tab.label}</span>
+                {tab.isHot && (
                   <span className="hot-tag">
                     <i className="fa-solid fa-fire"></i> HOT
                   </span>
@@ -416,9 +484,41 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 </button>
               )}
             </div>
-
           </div>
         </div>
+
+        {/* Dynamic Theme-Friendly Chamfered Provider Sub-Pills when PROVIDER tab is active */}
+        {selectedFilter === "provider" && availableProviders.length > 0 && (
+          <div className="provider-subpills-wrap mt-2">
+            <div
+              className={`cat-pill cat-pill-sm ${selectedSubProvider === "all" ? "active" : ""}`}
+              onClick={() => setSelectedSubProvider("all")}
+            >
+              <i className="fa-solid fa-cubes" style={{ color: selectedSubProvider === "all" ? "#ffffff" : "#f59e0b" }}></i>
+              <span>ALL PROVIDERS ({availableProviders.length})</span>
+            </div>
+            {availableProviders.map((prov) => {
+              const isSelected = selectedSubProvider === prov;
+              const icon = getProviderIcon(prov);
+              return (
+                <div
+                  key={prov}
+                  className={`cat-pill cat-pill-sm ${isSelected ? "active" : ""}`}
+                  onClick={() => setSelectedSubProvider(prov)}
+                >
+                  <i
+                    className={icon}
+                    style={{
+                      color: isSelected ? "#ffffff" : "#00e5ff",
+                      filter: "drop-shadow(0 0 6px rgba(0, 229, 255, 0.7))",
+                    }}
+                  ></i>
+                  <span>{prov.toUpperCase()}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Loading Skeletons */}
         {isLoading && (
@@ -614,7 +714,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
             >
               {featuredGames.map((game) => (
                 <SwiperSlide key={`featured-${game.id}`}>
-                  <GameCard game={game} onPlay={handleLaunchGame} hideTitleAndSubtitle={true} />
+                  <GameCard game={game} onPlay={handleLaunchGame} />
                 </SwiperSlide>
               ))}
             </Swiper>

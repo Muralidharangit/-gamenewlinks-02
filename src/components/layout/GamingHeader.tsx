@@ -44,19 +44,19 @@ export const GamingHeader: React.FC<GamingHeaderProps> = ({
           <Link
             to="/register"
             className="d-flex align-items-center gap-2 text-decoration-none me-1"
-            title="WINBET Central"
+            title="Betwise Central"
           >
             {/* <img
               src="/assets/images/logo.png"
-              alt="WINBET"
+              alt="BETWISE"
               className="brand-logo-img logo-sm"
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}
             /> */}
             <span className="brand-name">
-              <span style={{ color: "#f5b300" }}>WIN</span>
-              <span style={{ color: "#ffffff" }}>BET</span>
+              <span style={{ color: "#f5b300" }}>BET</span>
+              <span style={{ color: "#ffffff" }}>WISE</span>
             </span>
           </Link>
 

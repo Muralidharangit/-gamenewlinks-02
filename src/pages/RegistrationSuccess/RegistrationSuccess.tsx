@@ -32,7 +32,7 @@ export const RegistrationSuccess: React.FC = () => {
             <Link to="/register" className="brand-logo-wrap text-decoration-none mb-0">
               <img
                 src="/assets/images/logo.png"
-                alt="WINBET"
+                alt="BETWISE"
                 className="brand-logo-img logo-sm"
                 style={{ height: "38px" }}
                 onError={(e) => {
@@ -40,8 +40,8 @@ export const RegistrationSuccess: React.FC = () => {
                 }}
               />
               <span className="brand-name fs-5">
-                <span style={{ color: "#f5b300" }}>WIN</span>
-                <span style={{ color: "#ffffff" }}>BET</span>
+                <span style={{ color: "#f5b300" }}>BET</span>
+                <span style={{ color: "#ffffff" }}>WISE</span>
               </span>
             </Link>
             <span
@@ -74,7 +74,7 @@ export const RegistrationSuccess: React.FC = () => {
                   <div className="winbet-logo mb-3">
                     <img
                       src="/assets/images/logo.png"
-                      alt="WINBET"
+                      alt="BETWISE"
                       className="brand-logo-img logo-sm"
                       style={{ maxHeight: "48px" }}
                       onError={(e) => {
@@ -135,7 +135,7 @@ export const RegistrationSuccess: React.FC = () => {
                       <i className="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div className="brand-text-block">
-                      <span className="brand-title">WinBet Central</span>
+                      <span className="brand-title">Betwise Central</span>
                       <span className="brand-sub">Independent. Fair. Reliable. Windhoek Central.</span>
                     </div>
                   </div>

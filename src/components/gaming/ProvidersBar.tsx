@@ -11,7 +11,7 @@ const PROVIDERS = [
   { id: "pragmatic", name: "Pragmatic Play", icon: "fa-solid fa-crown text-warning", count: "15 Games" },
   { id: "evolution", name: "Evolution Live", icon: "fa-solid fa-video text-info", count: "8 Tables" },
   { id: "netent", name: "NetEnt Classics", icon: "fa-solid fa-gem text-success", count: "12 Slots" },
-  { id: "winbet", name: "WinBet Originals", icon: "fa-solid fa-shield-cat text-warning", count: "Exclusive", isPopular: true },
+  { id: "betwise", name: "Betwise Originals", icon: "fa-solid fa-shield-cat text-warning", count: "Exclusive", isPopular: true },
 ];
 
 export const ProvidersBar: React.FC<ProvidersBarProps> = ({

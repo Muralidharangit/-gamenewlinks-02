@@ -144,7 +144,7 @@ export const NotAuthorized: React.FC = () => {
                       <i className="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div className="brand-text-block">
-                      <span className="brand-title">WinBet Security</span>
+                      <span className="brand-title">Betwise Security</span>
                       <span className="brand-sub">Hardware Binding · Tauri PC Protection</span>
                     </div>
                   </div>

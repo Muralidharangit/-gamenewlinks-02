@@ -126,22 +126,7 @@ export const SmartPCLobby: React.FC = () => {
     setActiveAlert("NONE");
   };
 
-  // Freeze scrolling when balance is zero
-  useEffect(() => {
-    if (machine.balance === 0) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [machine.balance]);
-
-  // Listen to remote cashout events from admin
+  // Listen to remote cashout events & poll status automatically when CASHOUT_PENDING
   useEffect(() => {
     const handleCashoutStatus = (e: Event) => {
       const customEvt = e as CustomEvent<{ status: string; amount: number }>;
@@ -153,10 +138,37 @@ export const SmartPCLobby: React.FC = () => {
       }
     };
     window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
+    if (activeAlert === "CASHOUT_PENDING") {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await api.getCashoutStatus();
+          if (res) {
+            const latestStatus = res.latest?.status?.toUpperCase();
+            const pendingStatus = res.pending?.status?.toUpperCase();
+
+            if (latestStatus === "APPROVED" && (!res.pending || pendingStatus === "APPROVED")) {
+              setActiveAlert("CASHOUT_APPROVED");
+              showToast(`Cashier approved payout of N$ ${(res.latest?.requested_amount || pendingCashoutAmount).toFixed(2)}!`);
+            } else if (latestStatus === "REJECTED" && (!res.pending || pendingStatus === "REJECTED")) {
+              const restored = res.latest?.requested_amount || pendingCashoutAmount;
+              updateBalance(restored);
+              setActiveAlert("CASHOUT_REJECTED");
+              showToast(`Cash out declined. N$ ${restored.toFixed(2)} restored.`);
+            }
+          }
+        } catch {
+          // ignore network poll errors
+        }
+      }, 2000);
+    }
+
     return () => {
       window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+      if (pollInterval) clearInterval(pollInterval);
     };
-  }, []);
+  }, [activeAlert, pendingCashoutAmount, showToast, updateBalance]);
 
   return (
     <>
@@ -180,6 +192,7 @@ export const SmartPCLobby: React.FC = () => {
           onBalanceChange={updateBalance}
           showToast={showToast}
           onOpenCashout={handleOpenCashout}
+          onZeroBalance={() => setIsZeroBalanceModalOpen(true)}
         />
       </GamingLayout>
 

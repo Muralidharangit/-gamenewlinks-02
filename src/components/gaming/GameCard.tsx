@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import type { GameItem } from "../../types";
 
 interface GameCardProps {
@@ -7,9 +7,123 @@ interface GameCardProps {
   hideTitleAndSubtitle?: boolean;
 }
 
+/**
+ * Resolved secondary fallback based on provider and game keyword
+ */
+const getSecondaryFallback = (game: GameItem): string => {
+  const n = (game.name || game.title || "").toLowerCase();
+  const p = (game.provider || "").toLowerCase();
+  const c = (game.category || "").toLowerCase();
+
+  // Spribe specific games
+  if (
+    p.includes("spribe") ||
+    c.includes("spribe") ||
+    game.categories?.some((cat) => cat.toLowerCase().includes("spribe"))
+  ) {
+    if (n.includes("pilot")) return "/assets/games/SPRIBE/PILOT.png";
+    if (n.includes("balloon") || n.includes("ballon")) return "/assets/games/SPRIBE/BALLON.png";
+    if (n.includes("dice") || n.includes("odd") || n.includes("even")) return "/assets/games/SPRIBE/DICE.png";
+    if (n.includes("hi-lo") || n.includes("hilo") || n.includes("hi lo") || n.includes("card")) return "/assets/games/SPRIBE/HILO.png";
+    if (n.includes("hotline")) return "/assets/games/SPRIBE/HOTLINE.png";
+    if (n.includes("keno80") || n.includes("keno 80") || (n.includes("keno") && n.includes("80"))) return "/assets/games/SPRIBE/KENO80.png";
+    if (n.includes("keno")) return "/assets/games/SPRIBE/KENO.png";
+    if (n.includes("mines") || n.includes("mine") || n.includes("bomb")) return "/assets/games/SPRIBE/MINES.png";
+    if (n.includes("miniroulette") || n.includes("mini-roulette") || n.includes("roulette")) return "/assets/games/SPRIBE/MINIROULETTE.png";
+    if (n.includes("plinko")) return "/assets/games/SPRIBE/PLINKO.png";
+    if (n.includes("soccer") || n.includes("goal") || n.includes("kick") || n.includes("football")) return "/assets/games/SPRIBE/SOCCER.png";
+    if (n.includes("trader") || n.includes("trade") || n.includes("chart")) return "/assets/games/SPRIBE/TRADER.png";
+    return "/assets/games/SPRIBE/AVIATOR.png";
+  }
+
+  // Exact matching for common game types
+  if (n.includes("aviator")) return "/assets/games/SPRIBE/AVIATOR.png";
+  if (n.includes("plinko")) return "/assets/games/SPRIBE/PLINKO.png";
+  if (n.includes("mines")) return "/assets/games/SPRIBE/MINES.png";
+  if (n.includes("dice")) return "/assets/games/SPRIBE/DICE.png";
+  if (n.includes("roulette")) return "/assets/games/SPRIBE/MINIROULETTE.png";
+  if (n.includes("soccer") || n.includes("football")) return "/assets/games/SPRIBE/SOCCER.png";
+
+  // General default local placeholder
+  return "/assets/games/placeholder.png";
+};
+
 export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, hideTitleAndSubtitle }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const providerName = game.provider || "Live Game";
+
+  // Image loading & fallback lifecycle
+  // stage: 0 = primary (provider URL), 1 = secondary fallback, 2 = local placeholder.png, 3 = CSS fallback
+  const [currentSrc, setCurrentSrc] = useState<string>(() => {
+    return game.image && game.image.trim() !== ""
+      ? game.image
+      : getSecondaryFallback(game);
+  });
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [fallbackStage, setFallbackStage] = useState<number>(() => {
+    return game.image && game.image.trim() !== "" ? 0 : 1;
+  });
+
+  // Reset image state when game changes
+  useEffect(() => {
+    const initialUrl =
+      game.image && game.image.trim() !== ""
+        ? game.image
+        : getSecondaryFallback(game);
+    const initialStage = game.image && game.image.trim() !== "" ? 0 : 1;
+    setCurrentSrc(initialUrl);
+    setFallbackStage(initialStage);
+    setImageLoaded(false);
+  }, [game.id, game.uuid, game.image]);
+
+  // Timeout guard for hanging external image servers (e.g. static.ga-stage.work)
+  useEffect(() => {
+    if (imageLoaded || fallbackStage >= 2) return;
+
+    // Only apply timeout for external HTTP/HTTPS images
+    if (currentSrc.startsWith("http://") || currentSrc.startsWith("https://")) {
+      const timer = setTimeout(() => {
+        if (!imageLoaded) {
+          const secondary = getSecondaryFallback(game);
+          if (import.meta.env.DEV) {
+            console.debug(`[GameCard] External image timed out (>2.5s) for "${game.title}". Switching to fallback: ${secondary}`);
+          }
+          setCurrentSrc(secondary);
+          setFallbackStage(1);
+        }
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentSrc, imageLoaded, fallbackStage, game]);
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
+
+  const handleImageError = useCallback(() => {
+    if (fallbackStage === 0) {
+      const secondary = getSecondaryFallback(game);
+      if (import.meta.env.DEV) {
+        console.debug(`[GameCard] Provider image load failed for "${game.title}". Switching to secondary fallback: ${secondary}`);
+      }
+      setFallbackStage(1);
+      setCurrentSrc(secondary);
+    } else if (fallbackStage === 1) {
+      const localPlaceholder = "/assets/games/placeholder.png";
+      if (currentSrc !== localPlaceholder) {
+        if (import.meta.env.DEV) {
+          console.debug(`[GameCard] Secondary image failed for "${game.title}". Switching to local placeholder: ${localPlaceholder}`);
+        }
+        setFallbackStage(2);
+        setCurrentSrc(localPlaceholder);
+      } else {
+        setFallbackStage(3); // CSS fallback
+      }
+    } else {
+      setFallbackStage(3); // CSS fallback
+    }
+  }, [fallbackStage, game, currentSrc]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -88,17 +202,40 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, hideTitleAndSu
               </span>
             </div>
 
-            {/* Crystal-Clear Game Artwork Layer */}
+            {/* Crystal-Clear Game Artwork Layer with Automatic Resilient Fallback */}
             <div className="chamfer-artwork-frame">
-              <img
-                src={game.image}
-                alt={game.title}
-                loading="lazy"
-                className="chamfer-poster-img"
-                onError={(e) => {
-                  e.currentTarget.src = "/assets/games/SPRIBE/AVIATOR.png";
-                }}
-              />
+              {/* Shimmer skeleton while loading */}
+              {!imageLoaded && fallbackStage < 3 && (
+                <div className="chamfer-artwork-skeleton" />
+              )}
+
+              {/* Poster Image or Guaranteed CSS Canvas Fallback */}
+              {fallbackStage < 3 ? (
+                <img
+                  src={currentSrc}
+                  alt={game.title}
+                  loading="lazy"
+                  className={`chamfer-poster-img ${imageLoaded ? "loaded" : ""}`}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                />
+              ) : (
+                <div className="chamfer-css-fallback">
+                  <i
+                    className="fa-solid fa-gamepad text-warning mb-2"
+                    style={{
+                      fontSize: "2rem",
+                      filter: "drop-shadow(0 0 10px rgba(245, 179, 0, 0.6))",
+                    }}
+                  ></i>
+                  <span
+                    className="text-light fw-bold small text-uppercase"
+                    style={{ letterSpacing: "0.5px" }}
+                  >
+                    {game.title}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Soft Bottom Shadow for 100% Crisp Typography */}
@@ -127,6 +264,3 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, hideTitleAndSu
     </div>
   );
 };
-
-
-

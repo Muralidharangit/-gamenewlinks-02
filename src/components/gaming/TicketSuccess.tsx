@@ -193,7 +193,7 @@ export const TicketSuccess: React.FC<TicketSuccessProps> = ({
             <i className="fa-solid fa-scale-balanced"></i>
           </div>
           <div className="brand-text-block text-start">
-            <span className="brand-title">WinBet Central</span>
+            <span className="brand-title">Betwise Central</span>
             <span className="brand-sub">Independent. Fair. Reliable. Windhoek Central.</span>
           </div>
         </div>
