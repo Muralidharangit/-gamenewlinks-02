@@ -6,6 +6,7 @@ interface ModalProps {
   children: React.ReactNode;
   maxWidth?: string;
   showCloseButton?: boolean;
+  isLocked?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -14,8 +15,10 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = "380px",
   showCloseButton = true,
+  isLocked = false,
 }) => {
   useEffect(() => {
+    if (isLocked) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         onClose();
@@ -23,7 +26,7 @@ export const Modal: React.FC<ModalProps> = ({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isLocked]);
 
   if (!isOpen) return null;
 
@@ -31,14 +34,14 @@ export const Modal: React.FC<ModalProps> = ({
     <div
       className="modal fade show d-block modal-theme-dark"
       tabIndex={-1}
-      style={{ backgroundColor: "rgba(3, 1, 8, 0.85)", backdropFilter: "blur(6px)" }}
+      style={{ backgroundColor: "rgba(3, 1, 8, 0.88)", backdropFilter: "blur(8px)" }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (!isLocked && e.target === e.currentTarget) onClose();
       }}
     >
       <div className="modal-dialog modal-dialog-centered" style={{ maxWidth }}>
         <div className="modal-content position-relative overflow-hidden">
-          {showCloseButton && (
+          {!isLocked && showCloseButton && (
             <button
               type="button"
               className="btn-game-modal-close"

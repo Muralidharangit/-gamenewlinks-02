@@ -1,6 +1,6 @@
 import Pusher from "pusher-js";
 import { api, getStoredMachineId } from "./api";
-import { broadcastBalanceChange, broadcastCashoutStatusChange } from "../hooks/useMachine";
+import { broadcastBalanceChange, broadcastCashoutStatusChange, broadcastStationUnbound } from "../hooks/useMachine";
 
 export interface LiveBalanceEventData {
   current_balance?: number;
@@ -130,12 +130,59 @@ class LiveSocketManager {
       this.currentChannel.bind("cash_out_rejected", handleCashoutRejected);
       this.currentChannel.bind("App\\Events\\CashoutRejected", handleCashoutRejected);
 
+      // Bind to unbind events from admin panel
+      const handleUnbound = (data?: { balance?: number; current_balance?: number; status?: string }) => {
+        console.log("🔌 WINBET Live Socket: Station Unbind / Deauthorize event received from server", data);
+        const bal = typeof data?.current_balance === "number" ? data.current_balance : typeof data?.balance === "number" ? data.balance : undefined;
+        broadcastStationUnbound(bal);
+      };
+
+      const unbindEventNames = [
+        "machine.unbound",
+        "MachineUnbound",
+        "smart-pc.unbound",
+        "smart_pc.unbound",
+        "station.unbound",
+        "StationUnbound",
+        "unbind",
+        "Unbind",
+        "machine.deauthorized",
+        "smart-pc.deauthorized",
+        "station.deauthorized",
+        "deauthorized",
+        "machine.deleted",
+        "smart-pc.deleted",
+        "station.unassigned",
+        "StationUnassigned",
+        "App\\Events\\MachineUnbound",
+        "App\\Events\\SmartPCUnbound",
+        "App\\Events\\StationUnbound",
+        "App\\Events\\MachineDeauthorized",
+        "App\\Events\\MachineStatusUpdated",
+      ];
+
+      unbindEventNames.forEach((evt) => {
+        this.currentChannel?.bind(evt, handleUnbound);
+      });
+
       // Also subscribe to public channel variant
       const publicChannel = this.pusher.subscribe(publicChannelName);
       publicChannel.bind("balance.updated", handleBalanceUpdate);
       publicChannel.bind("BalanceUpdated", handleBalanceUpdate);
       publicChannel.bind("cashout.approved", handleCashoutApproved);
       publicChannel.bind("cashout.rejected", handleCashoutRejected);
+      unbindEventNames.forEach((evt) => {
+        publicChannel.bind(evt, handleUnbound);
+      });
+
+      // Subscribe to machine.* channel variant if different
+      if (!channelName.startsWith("private-machine.")) {
+        try {
+          const machineChan = this.pusher.subscribe(`private-machine.${machineId}`);
+          machineChan.bind("balance.updated", handleBalanceUpdate);
+          unbindEventNames.forEach((evt) => machineChan.bind(evt, handleUnbound));
+        } catch {}
+      }
     } catch (err) {
       console.warn("Channel subscription error:", err);
     }

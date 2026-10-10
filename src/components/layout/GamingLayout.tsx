@@ -42,20 +42,11 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
   const [internalToast, setInternalToast] = useState<string | null>(null);
 
-  // Kiosk Keyboard Lock: When balance is 0, keyboard is disabled until unlocked by Ctrl + Shift + K or balance > 0
-  const { isOverrideUnlocked } = useKioskKeyboardLock({
-    balance,
-    onNotify: (msg) => {
-      setInternalToast(msg);
-      setTimeout(() => setInternalToast(null), 4000);
-    },
-  });
+  // Kiosk Keyboard Lock: When balance is 0, keyboard is disabled until unlocked by Ctrl + Shift + D or balance > 0
+  const { isOverrideUnlocked } = useKioskKeyboardLock();
 
   return (
-    <div 
-      className="game-lobby-body d-flex flex-column min-vh-100"
-      style={balance === 0 ? { height: "100vh", overflow: "hidden" } : {}}
-    >
+    <div className="game-lobby-body d-flex flex-column min-vh-100">
       {/* Header */}
       <GamingHeader
         machineType={machineType}
@@ -108,7 +99,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
           <div className="d-flex align-items-center gap-2">
             {isOverrideUnlocked && (
               <span className="badge bg-warning text-dark border border-warning px-3 py-2 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">
-                <i className="fa-solid fa-lock-open"></i> KEYBOARD UNLOCKED (ADMIN)
+                <i className="fa-solid fa-lock-open"></i> KEYBOARD UNLOCKED (CTRL+SHIFT+D)
               </span>
             )}
             <button

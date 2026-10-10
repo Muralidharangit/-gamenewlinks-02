@@ -5,9 +5,9 @@ import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { BalanceDisplay } from "../../components/gaming/BalanceDisplay";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
-import { ZeroBalanceModal } from "../../components/gaming/ZeroBalanceModal";
 import { ThemeNotificationModal } from "../../components/common/ThemeNotificationModal";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { useKioskKeyboardLock } from "../../hooks/useKioskKeyboardLock";
 import type { GameItem, ValidationAlertType } from "../../types";
 
 export const GamePlayPage: React.FC = () => {
@@ -15,7 +15,7 @@ export const GamePlayPage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const location = useLocation();
   const { machine, updateBalance, toastMessage, showToast, clearToast } = useMachine("smart-pc");
-  const [isZeroBalanceModalOpen, setIsZeroBalanceModalOpen] = useState(false);
+  const { isOverrideUnlocked } = useKioskKeyboardLock();
 
   // Game data from location state or API
   const passedGame = location.state?.game as GameItem | undefined;
@@ -182,6 +182,13 @@ export const GamePlayPage: React.FC = () => {
     initiateGameLaunch();
   }, [initiateGameLaunch]);
 
+  // Auto-redirect to Lobby if playing game and balance is 0
+  useEffect(() => {
+    if (machine.balance <= 0) {
+      navigate("/smart-pc", { replace: true });
+    }
+  }, [machine.balance, navigate]);
+
   // Choices map for local dummy games (PDF 4.7)
   const getChoices = () => {
     const name = (game?.name || "").toLowerCase();
@@ -201,7 +208,7 @@ export const GamePlayPage: React.FC = () => {
 
   const handleOpenCashout = () => {
     if (machine.balance <= 0) {
-      setIsZeroBalanceModalOpen(true);
+      navigate("/smart-pc", { replace: true });
       return;
     }
     setIsCashoutModalOpen(true);
@@ -209,24 +216,26 @@ export const GamePlayPage: React.FC = () => {
 
   const handleConfirmCashout = async () => {
     const amt = machine.balance;
-    setPendingCashoutAmount(amt);
     setIsCashoutModalOpen(false);
 
     try {
       await api.requestCashOut(amt);
       updateBalance(0.0);
-      setActiveAlert("CASHOUT_PENDING");
-      showToast(`Cash Out of N$ ${amt.toFixed(2)} requested! Waiting for cashier...`);
     } catch {
       updateBalance(0.0);
-      setActiveAlert("CASHOUT_PENDING");
+    } finally {
+      // Exit the game and immediately redirect to Lobby with cashout state
+      navigate("/smart-pc", {
+        replace: true,
+        state: { cashoutRequested: true, amount: amt },
+      });
     }
   };
 
   const handleCashierApprove = async () => {
     await api.cashierApproveCashout();
-    setActiveAlert("CASHOUT_APPROVED");
-    showToast(`Cashier approved! N$ ${pendingCashoutAmount.toFixed(2)} paid in cash.`);
+    setActiveAlert("NONE");
+    navigate("/smart-pc", { replace: true });
   };
 
   const handleCashierReject = async () => {
@@ -250,7 +259,8 @@ export const GamePlayPage: React.FC = () => {
         setPendingCashoutAmount(customEvt.detail.amount);
         setActiveAlert("CASHOUT_REJECTED");
       } else if (customEvt.detail.status === "APPROVED") {
-        setActiveAlert("CASHOUT_APPROVED");
+        setActiveAlert("NONE");
+        navigate("/smart-pc", { replace: true });
       }
     };
     window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
@@ -265,8 +275,8 @@ export const GamePlayPage: React.FC = () => {
             const pendingStatus = res.pending?.status?.toUpperCase();
 
             if (latestStatus === "APPROVED" && (!res.pending || pendingStatus === "APPROVED")) {
-              setActiveAlert("CASHOUT_APPROVED");
-              showToast(`Cashier approved payout of N$ ${(res.latest?.requested_amount || pendingCashoutAmount).toFixed(2)}!`);
+              setActiveAlert("NONE");
+              navigate("/smart-pc", { replace: true });
             } else if (latestStatus === "REJECTED" && (!res.pending || pendingStatus === "REJECTED")) {
               const restored = res.latest?.requested_amount || pendingCashoutAmount;
               updateBalance(restored);
@@ -284,7 +294,7 @@ export const GamePlayPage: React.FC = () => {
       window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [activeAlert, pendingCashoutAmount, showToast, updateBalance]);
+  }, [activeAlert, pendingCashoutAmount, showToast, updateBalance, navigate]);
 
   const toggleSound = () => {
     setSoundEnabled((prev) => !prev);
@@ -425,6 +435,11 @@ export const GamePlayPage: React.FC = () => {
 
           {/* Right: Live Balance + Cash Out + Controls */}
           <div className="d-flex align-items-center gap-2 gap-sm-3">
+            {isOverrideUnlocked && (
+              <span className="badge bg-warning text-dark border border-warning px-2 px-md-3 py-2 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style={{ fontSize: "0.78rem" }}>
+                <i className="fa-solid fa-lock-open"></i> KEYBOARD UNLOCKED (CTRL+SHIFT+D)
+              </span>
+            )}
             {/* Live Balance Display (Identical to Lobby) */}
             <BalanceDisplay balance={machine.balance} onClick={handleOpenCashout} />
 
@@ -806,14 +821,6 @@ export const GamePlayPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Zero Balance Friendly Modal */}
-      <ZeroBalanceModal
-        isOpen={isZeroBalanceModalOpen}
-        onClose={() => setIsZeroBalanceModalOpen(false)}
-        shopName={machine.shopName}
-        machineName={machine.name}
-      />
 
       {/* Cash Out Confirmation Modal */}
       <CashOutModal

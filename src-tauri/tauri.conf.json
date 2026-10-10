@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "winbet-smart-pc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.winbet.smartpc",
   "build": {
     "frontendDist": "../dist",
@@ -29,7 +29,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["deb", "appimage", "nsis", "msi"],
+    "targets": ["deb", "nsis"],
     "shortDescription": "WinBet Smart PC Gaming Terminal",
     "longDescription": "WinBet Smart PC Dedicated Gaming Terminal and Kiosk Application",
     "category": "Game",

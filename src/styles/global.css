@@ -315,6 +315,11 @@ body.game-lobby-body,
 }
 
 /* Custom Input Field */
+input, textarea, select, .winbet-input {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
 .winbet-input {
   background-color: var(--input-bg);
   border: 1px solid var(--input-border);
