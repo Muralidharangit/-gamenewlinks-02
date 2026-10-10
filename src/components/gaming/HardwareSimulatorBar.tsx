@@ -332,9 +332,17 @@ export const HardwareSimulatorBar: React.FC<HardwareSimulatorBarProps> = ({
                     type="button"
                     className="btn btn-xs btn-outline-danger py-1 px-3"
                     style={{ fontSize: "0.74rem" }}
+                    onClick={() => onTriggerAlert("STATION_UNBOUND", balance)}
+                  >
+                    <i className="fa-solid fa-cash-register me-1"></i> Simulate Admin Unbind (Contact Cashier Popup)
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-xs btn-outline-secondary py-1 px-3"
+                    style={{ fontSize: "0.74rem" }}
                     onClick={() => navigate("/not-authorized")}
                   >
-                    <i className="fa-solid fa-lock me-1"></i> Test Screen 28: PC Not Authorized (Unbound)
+                    <i className="fa-solid fa-lock me-1"></i> Screen 28: Hardware Lock
                   </button>
                 </div>
               </div>

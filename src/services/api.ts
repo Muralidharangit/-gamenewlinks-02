@@ -12,7 +12,7 @@ import type {
   SmartPCCashoutData,
 } from "../types";
 import { generateTicketNumber } from "../utils/formatCurrency";
-import { broadcastBalanceChange } from "../hooks/useMachine";
+import { broadcastBalanceChange, broadcastStationUnbound } from "../hooks/useMachine";
 
 // Base URL configuration (PDF Section 1.1)
 const API_ORIGIN =
@@ -178,9 +178,33 @@ export const api = {
       });
 
       const json = await res.json().catch(() => ({}));
-      if (res.status === 422) {
-        return { success: false, message: json.message || "Smart PC not registered on server" };
+      const isUnboundStatus =
+        res.status === 401 ||
+        res.status === 403 ||
+        res.status === 404 ||
+        res.status === 422 ||
+        json.status === "UNBOUND" ||
+        json.status === "DEAUTHORIZED" ||
+        json.status === "INACTIVE" ||
+        json.status === "UNASSIGNED" ||
+        json.data?.status === "UNBOUND" ||
+        json.data?.status === "DEAUTHORIZED" ||
+        json.data?.status === "INACTIVE" ||
+        json.data?.status === "UNASSIGNED" ||
+        (typeof json.message === "string" && (
+          json.message.toLowerCase().includes("unbound") ||
+          json.message.toLowerCase().includes("not authorized") ||
+          json.message.toLowerCase().includes("not registered") ||
+          json.message.toLowerCase().includes("fingerprint mismatch") ||
+          json.message.toLowerCase().includes("mismatch") ||
+          json.message.toLowerCase().includes("not found")
+        ));
+
+      if (isUnboundStatus) {
+        broadcastStationUnbound(json.data?.current_balance ?? fallbackChipsBalance);
+        return { success: false, message: json.message || "Smart PC unbound on server", data: { status: "UNBOUND" } };
       }
+
       if (res.ok && json.data) {
         if (typeof json.data.current_balance === "number") {
           fallbackChipsBalance = json.data.current_balance;
@@ -207,7 +231,48 @@ export const api = {
           Accept: "application/json",
         },
       });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
+
+      const isUnbound =
+        res.status === 401 ||
+        res.status === 403 ||
+        res.status === 404 ||
+        res.status === 422 ||
+        json.status === "UNBOUND" ||
+        json.status === "DEAUTHORIZED" ||
+        json.status === "INACTIVE" ||
+        json.status === "UNASSIGNED" ||
+        json.data?.status === "UNBOUND" ||
+        json.data?.status === "DEAUTHORIZED" ||
+        json.data?.status === "INACTIVE" ||
+        json.data?.status === "UNASSIGNED" ||
+        (typeof json.message === "string" && (
+          json.message.toLowerCase().includes("unbound") ||
+          json.message.toLowerCase().includes("not authorized") ||
+          json.message.toLowerCase().includes("not registered") ||
+          json.message.toLowerCase().includes("fingerprint mismatch") ||
+          json.message.toLowerCase().includes("mismatch")
+        ));
+
+      if (isUnbound) {
+        const unboundBal = typeof json.data?.current_balance === "number" ? json.data.current_balance : fallbackChipsBalance;
+        broadcastStationUnbound(unboundBal);
+        return {
+          id: Number(localStorage.getItem("winbet_numeric_id")) || 0,
+          machine_id: mId,
+          hostname: localStorage.getItem("winbet_machine_name") || mId || "Smart PC",
+          terminal_name: localStorage.getItem("winbet_machine_name") || mId || "Smart PC",
+          pc_name: localStorage.getItem("winbet_machine_name") || mId || "Smart PC",
+          status: "UNBOUND",
+          current_balance: unboundBal,
+          loaded_amount: 0,
+          player_id: Number(localStorage.getItem("winbet_player_id")) || 0,
+          shop_id: Number(localStorage.getItem("winbet_shop_id")) || 0,
+          shop_name: localStorage.getItem("winbet_shop_name") || "WinBet Shop",
+          pending_cash_out: null,
+        };
+      }
+
       if (res.ok && json.success && json.data) {
         const data: SmartPCSessionData = json.data;
         if (typeof data.current_balance === "number") {
@@ -594,6 +659,22 @@ export const api = {
       machineName,
       shopName: shop.name,
     };
+
+    if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
+      try {
+        const { printTicketNative } = await import("./tauri");
+        await printTicketNative({
+          ticket_number: ticket.ticketNumber,
+          amount: ticket.amount,
+          machine_name: ticket.machineName,
+          shop_name: ticket.shopName,
+          created_at: ticket.createdAt,
+        });
+      } catch (err) {
+        console.warn("Native printer dispatch notice:", err);
+      }
+    }
+
     return { success: true, ticket };
   },
 };

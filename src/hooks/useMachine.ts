@@ -5,6 +5,7 @@ import { api } from "../services/api";
 
 const BALANCE_EVENT = "winbet_balance_update";
 export const CASHOUT_STATUS_EVENT = "winbet_cashout_status_change";
+export const STATION_UNBOUND_EVENT = "winbet_station_unbound";
 
 export interface CashoutStatusEventDetail {
   status: "PENDING" | "APPROVED" | "REJECTED" | "NONE";
@@ -18,6 +19,10 @@ export const broadcastBalanceChange = (newBalance: number) => {
 
 export const broadcastCashoutStatusChange = (status: "PENDING" | "APPROVED" | "REJECTED" | "NONE", amount: number) => {
   window.dispatchEvent(new CustomEvent(CASHOUT_STATUS_EVENT, { detail: { status, amount } }));
+};
+
+export const broadcastStationUnbound = (balance?: number) => {
+  window.dispatchEvent(new CustomEvent(STATION_UNBOUND_EVENT, { detail: { balance } }));
 };
 
 export const getStoredBalance = (fallback: number): number => {
@@ -49,11 +54,15 @@ export const useMachine = (initialType?: MachineType) => {
   const previousPendingStatusRef = useRef<string | null>(null);
   const previousBalanceRef = useRef<number>(machine.balance);
 
+  const clearToast = useCallback(() => {
+    setToastMessage(null);
+  }, []);
+
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000);
+    }, 4000);
   }, []);
 
   const updateBalance = useCallback((newBalance: number) => {
@@ -139,6 +148,18 @@ export const useMachine = (initialType?: MachineType) => {
           }
         }
 
+        // Check for station unbind status from server
+        if (
+          session.status === "UNBOUND" ||
+          session.status === "INACTIVE" ||
+          session.status === "DEAUTHORIZED" ||
+          session.status === "UNASSIGNED" ||
+          session.status === "MISMATCH" ||
+          session.status === "LOCKED"
+        ) {
+          broadcastStationUnbound(session.current_balance ?? previousBalanceRef.current);
+        }
+
         previousPendingStatusRef.current = currentStatus;
       } catch {
         // Continue tracking seamlessly
@@ -198,5 +219,6 @@ export const useMachine = (initialType?: MachineType) => {
     selectMachineType,
     toastMessage,
     showToast,
+    clearToast,
   };
 };

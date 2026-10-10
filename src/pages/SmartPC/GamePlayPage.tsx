@@ -5,14 +5,17 @@ import { useMachine, CASHOUT_STATUS_EVENT } from "../../hooks/useMachine";
 import { BalanceDisplay } from "../../components/gaming/BalanceDisplay";
 import { CashOutModal } from "../../components/gaming/CashOutModal";
 import { ValidationModals } from "../../components/gaming/ValidationModals";
+import { ThemeNotificationModal } from "../../components/common/ThemeNotificationModal";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { useKioskKeyboardLock } from "../../hooks/useKioskKeyboardLock";
 import type { GameItem, ValidationAlertType } from "../../types";
 
 export const GamePlayPage: React.FC = () => {
   const navigate = useNavigate();
   const { gameId } = useParams<{ gameId: string }>();
   const location = useLocation();
-  const { machine, updateBalance, toastMessage, showToast } = useMachine("smart-pc");
+  const { machine, updateBalance, toastMessage, showToast, clearToast } = useMachine("smart-pc");
+  const { isOverrideUnlocked } = useKioskKeyboardLock();
 
   // Game data from location state or API
   const passedGame = location.state?.game as GameItem | undefined;
@@ -179,6 +182,13 @@ export const GamePlayPage: React.FC = () => {
     initiateGameLaunch();
   }, [initiateGameLaunch]);
 
+  // Auto-redirect to Lobby if playing game and balance is 0
+  useEffect(() => {
+    if (machine.balance <= 0) {
+      navigate("/smart-pc", { replace: true });
+    }
+  }, [machine.balance, navigate]);
+
   // Choices map for local dummy games (PDF 4.7)
   const getChoices = () => {
     const name = (game?.name || "").toLowerCase();
@@ -198,7 +208,7 @@ export const GamePlayPage: React.FC = () => {
 
   const handleOpenCashout = () => {
     if (machine.balance <= 0) {
-      showToast("Session balance is N$ 0.00. No chips to cash out.");
+      navigate("/smart-pc", { replace: true });
       return;
     }
     setIsCashoutModalOpen(true);
@@ -206,24 +216,26 @@ export const GamePlayPage: React.FC = () => {
 
   const handleConfirmCashout = async () => {
     const amt = machine.balance;
-    setPendingCashoutAmount(amt);
     setIsCashoutModalOpen(false);
 
     try {
       await api.requestCashOut(amt);
       updateBalance(0.0);
-      setActiveAlert("CASHOUT_PENDING");
-      showToast(`Cash Out of N$ ${amt.toFixed(2)} requested! Waiting for cashier...`);
     } catch {
       updateBalance(0.0);
-      setActiveAlert("CASHOUT_PENDING");
+    } finally {
+      // Exit the game and immediately redirect to Lobby with cashout state
+      navigate("/smart-pc", {
+        replace: true,
+        state: { cashoutRequested: true, amount: amt },
+      });
     }
   };
 
   const handleCashierApprove = async () => {
     await api.cashierApproveCashout();
-    setActiveAlert("CASHOUT_APPROVED");
-    showToast(`Cashier approved! N$ ${pendingCashoutAmount.toFixed(2)} paid in cash.`);
+    setActiveAlert("NONE");
+    navigate("/smart-pc", { replace: true });
   };
 
   const handleCashierReject = async () => {
@@ -247,14 +259,42 @@ export const GamePlayPage: React.FC = () => {
         setPendingCashoutAmount(customEvt.detail.amount);
         setActiveAlert("CASHOUT_REJECTED");
       } else if (customEvt.detail.status === "APPROVED") {
-        setActiveAlert("CASHOUT_APPROVED");
+        setActiveAlert("NONE");
+        navigate("/smart-pc", { replace: true });
       }
     };
     window.addEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
+    if (activeAlert === "CASHOUT_PENDING") {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await api.getCashoutStatus();
+          if (res) {
+            const latestStatus = res.latest?.status?.toUpperCase();
+            const pendingStatus = res.pending?.status?.toUpperCase();
+
+            if (latestStatus === "APPROVED" && (!res.pending || pendingStatus === "APPROVED")) {
+              setActiveAlert("NONE");
+              navigate("/smart-pc", { replace: true });
+            } else if (latestStatus === "REJECTED" && (!res.pending || pendingStatus === "REJECTED")) {
+              const restored = res.latest?.requested_amount || pendingCashoutAmount;
+              updateBalance(restored);
+              setActiveAlert("CASHOUT_REJECTED");
+              showToast(`Cash out declined. N$ ${restored.toFixed(2)} restored.`);
+            }
+          }
+        } catch {
+          // ignore network poll errors
+        }
+      }, 2000);
+    }
+
     return () => {
       window.removeEventListener(CASHOUT_STATUS_EVENT, handleCashoutStatus);
+      if (pollInterval) clearInterval(pollInterval);
     };
-  }, []);
+  }, [activeAlert, pendingCashoutAmount, showToast, updateBalance, navigate]);
 
   const toggleSound = () => {
     setSoundEnabled((prev) => !prev);
@@ -355,11 +395,11 @@ export const GamePlayPage: React.FC = () => {
             <Link
               to="/smart-pc"
               className="d-flex align-items-center gap-2 text-decoration-none me-1"
-              title="WINBET Station"
+              title="Betwise Station"
             >
               <span className="brand-name">
-                <span style={{ color: "#f5b300" }}>WIN</span>
-                <span style={{ color: "#ffffff" }}>BET</span>
+                <span style={{ color: "#f5b300" }}>BET</span>
+                <span style={{ color: "#ffffff" }}>WISE</span>
               </span>
             </Link>
 
@@ -393,28 +433,15 @@ export const GamePlayPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Live Stream/Fast Bet Switch + Live Balance + Cash Out + Controls */}
+          {/* Right: Live Balance + Cash Out + Controls */}
           <div className="d-flex align-items-center gap-2 gap-sm-3">
-            {/* View Mode Switcher */}
-            <div className="btn-group btn-group-sm d-none d-md-inline-flex">
-              <button
-                type="button"
-                className={`btn btn-sm ${playMode === "stream" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                onClick={() => setPlayMode("stream")}
-              >
-                <i className="fa-solid fa-display me-1"></i> Live Stream
-              </button>
-              <button
-                type="button"
-                className={`btn btn-sm ${playMode === "arcade" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                onClick={() => setPlayMode("arcade")}
-              >
-                <i className="fa-solid fa-bolt me-1"></i> Fast Bet
-              </button>
-            </div>
-
+            {isOverrideUnlocked && (
+              <span className="badge bg-warning text-dark border border-warning px-2 px-md-3 py-2 fw-bold d-inline-flex align-items-center gap-1 shadow-sm" style={{ fontSize: "0.78rem" }}>
+                <i className="fa-solid fa-lock-open"></i> KEYBOARD UNLOCKED (CTRL+SHIFT+D)
+              </span>
+            )}
             {/* Live Balance Display (Identical to Lobby) */}
-            <BalanceDisplay balance={machine.balance} />
+            <BalanceDisplay balance={machine.balance} onClick={handleOpenCashout} />
 
             {/* Cash Out Button (Identical to Lobby) */}
             <button
@@ -485,7 +512,7 @@ export const GamePlayPage: React.FC = () => {
             ) : gameUrl && gameUrl.startsWith("http") && !gameUrl.includes("/smart-pc") && !gameUrl.includes(window.location.host) && !gameUrl.includes("staging.game-server.winbet.com") ? (
               <iframe
                 src={gameUrl}
-                title={game?.title || "WINBET Game Stream"}
+                title={game?.title || "Betwise Game Stream"}
                 className="w-100 flex-grow-1 border-0"
                 style={{ height: "calc(100vh - 75px)", minHeight: "560px", background: "#05010e" }}
                 allow="autoplay; fullscreen; clipboard-write"
@@ -813,20 +840,12 @@ export const GamePlayPage: React.FC = () => {
         onSimulateReject={handleCashierReject}
       />
 
-      {/* Global Toast */}
-      {toastMessage && (
-        <div
-          className="toast-custom-pill position-fixed bottom-0 start-50 translate-middle-x mb-4 px-4 py-2 rounded-pill text-light fw-semibold shadow-lg z-3"
-          style={{
-            background: "rgba(13, 5, 29, 0.95)",
-            border: "1.5px solid rgba(245, 179, 0, 0.6)",
-            fontSize: "0.85rem",
-          }}
-        >
-          <i className="fa-solid fa-circle-info text-warning me-2"></i>
-          {toastMessage}
-        </div>
-      )}
+      {/* WinBet Theme Modal Popup (Replaces plain toast) */}
+      <ThemeNotificationModal
+        isOpen={Boolean(toastMessage)}
+        message={toastMessage || null}
+        onClose={clearToast}
+      />
     </div>
   );
 };

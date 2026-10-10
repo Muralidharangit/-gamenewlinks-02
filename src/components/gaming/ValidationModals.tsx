@@ -12,6 +12,7 @@ interface ValidationModalProps {
   onSimulateApprove?: () => void;
   onSimulateReject?: () => void;
   onRetry?: () => void;
+  onRegisterNewToken?: () => void;
 }
 
 export const ValidationModals: React.FC<ValidationModalProps> = ({
@@ -22,11 +23,20 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
   onSimulateApprove: _onSimulateApprove,
   onSimulateReject: _onSimulateReject,
   onRetry,
+  onRegisterNewToken,
 }) => {
-  if (!isOpen || alertType === "NONE") return null;
+  if (!isOpen || alertType === "NONE" || alertType === "CASHOUT_APPROVED") return null;
+
+  const isModalLocked = alertType === "CASHOUT_PENDING" || alertType === "STATION_UNBOUND";
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="420px">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="420px"
+      isLocked={isModalLocked}
+      showCloseButton={!isModalLocked}
+    >
       <div className="modal-body p-4 text-center">
         {/* =========================================================================
             SCREEN 06 (Terminal & Smart PC): Shop Balance Too Low
@@ -436,11 +446,7 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
             ========================================================================= */}
         {alertType === "CASHOUT_PENDING" && (
           <div>
-            <div className="step-pill-box justify-content-center mb-3">
-              <span className="pill-text fw-bold text-warning">
-                <i className="fa-solid fa-clock me-1"></i> Pending Desk Queue
-              </span>
-            </div>
+            
 
             {/* Glowing Amber Pulse Circle with micro-animation */}
             <div className="neon-alert-circle-wrap mb-3">
@@ -482,30 +488,14 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               <div className="fs-1 fw-bold text-warning" style={{ textShadow: "0 0 20px rgba(245, 179, 0, 0.6)" }}>
                 {formatCurrency(amount)}
               </div>
-              <div
-                className="badge mt-2 px-3 py-1 rounded-pill"
-                style={{
-                  background: "rgba(0, 0, 0, 0.5)",
-                  border: "1px solid rgba(245, 179, 0, 0.3)",
-                  color: "#fde68a",
-                  fontSize: "0.74rem",
-                }}
-              >
-                <i className="fa-solid fa-circle-notch fa-spin me-1 text-warning"></i> Machine Credits: N$ 0.00
-              </div>
+             
             </div>
 
-            <p className="text-light small mb-4" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
+            <p className="text-light small mb-2" style={{ lineHeight: "1.5", fontSize: "0.85rem" }}>
               Waiting for cashier at the desk to approve and pay cash.
               <br />
               <span className="text-warning-subtle fw-semibold">Please proceed to the cashier counter.</span>
             </p>
-
-            <div className="d-flex flex-column gap-2 mt-2">
-              <Button variant="cancel" onClick={onClose} icon="fa-solid fa-xmark">
-                Close Window
-              </Button>
-            </div>
           </div>
         )}
 
@@ -578,71 +568,6 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
         )}
 
         {/* =========================================================================
-            Smart PC: Cash Out Approved by Cashier
-            ========================================================================= */}
-        {alertType === "CASHOUT_APPROVED" && (
-          <div>
-            <div className="step-pill-box justify-content-center mb-3">
-              <span className="pill-text fw-bold text-success">
-                <i className="fa-solid fa-circle-check me-1"></i> Payout Approved
-              </span>
-            </div>
-
-            {/* Glowing Emerald Pulse Circle with animated spring bounce */}
-            <div className="neon-success-circle-wrap mb-3 text-center">
-              <div
-                className="neon-success-circle status-ring-pulse-green"
-                style={{
-                  width: "86px",
-                  height: "86px",
-                  borderRadius: "50%",
-                  background: "radial-gradient(circle at 35% 30%, #34d399 0%, #059669 65%, #064e3b 100%)",
-                  border: "2.5px solid #a7f3d0",
-                  boxShadow: "0 0 45px rgba(16, 185, 129, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.8)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#ffffff",
-                  fontSize: "2.5rem",
-                }}
-              >
-                <i className="fa-solid fa-check"></i>
-              </div>
-            </div>
-
-            <h3 className="success-text-heading text-success mb-2" style={{ textShadow: "0 0 15px rgba(16, 185, 129, 0.6)" }}>
-              Cash Paid at Desk!
-            </h3>
-
-            <div
-              className="p-3 mb-3 rounded-4 border text-center"
-              style={{
-                background: "radial-gradient(circle at 50% 0%, #1e0d3d 0%, #0e041f 100%)",
-                borderColor: "rgba(16, 185, 129, 0.5)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.15)",
-              }}
-            >
-              <div className="text-secondary small fw-semibold text-uppercase mb-1" style={{ letterSpacing: "0.5px" }}>
-                Paid in Cash
-              </div>
-              <div className="fs-1 fw-bold text-success" style={{ textShadow: "0 0 20px rgba(16, 185, 129, 0.6)" }}>
-                {formatCurrency(amount)}
-              </div>
-            </div>
-
-            <p className="text-light small mb-4" style={{ lineHeight: "1.45" }}>
-              Cashier approved your request and paid your cash at the desk. Session complete.
-            </p>
-
-            <div className="d-flex flex-column gap-2 mt-2">
-              <Button variant="success" onClick={onClose} icon="fa-solid fa-circle-check">
-                Done
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
             SMART PC: Cash-In (Load Chips) Received from Shop Panel
             ========================================================================= */}
         {alertType === "CHIPS_LOADED" && (
@@ -687,6 +612,111 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
               <Button variant="primary" onClick={onClose} icon="fa-solid fa-gamepad">
                 Let's Play!
               </Button>
+            </div>
+          </div>
+        )}
+        {/* =========================================================================
+            SMART PC: PC Not Authorized / Station Unbound (Register New Token)
+            ========================================================================= */}
+        {/* =========================================================================
+            SMART PC: PC Not Authorized / Station Unbound (Locked & Awaiting Cashier)
+            ========================================================================= */}
+        {alertType === "STATION_UNBOUND" && (
+          <div className="py-2">
+            {/* Top Status Pill with Emerald Glow */}
+            <div
+              className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
+              style={{
+                background: "rgba(16, 185, 129, 0.15)",
+                border: "1px solid rgba(52, 211, 153, 0.4)",
+                boxShadow: "0 0 16px rgba(16, 185, 129, 0.25)",
+              }}
+            >
+              <span className="spinner-grow spinner-grow-sm text-success" style={{ width: "8px", height: "8px" }} role="status"></span>
+              <span className="fw-bold text-success" style={{ fontSize: "0.78rem", letterSpacing: "0.7px", textTransform: "uppercase" }}>
+                Station Lock · Contact Cashier
+              </span>
+            </div>
+
+            {/* Glowing 3D Emerald Lock Emblem */}
+            <div className="d-flex justify-content-center mb-3">
+              <div
+                style={{
+                  width: "88px",
+                  height: "88px",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle at 35% 25%, #34d399 0%, #059669 55%, #064e3b 100%)",
+                  border: "2.5px solid #a7f3d0",
+                  boxShadow: "0 0 35px rgba(16, 185, 129, 0.8), inset 0 2px 6px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(0, 0, 0, 0.5)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  fontSize: "2.4rem",
+                  animation: "pulse3DGlow 2.5s infinite alternate ease-in-out",
+                }}
+              >
+                <i className="fa-solid fa-lock" style={{ filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))" }}></i>
+              </div>
+            </div>
+
+            {/* Emerald Gradient Heading */}
+            <h3
+              className="mb-2"
+              style={{
+                background: "linear-gradient(180deg, #ffffff 0%, #a7f3d0 45%, #34d399 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: "1.65rem",
+                fontWeight: 800,
+                letterSpacing: "0.5px",
+                filter: "drop-shadow(0 0 14px rgba(16, 185, 129, 0.6))",
+              }}
+            >
+              PC Not Authorized
+            </h3>
+
+            <p className="text-light small mb-3 px-2" style={{ lineHeight: "1.5", fontSize: "0.86rem", opacity: 0.95 }}>
+              This Smart PC terminal is awaiting shop cashier authorization. Please visit the cashier counter to assign this station or load credits.
+            </p>
+
+            {/* Live Auto-Unlocks Listening Status Bar (Green Theme) */}
+            <div
+              className="p-3 rounded-3 d-flex align-items-center justify-content-center gap-2 border mb-2"
+              style={{
+                background: "radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.16) 0%, rgba(6, 78, 59, 0.1) 100%)",
+                borderColor: "rgba(52, 211, 153, 0.38)",
+                boxShadow: "0 0 18px rgba(16, 185, 129, 0.15), inset 0 0 12px rgba(16, 185, 129, 0.08)",
+              }}
+            >
+              <i className="fa-solid fa-arrows-rotate fa-spin" style={{ color: "#34d399", animationDuration: "2.5s", fontSize: "0.95rem" }}></i>
+              <span className="fw-semibold small" style={{ color: "#a7f3d0", fontSize: "0.83rem" }}>
+                Auto-unlocks instantly when money is updated by cashier
+              </span>
+            </div>
+
+            {/* Subtle Setup Token Recovery Option */}
+            <div className="mt-2 text-center d-flex align-items-center justify-content-center gap-2">
+              <button
+                type="button"
+                className="btn btn-link text-secondary btn-sm p-0 text-decoration-none"
+                style={{ fontSize: "0.74rem", opacity: 0.85 }}
+                onClick={() => {
+                  if (onRegisterNewToken) {
+                    onRegisterNewToken();
+                  } else {
+                    localStorage.removeItem("winbet_machine_id");
+                    localStorage.removeItem("winbet_numeric_id");
+                    localStorage.removeItem("winbet_setup_code");
+                    window.location.href = "/register";
+                  }
+                }}
+              >
+                <i className="fa-solid fa-key me-1" style={{ color: "#34d399" }}></i> Register New Token
+              </button>
+              <span className="badge bg-dark border border-secondary text-secondary font-monospace px-1 py-0" style={{ fontSize: "0.68rem" }}>
+                Ctrl+Shift+R
+              </span>
             </div>
           </div>
         )}

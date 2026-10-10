@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { MachineType, SmartPCRegisterData } from "../../types";
 import { api } from "../../services/api";
+import { ThemeNotificationModal } from "../../components/common/ThemeNotificationModal";
 
 interface RegistrationProps {
   defaultMachineType?: MachineType;
@@ -207,7 +208,7 @@ export const Registration: React.FC<RegistrationProps> = ({
                         </div>
                       </div>
 
-                      <h2 className="success-banner-text">Station Registered!</h2>
+                      <h2 className="success-banner-text">Machine Registered!</h2>
                       <p className="text-secondary small mb-3" style={{ fontSize: "0.82rem" }}>
                         Assigned live from Betting Shop server
                       </p>
@@ -215,7 +216,7 @@ export const Registration: React.FC<RegistrationProps> = ({
                       {/* Live Registration Summary */}
                       <div className="receipt-list mb-3">
                         <div className="receipt-row">
-                          <span className="receipt-label">Station Name:</span>
+                          <span className="receipt-label">Machine Name:</span>
                           <span className="receipt-value text-warning fw-bold" id="successPcName">
                             {registeredData?.pc_name || registeredData?.terminal_name || registeredData?.machine_id}
                           </span>
@@ -231,16 +232,8 @@ export const Registration: React.FC<RegistrationProps> = ({
                           <span className="receipt-value text-warning-subtle fw-semibold">{registeredData?.shop_name}</span>
                         </div>
                         <div className="receipt-row">
-                          <span className="receipt-label">Player ID:</span>
-                          <span className="receipt-value text-info font-monospace">{registeredData?.player_id}</span>
-                        </div>
-                        <div className="receipt-row">
                           <span className="receipt-label">Status:</span>
                           <span className="badge bg-success text-dark px-2 py-1">{registeredData?.status || "ONLINE"}</span>
-                        </div>
-                        <div className="receipt-row">
-                          <span className="receipt-label">Live Balance:</span>
-                          <span className="receipt-value text-warning fw-bold">N$ {(registeredData?.current_balance || 0).toFixed(2)}</span>
                         </div>
                         <div className="receipt-row">
                           <span className="receipt-label">Portal:</span>
@@ -268,38 +261,17 @@ export const Registration: React.FC<RegistrationProps> = ({
                     </div>
                   )}
                 </div>
-
-                {/* Brand Footer */}
-                <div className="card-footer-brand mt-3">
-                  <div className="brand-badge">
-                    <i className="fa-solid fa-scale-balanced"></i>
-                  </div>
-                  <div className="brand-text-block">
-                    <span className="brand-title">WinBet Station</span>
-                    <span className="brand-sub">Live Backend Integration • Real-Time Cash Balance</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Global Toast */}
-        {toastMessage && (
-          <div
-            className="toast-custom-pill position-fixed bottom-0 start-50 translate-middle-x mb-4 px-4 py-2 rounded-pill text-light fw-semibold shadow-lg z-3"
-            style={{
-              background: "rgba(13, 5, 29, 0.95)",
-              border: "1.5px solid rgba(245, 179, 0, 0.6)",
-              boxShadow: "0 0 25px rgba(245, 179, 0, 0.4)",
-              fontSize: "0.85rem",
-              animation: "fadeInUp 0.25s ease forwards",
-            }}
-          >
-            <i className="fa-solid fa-circle-info text-warning me-2"></i>
-            {toastMessage}
-          </div>
-        )}
+        {/* WinBet Theme Modal Popup */}
+        <ThemeNotificationModal
+          isOpen={Boolean(toastMessage)}
+          message={toastMessage || null}
+          onClose={() => setToastMessage(null)}
+        />
       </div>
     </div>
   );

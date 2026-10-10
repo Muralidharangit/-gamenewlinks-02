@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import type { MachineType } from "../../types";
 import { GamingHeader } from "./GamingHeader";
 import { ShopLocation } from "./ShopLocation";
 import { SmartPCHeroBanner } from "../gaming/SmartPCHeroBanner";
+import { ThemeNotificationModal } from "../common/ThemeNotificationModal";
+import { useKioskKeyboardLock } from "../../hooks/useKioskKeyboardLock";
 
 interface GamingLayoutProps {
   machineType: MachineType;
   machineName: string;
   shopName: string;
+  shopLocation?: string;
   balance: number;
   actionText: string;
   onPrimaryAction: () => void;
   onToggleMachineType?: (type: MachineType) => void;
   toastMessage?: string | null;
+  onDismissToast?: () => void;
   showJackpotBanner?: boolean;
   showFooterTrustBar?: boolean;
   children: React.ReactNode;
@@ -22,11 +26,13 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   machineType,
   machineName,
   shopName,
+  shopLocation,
   balance,
   actionText,
   onPrimaryAction,
   onToggleMachineType,
   toastMessage,
+  onDismissToast,
   showJackpotBanner,
   showFooterTrustBar,
   children,
@@ -34,12 +40,13 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
   const isSmartPc = machineType === "smart-pc";
   const shouldShowJackpot = showJackpotBanner !== undefined ? showJackpotBanner : isSmartPc;
   const shouldShowFooterTrust = showFooterTrustBar !== undefined ? showFooterTrustBar : isSmartPc;
+  const [internalToast, setInternalToast] = useState<string | null>(null);
+
+  // Kiosk Keyboard Lock: When balance is 0, keyboard is disabled until unlocked by Ctrl + Shift + D or balance > 0
+  const { isOverrideUnlocked } = useKioskKeyboardLock();
 
   return (
-    <div 
-      className="game-lobby-body d-flex flex-column min-vh-100"
-      style={balance === 0 ? { height: "100vh", overflow: "hidden" } : {}}
-    >
+    <div className="game-lobby-body d-flex flex-column min-vh-100">
       {/* Header */}
       <GamingHeader
         machineType={machineType}
@@ -66,7 +73,7 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
       <footer className="smart-pc-dock">
         <div className="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-3">
           {/* Bottom Left: Shop Location */}
-          <ShopLocation shopName={shopName}/>
+          <ShopLocation shopName={shopName} location={shopLocation} />
 
           {/* Middle: Quick Bet Presets */}
           {/* <div className="d-none d-lg-flex align-items-center gap-2">
@@ -88,8 +95,13 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
             ))}
           </div> */}
 
-          {/* Right: Dock Action Button */}
+          {/* Right: Dock Action Button & Admin Unlock Indicator */}
           <div className="d-flex align-items-center gap-2">
+            {isOverrideUnlocked && (
+              <span className="badge bg-warning text-dark border border-warning px-3 py-2 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">
+                <i className="fa-solid fa-lock-open"></i> KEYBOARD UNLOCKED (CTRL+SHIFT+D)
+              </span>
+            )}
             <button
               type="button"
               className="btn-gold-action py-2 px-4"
@@ -111,15 +123,15 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
               <div className="col-12 col-md-4">
                 <div className="d-flex align-items-center gap-2 mb-2">
                   <span className="brand-name fs-5">
-                    <span style={{ color: "#f5b300" }}>WIN</span>
-                    <span style={{ color: "#ffffff" }}>BET</span>
+                    <span style={{ color: "#f5b300" }}>BET</span>
+                    <span style={{ color: "#ffffff" }}>WISE</span>
                   </span>
                   <span className="badge bg-dark border border-warning-subtle text-warning" style={{ fontSize: "0.7rem" }}>
                     OFFICIAL STATION
                   </span>
                 </div>
                 <p className="text-dim small mb-3">
-                  Authorized Gaming Terminal and Smart PC system. Powered by WinBet Gaming Central.
+                  Authorized Gaming Terminal and Smart PC system. Powered by Betwise Gaming Central.
                 </p>
                 <div className="security-badge-row">
                   <span className="ssl-badge">
@@ -151,11 +163,15 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
         </div>
       )}
 
-      {/* Toast Notification */}
-      <div className={`winbet-toast ${toastMessage ? "show" : ""}`} id="customToast">
-        <i className="fa-solid fa-circle-check text-success fs-5"></i>
-        <span id="toastMessage">{toastMessage}</span>
-      </div>
+      {/* WinBet Theme Modal Popup (Replaces plain toast) */}
+      <ThemeNotificationModal
+        isOpen={Boolean(internalToast || toastMessage)}
+        message={internalToast || toastMessage || null}
+        onClose={() => {
+          setInternalToast(null);
+          onDismissToast?.();
+        }}
+      />
     </div>
   );
 };

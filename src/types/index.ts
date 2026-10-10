@@ -59,7 +59,8 @@ export type ValidationAlertType =
   | "CASHOUT_PENDING"
   | "CASHOUT_REJECTED"
   | "CASHOUT_APPROVED"
-  | "CHIPS_LOADED";
+  | "CHIPS_LOADED"
+  | "STATION_UNBOUND";
 
 // PDF 4.1 Register Data Contract
 export interface SmartPCRegisterPayload {

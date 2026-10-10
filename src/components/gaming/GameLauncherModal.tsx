@@ -176,7 +176,7 @@ export const GameLauncherModal: React.FC<GameLauncherModalProps> = ({
             </h3>
             <div className="d-flex align-items-center gap-2">
               <span className="badge" style={{ fontSize: "0.68rem", background: "rgba(147, 51, 234, 0.3)", border: "1px solid #9333ea", color: "#ddd6fe" }}>
-                <i className="fa-solid fa-gamepad me-1"></i> {game.provider || "WINBET"}
+                <i className="fa-solid fa-gamepad me-1"></i> {game.provider || "BETWISE"}
               </span>
               <span className="badge" style={{ fontSize: "0.68rem", background: "rgba(16, 185, 129, 0.15)", border: "1px solid #10b981", color: "#6ee7b7" }}>
                 <i className="fa-solid fa-circle text-success me-1" style={{ fontSize: "0.45rem" }}></i> LIVE SESSION
@@ -185,24 +185,6 @@ export const GameLauncherModal: React.FC<GameLauncherModalProps> = ({
           </div>
 
           <div className="d-flex align-items-center gap-2">
-            {isProviderGame && (
-              <div className="btn-group btn-group-sm me-2">
-                <button
-                  type="button"
-                  className={`btn btn-sm ${viewMode === "iframe" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                  onClick={() => setViewMode("iframe")}
-                >
-                  <i className="fa-solid fa-display me-1"></i> Live Stream
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-sm ${viewMode === "arcade" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light"}`}
-                  onClick={() => setViewMode("arcade")}
-                >
-                  <i className="fa-solid fa-bolt me-1"></i> Fast Bet
-                </button>
-              </div>
-            )}
             <div className="px-3 py-1 rounded-pill bg-dark border border-warning-subtle text-warning fw-bold small">
               {formatCurrency(balance)}
             </div>

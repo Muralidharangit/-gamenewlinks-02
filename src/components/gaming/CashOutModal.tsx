@@ -40,7 +40,7 @@ export const CashOutModal: React.FC<CashOutModalProps> = ({
             Cash Out
           </h3>
           <p className="panel-label text-secondary small text-uppercase mb-1" style={{ fontSize: "0.72rem" }}>
-            Available Session Balance
+            Available Shop Balance
           </p>
           <div className="panel-amount fs-2 fw-bold text-light">
             <span className="currency-symbol text-warning me-1">N$</span>
