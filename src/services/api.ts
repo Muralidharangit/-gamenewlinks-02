@@ -74,9 +74,12 @@ export const api = {
    */
   async registerSmartPC(payload: SmartPCRegisterPayload): Promise<SmartPCRegisterData> {
     const url = buildShopUrl("/smart-pcs/register", payload.portal_slug);
+    const token = payload.registration_token.trim().toUpperCase();
+    const fp = payload.device_fingerprint || getDeviceFingerprint();
+
     const body = {
-      registration_token: payload.registration_token,
-      device_fingerprint: payload.device_fingerprint,
+      registration_token: token,
+      device_fingerprint: fp,
       operating_system: payload.operating_system || "Windows 11",
     };
 
@@ -100,45 +103,13 @@ export const api = {
         localStorage.setItem("winbet_shop_name", data.shop_name);
         localStorage.setItem("winbet_machine_name", data.pc_name || data.terminal_name || data.machine_id);
         localStorage.setItem("winbet_portal", payload.portal_slug);
-        localStorage.setItem("winbet_device_fingerprint", payload.device_fingerprint);
+        localStorage.setItem("winbet_device_fingerprint", fp);
         
         const balance = typeof data.current_balance === "number" ? data.current_balance : 0;
         fallbackChipsBalance = balance;
         broadcastBalanceChange(balance);
 
         return data;
-      }
-
-      // Handle 422 "already registered" by resolving the active backend session
-      const errMessage = json.message || json.errors?.registration_token?.[0] || "";
-      if (res.status === 422 && errMessage.toLowerCase().includes("already registered")) {
-        const session = await api.getSession(getStoredMachineId(), payload.device_fingerprint);
-        if (session && session.machine_id) {
-          const recoveredData: SmartPCRegisterData = {
-            id: session.id,
-            machine_id: session.machine_id,
-            hostname: session.hostname || session.pc_name || session.machine_id,
-            terminal_name: session.terminal_name || session.pc_name || session.machine_id,
-            pc_name: session.pc_name || session.terminal_name || session.machine_id,
-            shop_id: session.shop_id,
-            shop_name: session.shop_name,
-            status: session.status || "ONLINE",
-            current_balance: typeof session.current_balance === "number" ? session.current_balance : 0,
-            player_id: session.player_id,
-          };
-          localStorage.setItem("winbet_machine_id", recoveredData.machine_id);
-          localStorage.setItem("winbet_numeric_id", String(recoveredData.id));
-          localStorage.setItem("winbet_player_id", String(recoveredData.player_id));
-          localStorage.setItem("winbet_shop_id", String(recoveredData.shop_id));
-          localStorage.setItem("winbet_shop_name", recoveredData.shop_name);
-          localStorage.setItem("winbet_machine_name", recoveredData.pc_name || recoveredData.machine_id);
-          localStorage.setItem("winbet_portal", payload.portal_slug);
-          localStorage.setItem("winbet_device_fingerprint", payload.device_fingerprint);
-
-          fallbackChipsBalance = recoveredData.current_balance;
-          broadcastBalanceChange(recoveredData.current_balance);
-          return recoveredData;
-        }
       }
 
       const specificError =

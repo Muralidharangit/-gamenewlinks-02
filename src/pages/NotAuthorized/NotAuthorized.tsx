@@ -13,6 +13,7 @@ export const NotAuthorized: React.FC = () => {
     localStorage.removeItem("winbet_machine_name");
     localStorage.removeItem("winbet_machine_type");
     localStorage.removeItem("winbet_setup_code");
+    localStorage.removeItem("winbet_registration_token");
     localStorage.removeItem("winbet_shop_name");
     localStorage.removeItem("winbet_shop_location");
 

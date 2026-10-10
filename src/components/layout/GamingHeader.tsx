@@ -42,9 +42,9 @@ export const GamingHeader: React.FC<GamingHeaderProps> = ({
         {/* Left: Winbet Brand Logo + Machine Station Badge */}
         <div className="d-flex align-items-center gap-3">
           <Link
-            to="/register"
+            to={machineType === "terminal" ? "/terminal" : "/smart-pc"}
             className="d-flex align-items-center gap-2 text-decoration-none me-1"
-            title="Betwise Central"
+            title="Betwise Station"
           >
             {/* <img
               src="/assets/images/logo.png"

@@ -708,6 +708,7 @@ export const ValidationModals: React.FC<ValidationModalProps> = ({
                     localStorage.removeItem("winbet_machine_id");
                     localStorage.removeItem("winbet_numeric_id");
                     localStorage.removeItem("winbet_setup_code");
+                    localStorage.removeItem("winbet_registration_token");
                     window.location.href = "/register";
                   }
                 }}
