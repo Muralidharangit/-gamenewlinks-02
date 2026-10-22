@@ -20,6 +20,13 @@ export const SmartPCLobby: React.FC = () => {
   // Zero Balance Notice Modal
   const [isZeroBalanceModalOpen, setIsZeroBalanceModalOpen] = useState(false);
 
+  // Auto-close Zero Balance modal immediately when balance is loaded (> 0)
+  useEffect(() => {
+    if (machine.balance > 0 && isZeroBalanceModalOpen) {
+      setIsZeroBalanceModalOpen(false);
+    }
+  }, [machine.balance, isZeroBalanceModalOpen]);
+
   // Validation / Queue Alerts (05 Pending, 06 Rejected, 06 Low Shop Balance, Approved, Chips Loaded)
   const [activeAlert, setActiveAlert] = useState<ValidationAlertType>("NONE");
   const [pendingCashoutAmount, setPendingCashoutAmount] = useState<number>(0);
@@ -273,6 +280,7 @@ export const SmartPCLobby: React.FC = () => {
         onClose={() => setIsZeroBalanceModalOpen(false)}
         shopName={machine.shopName}
         machineName={machine.name}
+        balance={machine.balance}
       />
 
       {/* Smart PC Step 4: Cash Out Confirmation Modal */}

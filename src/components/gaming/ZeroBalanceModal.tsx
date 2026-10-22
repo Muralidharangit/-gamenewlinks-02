@@ -7,6 +7,7 @@ interface ZeroBalanceModalProps {
   onClose: () => void;
   shopName?: string;
   machineName?: string;
+  balance?: number;
 }
 
 export const ZeroBalanceModal: React.FC<ZeroBalanceModalProps> = ({
@@ -14,7 +15,15 @@ export const ZeroBalanceModal: React.FC<ZeroBalanceModalProps> = ({
   onClose,
   shopName: _shopName,
   machineName: _machineName = "Smart PC",
+  balance = 0,
 }) => {
+  // Auto-close modal if cashier loads balance while modal is open
+  React.useEffect(() => {
+    if (isOpen && balance > 0) {
+      onClose();
+    }
+  }, [isOpen, balance, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -23,7 +32,7 @@ export const ZeroBalanceModal: React.FC<ZeroBalanceModalProps> = ({
         {/* Step Pill */}
         <div className="step-pill-box justify-content-center mb-3">
           <span className="pill-text fw-bold text-warning">
-            <i className="fa-solid fa-coins me-1"></i> Station Balance Alert
+            <i className="fa-solid fa-coins me-1"></i> Machine Balance Alert
           </span>
         </div>
 

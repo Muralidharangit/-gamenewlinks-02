@@ -36,10 +36,12 @@ export const NotAuthorized: React.FC = () => {
         >
           <div className="d-flex align-items-center gap-2">
             <Link to="/register" className="brand-logo-wrap text-decoration-none mb-0">
-              <span className="brand-name fs-5">
-                <span style={{ color: "#f5b300" }}>WIN</span>
-                <span style={{ color: "#ffffff" }}>BET</span>
-              </span>
+              <img
+                src="/assets/images/logo.png"
+                alt="WINBET"
+                className="brand-logo-img logo-sm"
+                style={{ height: "38px", width: "auto", objectFit: "contain" }}
+              />
             </Link>
             <span
               className="badge ms-2 bg-danger text-white border border-danger-subtle"
@@ -150,7 +152,7 @@ export const NotAuthorized: React.FC = () => {
                       <i className="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div className="brand-text-block">
-                      <span className="brand-title">Betwise Security</span>
+                      <span className="brand-title">WinBet Security</span>
                       <span className="brand-sub">Hardware Binding · Tauri PC Protection</span>
                     </div>
                   </div>

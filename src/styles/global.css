@@ -81,12 +81,11 @@ body.game-lobby-body,
   justify-content: center;
   gap: 12px;
   text-decoration: none;
-  transition: transform 0.25s ease;
   margin-bottom: 16px;
 }
 
 .brand-logo-wrap:hover {
-  transform: scale(1.03);
+  transform: none;
 }
 
 .brand-logo-img,
@@ -97,7 +96,7 @@ body.game-lobby-body,
   object-fit: contain;
   display: inline-block;
   filter: drop-shadow(0 0 12px rgba(245, 179, 0, 0.55));
-  transition: transform 0.25s ease, filter 0.25s ease;
+  transition: opacity 0.25s ease;
 }
 
 .brand-logo-img.logo-sm {
@@ -112,8 +111,7 @@ body.game-lobby-body,
 
 .brand-logo-wrap:hover .brand-logo-img,
 .winbet-logo:hover .brand-logo-img {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 18px rgba(245, 179, 0, 0.85));
+  transform: none;
 }
 
 .crown-icon {

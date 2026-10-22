@@ -37,7 +37,7 @@ export const RegistrationSuccess: React.FC = () => {
             <Link to="/register" className="brand-logo-wrap text-decoration-none mb-0">
               <img
                 src="/assets/images/logo.png"
-                alt="BETWISE"
+                alt="WINBET"
                 className="brand-logo-img logo-sm"
                 style={{ height: "38px" }}
                 onError={(e) => {
@@ -45,8 +45,8 @@ export const RegistrationSuccess: React.FC = () => {
                 }}
               />
               <span className="brand-name fs-5">
-                <span style={{ color: "#f5b300" }}>BET</span>
-                <span style={{ color: "#ffffff" }}>WISE</span>
+                <span style={{ color: "#f5b300" }}>WIN</span>
+                <span style={{ color: "#ffffff" }}>BET</span>
               </span>
             </Link>
             <span
@@ -75,19 +75,6 @@ export const RegistrationSuccess: React.FC = () => {
             <div className="col-12 col-md-8 col-lg-5 col-xl-4">
               <div className="winbet-card active-step-card">
                 <div>
-                  {/* Brand Logo */}
-                  <div className="winbet-logo mb-3">
-                    <img
-                      src="/assets/images/logo.png"
-                      alt="BETWISE"
-                      className="brand-logo-img logo-sm"
-                      style={{ maxHeight: "48px" }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  </div>
-
                   {/* Glowing Checkmark Circle */}
                   <div className="success-circle-container mt-2">
                     <div className="neon-success-circle">
@@ -140,7 +127,7 @@ export const RegistrationSuccess: React.FC = () => {
                       <i className="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div className="brand-text-block">
-                      <span className="brand-title">Betwise Central</span>
+                      <span className="brand-title">WinBet Central</span>
                       <span className="brand-sub">Independent. Fair. Reliable. Windhoek Central.</span>
                     </div>
                   </div>

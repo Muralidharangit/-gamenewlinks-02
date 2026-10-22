@@ -122,16 +122,18 @@ export const GamingLayout: React.FC<GamingLayoutProps> = ({
             <div className="row g-4 justify-content-between">
               <div className="col-12 col-md-4">
                 <div className="d-flex align-items-center gap-2 mb-2">
-                  <span className="brand-name fs-5">
-                    <span style={{ color: "#f5b300" }}>BET</span>
-                    <span style={{ color: "#ffffff" }}>WISE</span>
-                  </span>
+                  <img
+                    src="/assets/images/logo.png"
+                    alt="WINBET"
+                    className="brand-logo-img logo-sm"
+                    style={{ height: "34px", width: "auto", objectFit: "contain" }}
+                  />
                   <span className="badge bg-dark border border-warning-subtle text-warning" style={{ fontSize: "0.7rem" }}>
                     OFFICIAL MACHINE
                   </span>
                 </div>
                 <p className="text-dim small mb-3">
-                  Authorized Gaming Smart PC System. Powered by Betwise Gaming Central.
+                  Authorized Gaming Smart PC System. Powered by WinBet Gaming Central.
                 </p>
                 <div className="security-badge-row">
                   <span className="ssl-badge">

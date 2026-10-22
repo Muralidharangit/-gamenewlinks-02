@@ -11,7 +11,7 @@ import { GameCard } from "./GameCard";
 import { LiveWinnersTicker } from "./LiveWinnersTicker";
 // import { TournamentSection } from "./TournamentSection";
 // import { VipPromotionsSection } from "./VipPromotionsSection";
-import { SmartPCHelpBar } from "./SmartPCHelpBar";
+// import { SmartPCHelpBar } from "./SmartPCHelpBar";
 
 interface GameGridProps {
   balance: number;
@@ -50,8 +50,8 @@ const getProviderIcon = (providerName: string): string => {
 export const GameGrid: React.FC<GameGridProps> = ({
   balance,
   machineType = "smart-pc",
-  machineName,
-  shopName,
+  machineName: _machineName,
+  shopName: _shopName,
   onBalanceChange: _onBalanceChange,
   showToast: _showToast,
   onOpenCashout,
@@ -787,8 +787,8 @@ export const GameGrid: React.FC<GameGridProps> = ({
             onOpenCashout={onOpenCashout}
           /> */}
 
-          {/* SECTION 7: SMART PC HELP & FAIR PLAY ASSURANCE */}
-          <SmartPCHelpBar machineName={machineName} shopName={shopName} />
+          {/* SECTION 7: SMART PC HELP & FAIR PLAY ASSURANCE (HIDDEN) */}
+          {/* <SmartPCHelpBar machineName={machineName} shopName={shopName} /> */}
         </>
       )}
 

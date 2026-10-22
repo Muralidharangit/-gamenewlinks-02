@@ -40,7 +40,7 @@ export const getPortalSlug = (): string => {
   return (
     localStorage.getItem("winbet_portal") ||
     import.meta.env.VITE_PORTAL_SLUG ||
-    "betwise"
+    "winbet"
   );
 };
 
