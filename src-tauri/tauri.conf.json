@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "betwise-smartpc",
+  "productName": "winbet-smart-pc",
   "version": "1.0.2",
-  "identifier": "com.betwise.smartpc",
+  "identifier": "com.winbet.smartpc",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Betwise Smart PC",
+        "title": "WinBet Smart PC",
         "width": 1920,
         "height": 1080,
         "minWidth": 1024,
@@ -30,8 +30,8 @@
   "bundle": {
     "active": true,
     "targets": ["deb", "nsis"],
-    "shortDescription": "Betwise Smart PC Gaming Terminal",
-    "longDescription": "Betwise Smart PC Dedicated Gaming Terminal and Kiosk Application",
+    "shortDescription": "WinBet Smart PC Gaming Terminal",
+    "longDescription": "WinBet Smart PC Dedicated Gaming Terminal and Kiosk Application",
     "category": "Game",
     "icon": [
       "icons/32x32.png",

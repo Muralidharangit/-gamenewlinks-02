@@ -107,7 +107,7 @@ export const GamePlayPage: React.FC = () => {
         }
         if (session?.pending_cash_out?.requested_amount) {
           setPendingCashoutAmount(session.pending_cash_out.requested_amount);
-          // Intentionally omitting setActiveAlert("CASHOUT_PENDING") here
+          setActiveAlert("CASHOUT_PENDING");
         }
       })
       .catch(() => {});
@@ -182,12 +182,12 @@ export const GamePlayPage: React.FC = () => {
     initiateGameLaunch();
   }, [initiateGameLaunch]);
 
-  // Auto-redirect to Lobby if playing game and balance is 0
+  // Auto-redirect to Lobby if playing game and balance is 0 and no cashout is in progress
   useEffect(() => {
-    if (machine.balance <= 0) {
+    if (machine.balance <= 0 && activeAlert === "NONE" && !isCashoutModalOpen) {
       navigate("/smart-pc", { replace: true });
     }
-  }, [machine.balance, navigate]);
+  }, [machine.balance, activeAlert, isCashoutModalOpen, navigate]);
 
   // Choices map for local dummy games (PDF 4.7)
   const getChoices = () => {
@@ -216,19 +216,17 @@ export const GamePlayPage: React.FC = () => {
 
   const handleConfirmCashout = async () => {
     const amt = machine.balance;
+    setPendingCashoutAmount(amt);
     setIsCashoutModalOpen(false);
 
     try {
       await api.requestCashOut(amt);
       updateBalance(0.0);
+      setActiveAlert("CASHOUT_PENDING");
+      showToast(`Cash Out of N$ ${amt.toFixed(2)} requested! Waiting for cashier...`);
     } catch {
       updateBalance(0.0);
-    } finally {
-      // Exit the game and immediately redirect to Lobby with cashout state
-      navigate("/smart-pc", {
-        replace: true,
-        state: { cashoutRequested: true, amount: amt },
-      });
+      setActiveAlert("CASHOUT_PENDING");
     }
   };
 
@@ -257,6 +255,7 @@ export const GamePlayPage: React.FC = () => {
       const customEvt = e as CustomEvent<{ status: string; amount: number }>;
       if (customEvt.detail.status === "REJECTED") {
         setPendingCashoutAmount(customEvt.detail.amount);
+        updateBalance(customEvt.detail.amount);
         setActiveAlert("CASHOUT_REJECTED");
       } else if (customEvt.detail.status === "APPROVED") {
         setActiveAlert("NONE");
@@ -300,14 +299,14 @@ export const GamePlayPage: React.FC = () => {
     setSoundEnabled((prev) => !prev);
   };
 
-  const toggleFullscreen = () => {
-    const container = document.getElementById("gamePlayContainer");
-    if (!document.fullscreenElement && container) {
-      container.requestFullscreen().catch(() => {});
-    } else if (document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    }
-  };
+  // const toggleFullscreen = () => {
+  //   const container = document.getElementById("gamePlayContainer");
+  //   if (!document.fullscreenElement && container) {
+  //     container.requestFullscreen().catch(() => {});
+  //   } else if (document.exitFullscreen) {
+  //     document.exitFullscreen().catch(() => {});
+  //   }
+  // };
 
   const handlePlaceBet = async () => {
     if (isPlayingRound) return;
@@ -395,12 +394,14 @@ export const GamePlayPage: React.FC = () => {
             <Link
               to="/smart-pc"
               className="d-flex align-items-center gap-2 text-decoration-none me-1"
-              title="Betwise Station"
+              title="WinBet Station"
             >
-              <span className="brand-name">
-                <span style={{ color: "#f5b300" }}>BET</span>
-                <span style={{ color: "#ffffff" }}>WISE</span>
-              </span>
+              <img
+                src="/assets/images/logo.png"
+                alt="WINBET"
+                className="brand-logo-img logo-sm"
+                style={{ height: "38px", width: "auto", objectFit: "contain" }}
+              />
             </Link>
 
             {/* Dedicated Station Badge */}
@@ -455,14 +456,14 @@ export const GamePlayPage: React.FC = () => {
             </button>
 
             {/* Popout Game Window */}
-            <button
+            {/* <button
               type="button"
               className="btn-icon-control"
               onClick={handlePopoutWindow}
               title="Open Direct Game Window"
             >
               <i className="fa-solid fa-up-right-from-square"></i>
-            </button>
+            </button> */}
 
             {/* Sound Toggle */}
             <button
@@ -475,14 +476,14 @@ export const GamePlayPage: React.FC = () => {
             </button>
 
             {/* Fullscreen Mode */}
-            <button
+            {/* <button
               type="button"
               className="btn-icon-control"
               onClick={toggleFullscreen}
               title="Fullscreen Mode"
             >
               <i className="fa-solid fa-expand"></i>
-            </button>
+            </button> */}
           </div>
         </div>
       </header>
@@ -503,7 +504,7 @@ export const GamePlayPage: React.FC = () => {
             ) : gameUrl && gameUrl.startsWith("http") && !gameUrl.includes("/smart-pc") && !gameUrl.includes(window.location.host) && !gameUrl.includes("staging.game-server.winbet.com") ? (
               <iframe
                 src={gameUrl}
-                title={game?.title || "Betwise Game Stream"}
+                title={game?.title || "WinBet Game Stream"}
                 className="w-100 flex-grow-1 border-0"
                 style={{ height: "calc(100vh - 75px)", minHeight: "560px", background: "#05010e" }}
                 allow="autoplay; fullscreen; clipboard-write"

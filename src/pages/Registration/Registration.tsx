@@ -12,7 +12,7 @@ export const Registration: React.FC<RegistrationProps> = ({
   defaultMachineType = "smart-pc",
 }) => {
   const navigate = useNavigate();
-  const [portal, setPortal] = useState(() => localStorage.getItem("winbet_portal") || api.getPortalSlug() || "betwise");
+  const [portal, setPortal] = useState(() => localStorage.getItem("winbet_portal") || api.getPortalSlug() || "winbet");
   const [registrationToken, setRegistrationToken] = useState("");
   const [machineType] = useState<MachineType>(defaultMachineType);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -100,6 +100,42 @@ export const Registration: React.FC<RegistrationProps> = ({
   return (
     <div className="d-flex flex-column min-vh-100" style={{ background: "radial-gradient(circle at 50% 15%, #1d0938 0%, #080214 100%)" }}>
       <div className="container-fluid px-lg-5 py-3 d-flex flex-column flex-grow-1">
+        {/* Top Controls Bar */}
+        {/* <div
+          className="d-flex flex-wrap justify-content-between align-items-center mb-3 border-bottom pb-3"
+          style={{ borderColor: "rgba(94, 23, 187, 0.4)" }}
+        >
+          <div className="d-flex align-items-center gap-2">
+            <Link to="/register" className="brand-logo-wrap text-decoration-none mb-0">
+              <img
+                src="/assets/images/logo.png"
+                alt="WINBET"
+                className="brand-logo-img logo-sm"
+                style={{ height: "38px", width: "auto", objectFit: "contain" }}
+              />
+            </Link>
+            <span
+              className="badge ms-2 bg-dark text-warning border border-warning-subtle"
+              style={{ fontSize: "0.75rem" }}
+            >
+              REGISTRATION PORTAL
+            </span>
+          </div>
+
+          <div className="d-flex align-items-center gap-3 mt-2 mt-sm-0">
+            {hasExistingMachine && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-warning d-flex align-items-center gap-1"
+                style={{ fontSize: "0.78rem", borderRadius: "8px" }}
+                onClick={() => navigate(machineType === "terminal" ? "/terminal" : "/smart-pc")}
+              >
+                <i className="fa-solid fa-arrow-right-to-bracket"></i> Enter Lobby
+              </button>
+            )}
+          </div>
+        </div> */}
+
         {/* Center Content Wrapper */}
         <div className="my-auto w-100 py-2">
           <div id="wizardContainer" className="row justify-content-center py-2">
@@ -115,6 +151,19 @@ export const Registration: React.FC<RegistrationProps> = ({
                   {wizardStep === 1 ? (
                     /* SCREEN 1: REGISTRATION SETUP */
                     <form id="flowScreen1" onSubmit={handleSubmit} className="text-start">
+                      {/* Brand Logo - Register Machine Only */}
+                      <div className="winbet-logo mb-3 text-center">
+                        <img
+                          src="/assets/images/logo.png"
+                          alt="WINBET"
+                          className="brand-logo-img logo-sm"
+                          style={{ maxHeight: "52px", width: "auto", objectFit: "contain" }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      </div>
+
                       <div className="d-flex align-items-center justify-content-between mb-1">
                         <h2 className="card-heading mb-0 text-start">Register Machine</h2>
                         {hasExistingMachine && (
@@ -147,7 +196,7 @@ export const Registration: React.FC<RegistrationProps> = ({
                             setPortal(e.target.value);
                             setErrorMessage(null);
                           }}
-                          placeholder="betwise"
+                          placeholder="winbet"
                         />
                       </div>
 

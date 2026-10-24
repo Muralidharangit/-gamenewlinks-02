@@ -1,8 +1,8 @@
 [package]
-name = "betwise-smartpc"
+name = "winbet-smart-pc"
 version = "1.0.2"
-description = "Betwise Smart PC Gaming Terminal"
-authors = ["Betwise Gaming Central"]
+description = "WinBet Smart PC Gaming Terminal"
+authors = ["WinBet Gaming Central"]
 license = "Proprietary"
 repository = ""
 edition = "2024"

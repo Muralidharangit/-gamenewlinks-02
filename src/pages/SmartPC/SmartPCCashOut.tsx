@@ -13,6 +13,14 @@ export const SmartPCCashOut: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(machine.balance > 0);
   const [isZeroBalanceOpen, setIsZeroBalanceOpen] = useState(machine.balance <= 0);
 
+  // Auto-close Zero Balance modal if cashier loads balance
+  React.useEffect(() => {
+    if (machine.balance > 0 && isZeroBalanceOpen) {
+      setIsZeroBalanceOpen(false);
+      setIsModalOpen(true);
+    }
+  }, [machine.balance, isZeroBalanceOpen]);
+
   const handleClose = () => {
     setIsModalOpen(false);
     setIsZeroBalanceOpen(false);
@@ -65,6 +73,7 @@ export const SmartPCCashOut: React.FC = () => {
         onClose={handleClose}
         shopName={machine.shopName}
         machineName={machine.name}
+        balance={machine.balance}
       />
 
       <CashOutModal
